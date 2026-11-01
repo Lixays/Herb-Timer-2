@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/herb_widget_2x1_desc"
+    android:initialLayout="@layout/widget_herb_2x1"
+    android:minWidth="110dp"
+    android:minHeight="40dp"
+    android:previewLayout="@layout/widget_herb_2x1_preview"
+    android:resizeMode="none"
+    android:targetCellHeight="1"
+    android:targetCellWidth="2"
+    android:updatePeriodMillis="0"
+    android:widgetCategory="home_screen" />

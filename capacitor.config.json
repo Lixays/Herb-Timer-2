@@ -1,0 +1,10 @@
+{
+  "appId": "com.example.herbtimer",
+  "appName": "Herb Timer",
+  "webDir": "www",
+  "plugins": {
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_herb"
+    }
+  }
+}

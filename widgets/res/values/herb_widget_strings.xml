@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="herb_widget_1x1_desc">Plant and countdown until your last herb patch is ready.</string>
+    <string name="herb_widget_2x1_desc">Plant, countdown and finish time for your herb patches.</string>
+</resources>
