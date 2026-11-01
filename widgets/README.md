@@ -1,26 +1,13 @@
-# Herb Timer home-screen widgets
+# Herb Timer widgets + native notifications
 
-Two widgets: **1x1** and **2x1**. Each shows a plant that grows as your patches grow
-(seed -> 3 growth stages -> ready with a gold sparkle) and a live countdown to the patch
-that finishes LAST. Empty = soil only, ready = "Ready!". Tap = opens the app.
+Added on top of the web app, all in `widgets/` (copied into the Android project by `apply_widgets.py`):
 
-## Add to the repo
-1. Drop `widgets/` and `www/index.html` into the repo root (replace `www/index.html`).
-2. In your GitHub workflow, after the step that creates/syncs the Android project
-   (`npx cap add android` / `npx cap sync android`) and before Gradle builds it, add:
+- **Widgets 1x1 / 2x1** - plant picture + live countdown to the patch that finishes last.
+  Tap the **plant** = plant empty patches and restart ready ones (no app opening).
+  Tap the **text** = open the app.
+- **"Herbs ready" notifications** - sent by the Android side, so the buttons work with the app closed:
+  **Restart all** (replants everything that is ready) and **Snooze 10 min**.
+- **Status-bar icon** while anything is growing or ready.
+- Changes made from a button are handed to the app the next time it opens (or within ~3 s if it's open).
 
-       - name: Add home-screen widgets
-         run: python3 widgets/apply_widgets.py
-
-3. Build, install, long-press the home screen -> Widgets -> Herb Timer.
-   Open the app once so it can send the timers to the widgets.
-
-## What the script does
-- copies `widgets/java/*` into `com/example/herbtimer/`
-- copies `widgets/res/*` into the app's `res/`
-- adds the two `<receiver>` entries to `AndroidManifest.xml`
-- registers the `HerbWidget` plugin in `MainActivity` (your `index.html` already calls it)
-
-## What changed in index.html
-Two lines: notifications keep going through the notification plugin, and the timers are
-additionally pushed to the widgets.
+`www/index.html` is unchanged from V1_6 - it already contained the code that talks to this.

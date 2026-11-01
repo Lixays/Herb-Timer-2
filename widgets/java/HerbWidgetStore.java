@@ -49,4 +49,47 @@ final class HerbWidgetStore {
         } catch (Exception ignored) { }
         return n;
     }
+
+    static JSONArray timers(Context c) {
+        try { return new JSONArray(timersJson(c)); } catch (Exception e) { return new JSONArray(); }
+    }
+
+    static boolean hasTimers(Context c) {
+        return timers(c).length() > 0;
+    }
+
+    static void saveTimers(Context c, String json) {
+        prefs(c).edit().putString("timers", json).apply();
+    }
+
+    /** True when the notification/widget changed the timers and the app hasn't picked that up yet. */
+    static boolean isDirty(Context c) {
+        return prefs(c).getBoolean("dirty", false);
+    }
+
+    static void setDirty(Context c, boolean dirty) {
+        prefs(c).edit().putBoolean("dirty", dirty).apply();
+    }
+
+    /** The three "minutes past the hour" the patches tick at, sorted. */
+    static int[] windows(Context c) {
+        int[] out = {9, 29, 49};
+        try {
+            JSONArray a = new JSONArray(prefs(c).getString("windows", "[]"));
+            if (a.length() == 3) {
+                int[] w = {a.getInt(0), a.getInt(1), a.getInt(2)};
+                java.util.Arrays.sort(w);
+                out = w;
+            }
+        } catch (Exception ignored) { }
+        return out;
+    }
+
+    static String alarmList(Context c) {
+        return prefs(c).getString("alarms", "");
+    }
+
+    static void setAlarmList(Context c, String s) {
+        prefs(c).edit().putString("alarms", s).apply();
+    }
 }

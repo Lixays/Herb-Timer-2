@@ -35,7 +35,7 @@ print("res       ok")
 # 3. Manifest: register the two widget receivers
 manifest = MAIN / "AndroidManifest.xml"
 text = manifest.read_text(encoding="utf-8")
-if "HerbWidgetProvider1x1" in text:
+if "HerbBootReceiver" in text:
     print("manifest  already patched")
 else:
     receivers = '''
@@ -63,10 +63,30 @@ else:
                 android:resource="@xml/herb_widget_2x1_info" />
         </receiver>
 
+        <receiver
+            android:name="com.example.herbtimer.HerbReceiver"
+            android:exported="false" />
+
+        <receiver
+            android:name="com.example.herbtimer.HerbBootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
     '''
     if "</application>" not in text:
         sys.exit("Could not find </application> in AndroidManifest.xml")
-    manifest.write_text(text.replace("</application>", receivers + "</application>", 1), encoding="utf-8")
+    text = text.replace("</application>", receivers + "</application>", 1)
+    perms = ""
+    for name in ("RECEIVE_BOOT_COMPLETED", "POST_NOTIFICATIONS", "SCHEDULE_EXACT_ALARM"):
+        if "android.permission." + name not in text:
+            perms += '    <uses-permission android:name="android.permission.' + name + '" />\n'
+    if perms:
+        text = text.replace("</manifest>", perms + "</manifest>", 1)
+    manifest.write_text(text, encoding="utf-8")
     print("manifest  patched")
 
 # 4. MainActivity: register the HerbWidget plugin so the web app can reach it

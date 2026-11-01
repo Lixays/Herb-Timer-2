@@ -23,7 +23,7 @@ final class HerbWidgetRenderer {
     private static final long GROW_MS = 60L * 60 * 1000;
 
     private static final int[] PLANT_BY_STAGE = {
-            R.drawable.herb_plant_0, R.drawable.herb_plant_1, R.drawable.herb_plant_2, R.drawable.herb_plant_3
+            R.drawable.herb_grow_0, R.drawable.herb_grow_1, R.drawable.herb_grow_2, R.drawable.herb_grow_3
     };
 
     private HerbWidgetRenderer() {}
@@ -64,7 +64,7 @@ final class HerbWidgetRenderer {
         if (empty) {
             plant = R.drawable.herb_plant_empty;
         } else if (ready) {
-            plant = R.drawable.herb_plant_4;
+            plant = R.drawable.herb_grow_4;
         } else {
             long elapsed = now - (finish - GROW_MS);
             int stage = elapsed < 0 ? 0 : (int) Math.min(3, elapsed / STAGE_MS + 1);   // same stages as the app
@@ -98,21 +98,28 @@ final class HerbWidgetRenderer {
                 String time = DateFormat.getTimeFormat(app).format(new Date(finish));
                 sub = String.format(Locale.getDefault(), "Done %s \u00B7 %d growing", time, active);
             } else if (ready) {
-                sub = "Tap to harvest";
+                sub = "Tap plant to restart all";
             } else {
-                sub = "Tap to plant";
+                sub = "Tap plant to plant all";
             }
             v.setTextViewText(R.id.herb_sub, sub);
         }
 
         v.setContentDescription(R.id.herb_root, running ? "Herb timer running" : ready ? "Herbs ready" : "No herbs planted");
+        v.setContentDescription(R.id.herb_plant, "Plant all");
 
-        // Tapping the widget opens the app
+        // Tap the text: open the app. Tap the plant: plant / restart everything, without opening the app.
         Intent launch = app.getPackageManager().getLaunchIntentForPackage(app.getPackageName());
         if (launch != null) {
             PendingIntent open = PendingIntent.getActivity(app, 0, launch,
                     PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
             v.setOnClickPendingIntent(R.id.herb_root, open);
+        }
+        if (HerbWidgetStore.hasTimers(app)) {
+            Intent plantAll = new Intent(app, HerbReceiver.class).setAction(HerbReceiver.ACTION_PLANT_ALL);
+            PendingIntent plant = PendingIntent.getBroadcast(app, 5, plantAll,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            v.setOnClickPendingIntent(R.id.herb_plant, plant);
         }
         return v;
     }

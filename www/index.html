@@ -525,7 +525,7 @@
         const STATUS_ID = 1000;
         const SNOOZE_ID = 20;
         const SNOOZE_MS = 10 * 60 * 1000;
-        let nativeWorking = false;   // notifications always go through the plugin; HerbWidget only feeds the home-screen widgets
+        let nativeWorking = !!HW;
         let pluginReady = false;
 
         // Asks for permission to show notifications.
@@ -682,7 +682,8 @@
 
         // Called after any change to the timers.
         async function syncNotifications() {
-            await pushWidgetData();                   // feeds the home-screen widgets (does nothing if the Android side isn't there)
+            if (nativeWorking && await pushWidgetData()) return;
+            nativeWorking = false;                    // couldn't reach the Android side: use the plugin instead
             await scheduleWithPlugin();
         }
 

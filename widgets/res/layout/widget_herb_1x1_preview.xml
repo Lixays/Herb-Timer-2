@@ -13,7 +13,7 @@
         android:layout_weight="1"
         android:contentDescription="@null"
         android:scaleType="fitCenter"
-        android:src="@drawable/herb_plant_2" />
+        android:src="@drawable/herb_grow_2" />
 
     <TextView
         android:layout_width="match_parent"

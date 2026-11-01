@@ -15,7 +15,7 @@
         android:layout_height="match_parent"
         android:contentDescription="@null"
         android:scaleType="fitCenter"
-        android:src="@drawable/herb_plant_2" />
+        android:src="@drawable/herb_grow_2" />
 
     <LinearLayout
         android:layout_width="0dp"
