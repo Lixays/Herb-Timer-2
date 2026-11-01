@@ -117,9 +117,9 @@ final class HerbWidgetRenderer {
         }
         if (HerbWidgetStore.hasTimers(app)) {
             Intent plantAll = new Intent(app, HerbReceiver.class).setAction(HerbReceiver.ACTION_PLANT_ALL);
-            PendingIntent plant = PendingIntent.getBroadcast(app, 5, plantAll,
+            PendingIntent plantTap = PendingIntent.getBroadcast(app, 5, plantAll,
                     PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-            v.setOnClickPendingIntent(R.id.herb_plant, plant);
+            v.setOnClickPendingIntent(R.id.herb_plant, plantTap);
         }
         return v;
     }
