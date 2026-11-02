@@ -32,9 +32,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLines="1"
-            android:text="HERB PATCHES"
+            android:text="Plant"
             android:textColor="#C9A227"
-            android:textSize="10sp"
+            android:textSize="12sp"
             android:textStyle="bold" />
 
         <FrameLayout
@@ -73,7 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLines="1"
-            android:text="Tap to plant"
+            android:text=""
             android:textColor="#B8AB8C"
             android:textSize="11sp" />
     </LinearLayout>

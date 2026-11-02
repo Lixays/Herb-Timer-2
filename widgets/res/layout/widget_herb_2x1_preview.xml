@@ -27,7 +27,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="HERB PATCHES"
+            android:text="Weiss"
             android:textColor="#C9A227"
             android:textSize="10sp"
             android:textStyle="bold" />
@@ -43,7 +43,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Done 14:32 · 9 growing"
+            android:text="Done 14:32"
             android:textColor="#B8AB8C"
             android:textSize="11sp" />
     </LinearLayout>

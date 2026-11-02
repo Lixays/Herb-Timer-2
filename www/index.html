@@ -30,7 +30,7 @@
             --cols: 2;
             --panel-u: 214;   /* panel width in units */
             --h-u: 450;       /* panel height in units */
-            --h-px: 64px;     /* fixed pixel parts of the height (borders, gaps) */
+            --h-px: 90px;     /* fixed pixel parts of the height (borders, gaps, footer) */
             --u: min(
                 calc((100vw - var(--sal) - var(--sar) - 28px) / var(--panel-u)),
                 calc((var(--vh) - var(--sat) - var(--sab) - var(--h-px)) / var(--h-u))
@@ -39,7 +39,7 @@
         @supports (height: 100dvh) { :root { --vh: 100dvh; } }
         /* Landscape or tablet: 3 x 3 patches with Reset / Next Tick / Plant All in a 4th column */
         @media (orientation: landscape), (min-width: 600px) {
-            :root { --cols: 4; --panel-u: 405; --h-u: 250; --h-px: 76px; }
+            :root { --cols: 4; --panel-u: 405; --h-u: 250; --h-px: 102px; }
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -363,6 +363,18 @@
         .modal-btn { flex: 1; padding: 10px 0; font-size: 14px; letter-spacing: 0; }
         .modal-save { color: var(--osrs-gold-text); }
 
+        /* ---------- Footer credit ---------- */
+        .app-credit {
+            margin-top: auto;
+            flex-shrink: 0;
+            padding: 6px 0 2px;
+            text-align: center;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--osrs-gold-text);
+        }
+
         /* ---------- Landscape / tablet layout (kept last so it overrides the base styles) ---------- */
         @media (orientation: landscape), (min-width: 600px) {
             .app-viewport-container { max-width: none; }
@@ -429,6 +441,8 @@
                 </div>
             </button>
         </div>
+
+        <div class="app-credit">Created by: Rikku</div>
 
     </div>
 

@@ -40,7 +40,7 @@ final class HerbWidgetRenderer {
         int wideWidgets = update(app, mgr, HerbWidgetProvider2x1.class, true, now, finish, active);
         widgets += wideWidgets;
 
-        if (widgets > 0) scheduleNext(app, now, finish, wideWidgets > 0); else cancelAlarm(app);
+        if (widgets > 0) scheduleNext(app, now, finish, true); else cancelAlarm(app);
     }
 
     private static int update(Context app, AppWidgetManager mgr, Class<?> provider, boolean wide,
@@ -73,27 +73,12 @@ final class HerbWidgetRenderer {
         }
         v.setImageViewResource(R.id.herb_plant, plant);
 
-        if (running && wide) {   // 2x1: no seconds, redrawn once a minute
-            v.setChronometer(R.id.herb_countdown, SystemClock.elapsedRealtime(), null, false);
-            v.setViewVisibility(R.id.herb_countdown, android.view.View.GONE);
-            v.setViewVisibility(R.id.herb_status, android.view.View.VISIBLE);
-            v.setTextViewText(R.id.herb_status, minutesLeft(finish - now));
-            v.setTextColor(R.id.herb_status, 0xFFE8D9A8);
-        } else if (running && Build.VERSION.SDK_INT >= 24) {
-            long base = SystemClock.elapsedRealtime() + (finish - now);
-            v.setChronometerCountDown(R.id.herb_countdown, true);
-            v.setChronometer(R.id.herb_countdown, base, null, true);
-            v.setViewVisibility(R.id.herb_countdown, android.view.View.VISIBLE);
-            v.setViewVisibility(R.id.herb_status, android.view.View.GONE);
-        } else if (running) {   // very old Android: no counting-down chronometer, show whole minutes
-            v.setViewVisibility(R.id.herb_countdown, android.view.View.GONE);
-            v.setViewVisibility(R.id.herb_status, android.view.View.VISIBLE);
-            v.setTextViewText(R.id.herb_status, ((finish - now) / 60000 + 1) + " min");
+        v.setViewVisibility(R.id.herb_countdown, android.view.View.GONE);   // no ticking seconds any more
+        v.setViewVisibility(R.id.herb_status, android.view.View.VISIBLE);
+        if (running) {
+            v.setTextViewText(R.id.herb_status, minutesLeft(finish - now));   // e.g. "1h 2m", redrawn once a minute
             v.setTextColor(R.id.herb_status, 0xFFE8D9A8);
         } else {
-            v.setChronometer(R.id.herb_countdown, SystemClock.elapsedRealtime(), null, false);
-            v.setViewVisibility(R.id.herb_countdown, android.view.View.GONE);
-            v.setViewVisibility(R.id.herb_status, android.view.View.VISIBLE);
             v.setTextViewText(R.id.herb_status, ready ? "Ready!" : "Empty");
             v.setTextColor(R.id.herb_status, ready ? 0xFFE8D83A : 0xFFC25A5A);
         }
@@ -108,17 +93,33 @@ final class HerbWidgetRenderer {
         }
 
         if (wide) {
-            v.setTextViewText(R.id.herb_caption, "HERB PATCHES");
-            String sub;
+            // Top line: the patch name, "Growing", "Harvest" or "Plant"
+            int growing = 0, done = 0;
+            String lastName = "";
+            org.json.JSONArray arr = HerbWidgetStore.timers(app);
+            for (int i = 0; i < arr.length(); i++) {
+                org.json.JSONObject o = arr.optJSONObject(i);
+                if (o == null) continue;
+                long f = o.optLong("finish", 0);
+                if (f <= 0) continue;
+                if (f > now) { growing++; lastName = o.optString("name", ""); } else { done++; }
+            }
+            String caption;
+            if (done > 0) caption = "Harvest";
+            else if (growing >= 2) caption = "Growing";
+            else if (growing == 1) caption = lastName;
+            else caption = "Plant";
+            v.setTextViewText(R.id.herb_caption, caption);
+            v.setTextColor(R.id.herb_caption, done > 0 ? 0xFFE8D83A : 0xFFC9A227);
+
+            // Bottom line: only the finish time, and only while something is growing
             if (running) {
                 String time = DateFormat.getTimeFormat(app).format(new Date(finish));
-                sub = String.format(Locale.getDefault(), "Done %s \u00B7 %d growing", time, active);
-            } else if (ready) {
-                sub = "Tap plant to restart all";
+                v.setTextViewText(R.id.herb_sub, "Done " + time);
+                v.setViewVisibility(R.id.herb_sub, android.view.View.VISIBLE);
             } else {
-                sub = "Tap plant to plant all";
+                v.setViewVisibility(R.id.herb_sub, android.view.View.GONE);
             }
-            v.setTextViewText(R.id.herb_sub, sub);
         }
 
         v.setContentDescription(R.id.herb_root, running ? "Herb timer running" : ready ? "Herbs ready" : "No herbs planted");
@@ -140,12 +141,13 @@ final class HerbWidgetRenderer {
         return v;
     }
 
-    /** "42m" or "1h 05m" - rounded up, so it reaches 0 exactly when the timer ends. */
+    /** "42m" or "1h 2m" - rounded up, so it reaches 0 exactly when the timer ends. */
     private static String minutesLeft(long ms) {
         long mins = Math.max(1, (ms + 59999) / 60000);
         long h = mins / 60;
         long m = mins % 60;
-        return h > 0 ? String.format(Locale.US, "%dh %02dm", h, m) : mins + "m";
+        if (h == 0) return m + "m";
+        return m == 0 ? h + "h" : h + "h " + m + "m";
     }
 
     // ---------- alarm: redraw when the plant grows or the final timer finishes ----------
