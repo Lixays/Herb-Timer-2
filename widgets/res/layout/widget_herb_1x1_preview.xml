@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="14:32"
+        android:text="Weiss"
         android:textColor="#C9A227"
         android:textSize="12sp"
         android:textStyle="bold" />

@@ -9,6 +9,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=VT323&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
 
+    <script>
+        try { if (localStorage.getItem('dark_mode') === '1') document.documentElement.classList.add('amoled'); } catch (e) {}
+    </script>
     <style>
         :root {
             --osrs-bg-dark: #080604;
@@ -363,6 +366,74 @@
         .modal-btn { flex: 1; padding: 10px 0; font-size: 14px; letter-spacing: 0; }
         .modal-save { color: var(--osrs-gold-text); }
 
+        /* ---------- Dark Mode (AMOLED): pure black, same gold / green / red accents ---------- */
+        html.amoled {
+            --osrs-bg-dark: #000000;
+            --osrs-gold-text: #c29a1c;
+            --osrs-green-text: #35a035;
+            --osrs-red-text: #c94242;
+        }
+        html.amoled, html.amoled body { background-color: #000; background-image: none; }
+        html.amoled .osrs-panel { background: #000; box-shadow: none; }
+        html.amoled .app-viewport-container { border-color: #2a2112; }
+        html.amoled .modal-card { border-color: #2a2112; }
+        html.amoled .header-badge { background: #000; border-color: #2a2112; box-shadow: none; }
+        html.amoled .osrs-card { background: #000; border-color: #1f1a12; box-shadow: none; }
+        html.amoled .osrs-btn {
+            background: linear-gradient(180deg, #0d0d0d 0%, #000 100%);
+            border-color: #2a2112;
+            color: #a3966f;
+            box-shadow: none;
+        }
+        @media (hover: hover) { html.amoled .osrs-btn:hover { background: #151515; color: #c4b78f; } }
+        html.amoled .ctrl-reset .ctrl-inner { color: #d03a3a; }
+        html.amoled .ctrl-plant .ctrl-inner { color: #2fae5a; }
+        html.amoled .cycle-text { color: #77736a; }
+        html.amoled .modal-overlay { background: rgba(0, 0, 0, 0.92); }
+        html.amoled .tick-inputs input { background: #000; border-color: #2a2112; }
+        html.amoled .timer, html.amoled .patch-name-text { text-shadow: none; }
+        @keyframes flashRedDark { 0% { background-color: #000; } 100% { background-color: #3a0000; } }
+        html.amoled .ready-flash, html.amoled .flash-alert { animation-name: flashRedDark; }
+
+        /* Dark Mode switch in the settings pop-up */
+        .theme-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 12px 4px 4px;
+            padding-top: 12px;
+            border-top: 1px solid #2a2016;
+            text-align: left;
+        }
+        .theme-text { display: flex; flex-direction: column; gap: 2px; }
+        .theme-title { font-family: 'Cinzel', serif; font-size: 15px; font-weight: 700; color: var(--osrs-gold-text); }
+        .theme-note { font-family: 'Roboto Mono', monospace; font-size: 11px; color: #6f6652; }
+        .switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            flex-shrink: 0;
+            padding: 0;
+            border: 2px solid #41321f;
+            border-radius: 13px;
+            background: #090604;
+            cursor: pointer;
+        }
+        .switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #6f6652;
+            transition: transform 0.15s ease, background 0.15s ease;
+        }
+        .switch[aria-checked="true"] { border-color: var(--osrs-gold-text); }
+        .switch[aria-checked="true"]::after { transform: translateX(24px); background: var(--osrs-gold-text); }
+
         /* ---------- Footer credit ---------- */
         .app-credit {
             margin-top: auto;
@@ -457,6 +528,13 @@
                 <label>Tick 3<input id="tick-in-2" type="number" inputmode="numeric" min="0" max="59" onchange="onTickInputChange(2)"></label>
             </div>
             <div class="modal-error" id="tick-error"></div>
+            <div class="theme-row">
+                <div class="theme-text">
+                    <span class="theme-title">Dark Mode</span>
+                    <span class="theme-note" id="theme-note">Old School theme</span>
+                </div>
+                <button class="switch" id="dark-switch" role="switch" aria-checked="false" aria-label="Dark Mode" onclick="toggleDarkMode()"></button>
+            </div>
             <div class="modal-actions">
                 <button class="osrs-btn modal-btn" id="tick-cancel" onclick="closeTickSettings()">Cancel</button>
                 <button class="osrs-btn modal-btn modal-save" onclick="saveTickSettings()">Save</button>
@@ -743,10 +821,24 @@
             return true;
         }
 
+        // ---------- Theme: Old School (default) or Dark Mode (AMOLED) ----------
+        function syncThemeSwitch() {
+            const dark = document.documentElement.classList.contains('amoled');
+            document.getElementById('dark-switch').setAttribute('aria-checked', dark ? 'true' : 'false');
+            document.getElementById('theme-note').innerText = dark ? 'AMOLED black theme' : 'Old School theme';
+        }
+        function toggleDarkMode() {
+            const dark = !document.documentElement.classList.contains('amoled');
+            document.documentElement.classList.toggle('amoled', dark);
+            try { localStorage.setItem('dark_mode', dark ? '1' : '0'); } catch (e) {}
+            syncThemeSwitch();
+        }
+
         function openTickSettings(firstRun) {
             fillTickInputs(WINDOWS);
             document.getElementById('tick-error').innerText = '';
             document.getElementById('tick-cancel').style.display = firstRun ? 'none' : '';
+            syncThemeSwitch();
             document.getElementById('tick-modal').hidden = false;
         }
 

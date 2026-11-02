@@ -83,35 +83,29 @@ final class HerbWidgetRenderer {
             v.setTextColor(R.id.herb_status, ready ? 0xFFE8D83A : 0xFFC25A5A);
         }
 
-        if (!wide) {   // 1x1: the time the last patch finishes, at the top
-            if (running) {
-                v.setTextViewText(R.id.herb_finish, DateFormat.getTimeFormat(app).format(new Date(finish)));
-                v.setViewVisibility(R.id.herb_finish, android.view.View.VISIBLE);
-            } else {
-                v.setViewVisibility(R.id.herb_finish, android.view.View.GONE);
-            }
+        // Top line (both sizes): the patch name, "Growing", "Harvest" or "Plant"
+        int growing = 0, done = 0;
+        String lastName = "";
+        org.json.JSONArray arr = HerbWidgetStore.timers(app);
+        for (int i = 0; i < arr.length(); i++) {
+            org.json.JSONObject o = arr.optJSONObject(i);
+            if (o == null) continue;
+            long f = o.optLong("finish", 0);
+            if (f <= 0) continue;
+            if (f > now) { growing++; lastName = o.optString("name", ""); } else { done++; }
         }
+        String caption;
+        if (done > 0) caption = "Harvest";
+        else if (growing >= 2) caption = "Growing";
+        else if (growing == 1) caption = lastName;
+        else caption = "Plant";
+        int captionColor = done > 0 ? 0xFFE8D83A : 0xFFC9A227;
+        int captionId = wide ? R.id.herb_caption : R.id.herb_finish;
+        v.setTextViewText(captionId, caption);
+        v.setTextColor(captionId, captionColor);
+        v.setViewVisibility(captionId, android.view.View.VISIBLE);
 
         if (wide) {
-            // Top line: the patch name, "Growing", "Harvest" or "Plant"
-            int growing = 0, done = 0;
-            String lastName = "";
-            org.json.JSONArray arr = HerbWidgetStore.timers(app);
-            for (int i = 0; i < arr.length(); i++) {
-                org.json.JSONObject o = arr.optJSONObject(i);
-                if (o == null) continue;
-                long f = o.optLong("finish", 0);
-                if (f <= 0) continue;
-                if (f > now) { growing++; lastName = o.optString("name", ""); } else { done++; }
-            }
-            String caption;
-            if (done > 0) caption = "Harvest";
-            else if (growing >= 2) caption = "Growing";
-            else if (growing == 1) caption = lastName;
-            else caption = "Plant";
-            v.setTextViewText(R.id.herb_caption, caption);
-            v.setTextColor(R.id.herb_caption, done > 0 ? 0xFFE8D83A : 0xFFC9A227);
-
             // Bottom line: only the finish time, and only while something is growing
             if (running) {
                 String time = DateFormat.getTimeFormat(app).format(new Date(finish));
@@ -123,21 +117,27 @@ final class HerbWidgetRenderer {
         }
 
         v.setContentDescription(R.id.herb_root, running ? "Herb timer running" : ready ? "Herbs ready" : "No herbs planted");
-        v.setContentDescription(R.id.herb_plant, "Plant all");
+        v.setContentDescription(R.id.herb_plant, wide ? "Open Herb Timer" : "Plant all");
 
-        // Tap the text: open the app. Tap the plant: plant / restart everything, without opening the app.
+        // Two tap zones: the plant picture and everything else (the widget background / text).
+        //   1x1: plant = plant/restart everything, rest = open the app
+        //   2x1: plant = open the app,            rest = plant/restart everything
+        PendingIntent open = null;
         Intent launch = app.getPackageManager().getLaunchIntentForPackage(app.getPackageName());
         if (launch != null) {
-            PendingIntent open = PendingIntent.getActivity(app, 0, launch,
+            open = PendingIntent.getActivity(app, 0, launch,
                     PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-            v.setOnClickPendingIntent(R.id.herb_root, open);
         }
+        PendingIntent plantAllTap = open;   // until the app has sent its timers, just open it
         if (HerbWidgetStore.hasTimers(app)) {
             Intent plantAll = new Intent(app, HerbReceiver.class).setAction(HerbReceiver.ACTION_PLANT_ALL);
-            PendingIntent plantTap = PendingIntent.getBroadcast(app, 5, plantAll,
+            plantAllTap = PendingIntent.getBroadcast(app, 5, plantAll,
                     PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-            v.setOnClickPendingIntent(R.id.herb_plant, plantTap);
         }
+        PendingIntent onPlant = wide ? open : plantAllTap;
+        PendingIntent onRest = wide ? plantAllTap : open;
+        if (onRest != null) v.setOnClickPendingIntent(R.id.herb_root, onRest);
+        if (onPlant != null) v.setOnClickPendingIntent(R.id.herb_plant, onPlant);
         return v;
     }
 
