@@ -8,6 +8,20 @@
     android:orientation="vertical"
     android:padding="6dp">
 
+    <TextView
+        android:id="@+id/herb_finish"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autoSizeMaxTextSize="13sp"
+        android:autoSizeMinTextSize="8sp"
+        android:autoSizeTextType="uniform"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textColor="#C9A227"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
     <ImageView
         android:id="@+id/herb_plant"
         android:layout_width="match_parent"

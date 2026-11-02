@@ -7,6 +7,15 @@
     android:orientation="vertical"
     android:padding="6dp">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="14:32"
+        android:textColor="#C9A227"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="0dp"

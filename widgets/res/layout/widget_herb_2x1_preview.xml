@@ -35,7 +35,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="42:10"
+            android:text="42m"
             android:textColor="#E8D9A8"
             android:textSize="24sp"
             android:textStyle="bold" />
