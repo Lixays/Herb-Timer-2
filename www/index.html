@@ -10,7 +10,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=VT323&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
 
     <script>
-        try { if (localStorage.getItem('dark_mode') === '1') document.documentElement.classList.add('amoled'); } catch (e) {}
+        try {
+            if (localStorage.getItem('dark_mode') === '1') document.documentElement.classList.add('amoled');
+            var th = localStorage.getItem('theme');
+            if (th && th !== 'oldschool' && /^[a-z]+$/.test(th)) document.documentElement.setAttribute('data-theme', th);
+        } catch (e) {}
     </script>
     <style>
         :root {
@@ -19,6 +23,18 @@
             --osrs-yellow-text: #cccc00;
             --osrs-green-text: #247024;
             --osrs-red-text: #a02c2c;
+
+            /* Palette (Old School). Themes below only change these. */
+            --dots: #1a120b;
+            --frame: #3b2c1f;
+            --panel-a: #1a120c;  --panel-b: #0e0a07;
+            --card-a: #150f0a;   --well: #090604;
+            --card-border: #281d14;  --badge-border: #4a3825;  --line: #2a2016;
+            --btn-a: #2e2218;  --btn-b: #1b140e;  --btn-border: #41321f;  --btn-dark: #120c08;
+            --btn-ha: #3a2c1f; --btn-hb: #251b13; --btn-text: #8c7f62;   --btn-htext: #b8ab8c;
+            --text: #8c7f62;   --dim: #5e5a52;    --dim2: #6f6652;
+            --reset: #a32525;  --plant: #1e7a3d;
+            --flash-a: #281d14; --flash-b: #440000;
 
             /* Screen edges (status bar / gesture bar) */
             --sat: max(8px, env(safe-area-inset-top, 0px), var(--safe-area-inset-top, 0px));
@@ -55,12 +71,12 @@
             overflow: hidden;
             overscroll-behavior: none;
             background-color: var(--osrs-bg-dark);
-            color: #8c7f62;
+            color: var(--text);
             font-family: 'VT323', monospace;
             user-select: none;
             -webkit-user-select: none;
             -webkit-touch-callout: none;
-            background-image: radial-gradient(#1a120b 1px, transparent 1px);
+            background-image: radial-gradient(var(--dots) 1px, transparent 1px);
             background-size: 16px 16px;
         }
 
@@ -81,7 +97,7 @@
             flex-direction: column;
             justify-content: flex-start;
             padding: 10px;
-            border: 4px solid #3b2c1f;
+            border: 4px solid var(--frame);
         }
 
         .osrs-font-title {
@@ -96,7 +112,7 @@
         }
 
         .osrs-panel {
-            background: linear-gradient(135deg, #1a120c 0%, #0e0a07 100%);
+            background: linear-gradient(135deg, var(--panel-a) 0%, var(--panel-b) 100%);
             box-shadow: inset 0 0 10px #000000, 0 4px 12px rgba(0,0,0,0.8);
             position: relative;
         }
@@ -116,11 +132,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #090604;
+            background: var(--well);
             border-radius: 50%;
-            border: 2px solid #4a3825;
+            border: 2px solid var(--badge-border);
             box-shadow: 0 2px 4px rgba(0,0,0,0.6);
             flex-shrink: 0;
+            color: var(--osrs-gold-text);
         }
         .header-badge img {
             width: calc(var(--u) * 17);
@@ -146,8 +163,8 @@
 
         /* ---------- Cards ---------- */
         .osrs-card {
-            background: radial-gradient(circle, #150f0a 0%, #090604 100%);
-            border: 2px solid #281d14;
+            background: radial-gradient(circle, var(--card-a) 0%, var(--well) 100%);
+            border: 2px solid var(--card-border);
             box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.9), 0 2px 5px rgba(0, 0, 0, 0.5);
             border-radius: 4px;
             padding: calc(var(--u) * 4);
@@ -159,7 +176,7 @@
             cursor: pointer;
             transition: border-color 0.2s ease;
         }
-        @media (hover: hover) { .osrs-card:hover { border-color: #4a3825; } }
+        @media (hover: hover) { .osrs-card:hover { border-color: var(--badge-border); } }
 
         .patch-name-text {
             font-family: 'Cinzel', serif;
@@ -207,16 +224,16 @@
             font-size: calc(var(--u) * 8.5);
             line-height: 1.1;
             min-height: 1.1em;      /* keeps the card the same height when the line is empty */
-            color: #5e5a52;
+            color: var(--dim);
             white-space: nowrap;
         }
 
         .osrs-btn {
-            background: linear-gradient(180deg, #2e2218 0%, #1b140e 100%);
-            border: 2px solid #41321f;
-            border-bottom-color: #120c08;
-            border-right-color: #120c08;
-            color: #8c7f62;
+            background: linear-gradient(180deg, var(--btn-a) 0%, var(--btn-b) 100%);
+            border: 2px solid var(--btn-border);
+            border-bottom-color: var(--btn-dark);
+            border-right-color: var(--btn-dark);
+            color: var(--btn-text);
             font-family: 'Cinzel', serif;
             font-weight: 700;
             box-shadow: 0 2px 4px rgba(0,0,0,0.6);
@@ -224,7 +241,7 @@
             text-transform: uppercase;
             border-radius: 4px;
         }
-        @media (hover: hover) { .osrs-btn:hover { background: linear-gradient(180deg, #3a2c1f 0%, #251b13 100%); color: #b8ab8c; } }
+        @media (hover: hover) { .osrs-btn:hover { background: linear-gradient(180deg, var(--btn-ha) 0%, var(--btn-hb) 100%); color: var(--btn-htext); } }
 
         /* The finish-time button at the bottom of each card */
         .card-btn {
@@ -264,8 +281,8 @@
             min-width: 0;
         }
         .ctrl-inner { display: flex; align-items: center; gap: calc(var(--u) * 2.5); font-weight: 700; }
-        .ctrl-reset .ctrl-inner { color: #a32525; }
-        .ctrl-plant .ctrl-inner { color: #1e7a3d; }
+        .ctrl-reset .ctrl-inner { color: var(--reset); }
+        .ctrl-plant .ctrl-inner { color: var(--plant); }
 
         /* ---------- Corner flourishes ---------- */
         .corner-flourish {
@@ -282,10 +299,10 @@
         .corner-br { bottom: -2px; right: -2px; transform: scale(-1, -1); }
 
         @keyframes flashRed {
-            0% { background-color: #281d14; }
-            100% { background-color: #440000; }
+            0% { background-color: var(--flash-a); }
+            100% { background-color: var(--flash-b); }
         }
-        .ready-flash { animation: flashRed 1s infinite alternate; border-color: var(--osrs-red-text) !important; color: #b8ab8c; }
+        .ready-flash { animation: flashRed 1s infinite alternate; border-color: var(--osrs-red-text) !important; color: var(--btn-htext); }
         .flash-alert { animation: flashRed 1s infinite alternate; border-color: var(--osrs-red-text) !important; }
 
         /* ---------- Settings gear + farming tick pop-up ---------- */
@@ -309,7 +326,7 @@
             max-width: 340px;
             padding: 18px 16px;
             text-align: center;
-            border: 4px solid #3b2c1f;
+            border: 4px solid var(--frame);
             border-radius: 6px;
         }
         .modal-title {
@@ -323,7 +340,7 @@
             font-family: 'Roboto Mono', monospace;
             font-size: 12.5px;
             line-height: 1.45;
-            color: #8c7f62;
+            color: var(--text);
             margin: 0 0 14px;
         }
         .tick-inputs { display: flex; justify-content: center; gap: 10px; margin-bottom: 6px; }
@@ -335,7 +352,7 @@
             font-family: 'Cinzel', serif;
             font-size: 12px;
             font-weight: 700;
-            color: #8c7f62;
+            color: var(--text);
         }
         .tick-inputs input {
             width: 64px;
@@ -345,8 +362,8 @@
             font-weight: 700;
             text-align: center;
             color: var(--osrs-gold-text);
-            background: #090604;
-            border: 2px solid #41321f;
+            background: var(--well);
+            border: 2px solid var(--btn-border);
             border-radius: 4px;
             outline: none;
             user-select: text;
@@ -366,35 +383,6 @@
         .modal-btn { flex: 1; padding: 10px 0; font-size: 14px; letter-spacing: 0; }
         .modal-save { color: var(--osrs-gold-text); }
 
-        /* ---------- Dark Mode (AMOLED): pure black, same gold / green / red accents ---------- */
-        html.amoled {
-            --osrs-bg-dark: #000000;
-            --osrs-gold-text: #c29a1c;
-            --osrs-green-text: #35a035;
-            --osrs-red-text: #c94242;
-        }
-        html.amoled, html.amoled body { background-color: #000; background-image: none; }
-        html.amoled .osrs-panel { background: #000; box-shadow: none; }
-        html.amoled .app-viewport-container { border-color: #2a2112; }
-        html.amoled .modal-card { border-color: #2a2112; }
-        html.amoled .header-badge { background: #000; border-color: #2a2112; box-shadow: none; }
-        html.amoled .osrs-card { background: #000; border-color: #1f1a12; box-shadow: none; }
-        html.amoled .osrs-btn {
-            background: linear-gradient(180deg, #0d0d0d 0%, #000 100%);
-            border-color: #2a2112;
-            color: #a3966f;
-            box-shadow: none;
-        }
-        @media (hover: hover) { html.amoled .osrs-btn:hover { background: #151515; color: #c4b78f; } }
-        html.amoled .ctrl-reset .ctrl-inner { color: #d03a3a; }
-        html.amoled .ctrl-plant .ctrl-inner { color: #2fae5a; }
-        html.amoled .cycle-text { color: #77736a; }
-        html.amoled .modal-overlay { background: rgba(0, 0, 0, 0.92); }
-        html.amoled .tick-inputs input { background: #000; border-color: #2a2112; }
-        html.amoled .timer, html.amoled .patch-name-text { text-shadow: none; }
-        @keyframes flashRedDark { 0% { background-color: #000; } 100% { background-color: #3a0000; } }
-        html.amoled .ready-flash, html.amoled .flash-alert { animation-name: flashRedDark; }
-
         /* Dark Mode switch in the settings pop-up */
         .theme-row {
             display: flex;
@@ -403,21 +391,21 @@
             gap: 12px;
             margin: 12px 4px 4px;
             padding-top: 12px;
-            border-top: 1px solid #2a2016;
+            border-top: 1px solid var(--line);
             text-align: left;
         }
         .theme-text { display: flex; flex-direction: column; gap: 2px; }
         .theme-title { font-family: 'Cinzel', serif; font-size: 15px; font-weight: 700; color: var(--osrs-gold-text); }
-        .theme-note { font-family: 'Roboto Mono', monospace; font-size: 11px; color: #6f6652; }
+        .theme-note { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--dim2); }
         .switch {
             position: relative;
             width: 50px;
             height: 26px;
             flex-shrink: 0;
             padding: 0;
-            border: 2px solid #41321f;
+            border: 2px solid var(--btn-border);
             border-radius: 13px;
-            background: #090604;
+            background: var(--well);
             cursor: pointer;
         }
         .switch::after {
@@ -428,7 +416,7 @@
             width: 18px;
             height: 18px;
             border-radius: 50%;
-            background: #6f6652;
+            background: var(--dim2);
             transition: transform 0.15s ease, background 0.15s ease;
         }
         .switch[aria-checked="true"] { border-color: var(--osrs-gold-text); }
@@ -454,10 +442,10 @@
             text-align: left;
             margin: 14px 2px 6px;
             padding-top: 10px;
-            border-top: 1px solid #2a2016;
+            border-top: 1px solid var(--line);
         }
         .section-title.first { margin-top: 2px; padding-top: 0; border-top: none; }
-        .modal-text.note { font-size: 11px; margin: 10px 0 4px; color: #6f6652; }
+        .modal-text.note { font-size: 11px; margin: 10px 0 4px; color: var(--dim2); }
 
         .info-block { display: flex; flex-direction: column; gap: 6px; margin: 2px 0; }
         .info-row {
@@ -466,28 +454,28 @@
             align-items: baseline;
             gap: 10px;
             padding: 6px 10px;
-            background: #090604;
-            border: 1px solid #281d14;
+            background: var(--well);
+            border: 1px solid var(--card-border);
             border-radius: 4px;
             font-family: 'Roboto Mono', monospace;
             font-size: 13px;
-            color: #8c7f62;
+            color: var(--text);
             text-align: left;
         }
         .info-row b { color: var(--osrs-gold-text); font-weight: 700; text-align: right; }
 
-        .ex-row { padding: 8px 10px; margin-bottom: 6px; background: #090604; border: 1px solid #281d14; border-radius: 4px; text-align: left; }
+        .ex-row { padding: 8px 10px; margin-bottom: 6px; background: var(--well); border: 1px solid var(--card-border); border-radius: 4px; text-align: left; }
         .ex-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
         .ex-name { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; color: var(--osrs-gold-text); }
         .ex-time { font-family: 'Roboto Mono', monospace; font-size: 13px; font-weight: 700; white-space: nowrap; }
-        .ex-time.idle { color: #6f6652; }
+        .ex-time.idle { color: var(--dim2); }
         .ex-time.running { color: var(--osrs-green-text); }
         .ex-time.done { color: var(--osrs-yellow-text); }
         .ex-actions { display: flex; gap: 6px; margin-top: 8px; }
         .mini-btn { padding: 7px 10px; font-size: 12px; letter-spacing: 0; }
         .ex-main { flex: 1; }
         .ex-clear[hidden] { display: none; }
-        .empty-note { font-family: 'Roboto Mono', monospace; font-size: 12px; color: #6f6652; padding: 6px 0 2px; }
+        .empty-note { font-family: 'Roboto Mono', monospace; font-size: 12px; color: var(--dim2); padding: 6px 0 2px; }
 
         .add-form { display: flex; flex-direction: column; gap: 8px; }
         .osrs-input {
@@ -496,15 +484,15 @@
             font-family: 'Roboto Mono', monospace;
             font-size: 14px;
             color: var(--osrs-gold-text);
-            background: #090604;
-            border: 2px solid #41321f;
+            background: var(--well);
+            border: 2px solid var(--btn-border);
             border-radius: 4px;
             outline: none;
             user-select: text;
             -webkit-user-select: text;
         }
         .osrs-input:focus { border-color: var(--osrs-gold-text); }
-        .dur-row { display: flex; align-items: center; gap: 6px; font-family: 'Roboto Mono', monospace; font-size: 13px; color: #8c7f62; }
+        .dur-row { display: flex; align-items: center; gap: 6px; font-family: 'Roboto Mono', monospace; font-size: 13px; color: var(--text); }
         .dur-row .osrs-input { width: 58px; text-align: center; padding: 8px 4px; -moz-appearance: textfield; }
         .dur-row .osrs-input::-webkit-outer-spin-button, .dur-row .osrs-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         .add-btn { margin-left: auto; min-width: 64px; }
@@ -515,27 +503,15 @@
             font-family: 'Cinzel', serif;
             font-size: 12px;
             font-weight: 700;
-            color: #5e5a52;
-            background: #090604;
-            border: 2px solid #281d14;
+            color: var(--dim);
+            background: var(--well);
+            border: 2px solid var(--card-border);
             border-radius: 4px;
             cursor: pointer;
             text-decoration: line-through;
         }
         .pick[aria-pressed="true"] { color: var(--osrs-gold-text); border-color: var(--osrs-gold-text); text-decoration: none; }
 
-        html.amoled .info-row, html.amoled .ex-row, html.amoled .osrs-input, html.amoled .pick, html.amoled .switch { background: #000; border-color: #2a2112; }
-        html.amoled .info-row { border-width: 1px; }
-        html.amoled .pick[aria-pressed="true"] { border-color: var(--osrs-gold-text); }
-        html.amoled .switch[aria-checked="true"] { border-color: var(--osrs-gold-text); }
-        html.amoled .section-title, html.amoled .theme-row { border-color: #1f1a12; }
-
-        .app-footer .app-credit { white-space: nowrap; }
-        @media (max-width: 400px) {
-            .app-footer { padding: 6px 4px 4px; gap: 4px; }
-            .foot-btn { min-width: 0; padding: 8px 7px; font-size: 11px; }
-            .app-footer .app-credit { font-size: 12px; }
-        }
 
         /* ---------- Footer credit ---------- */
         .app-credit {
@@ -554,7 +530,101 @@
             .ctrl-btn { font-size: calc(var(--u) * 10); }
             .ctrl-btn .uim-icon { width: calc(var(--u) * 14); height: calc(var(--u) * 14); }
         }
-    </style>
+    
+        /* ---------- Themes ---------- */
+        .theme-picks { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 2px; }
+        .theme-pick {
+            display: flex; align-items: center; gap: 7px;
+            padding: 8px 11px;
+            font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700;
+            color: var(--dim);
+            background: var(--well);
+            border: 2px solid var(--card-border);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .theme-pick .swatch { width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.35); }
+        .theme-pick[aria-pressed="true"] { color: var(--osrs-gold-text); border-color: var(--osrs-gold-text); }
+
+        /* Ironman: gunmetal grey */
+        html[data-theme="iron"] {
+            --osrs-bg-dark: #0c0d0f; --dots: #15171a; --frame: #5b616a;
+            --panel-a: #262a2f; --panel-b: #14161a; --card-a: #15181b; --well: #0b0c0e;
+            --card-border: #3a3f46; --badge-border: #6f767f; --line: #2c3036;
+            --btn-a: #32363c; --btn-b: #1c1e22; --btn-border: #50565e; --btn-dark: #0e0f11;
+            --btn-ha: #41464d; --btn-hb: #26292e; --btn-text: #aab1ba; --btn-htext: #e2e6eb;
+            --text: #9097a1; --dim: #6a707a; --dim2: #6f757f;
+            --osrs-gold-text: #c3cad3; --osrs-green-text: #3a9f4b; --osrs-red-text: #d05656; --osrs-yellow-text: #d9d94a;
+            --reset: #c94444; --plant: #34a35f; --flash-a: #26292e; --flash-b: #4a1313;
+        }
+        /* Hardcore Ironman: red */
+        html[data-theme="hcim"] {
+            --osrs-bg-dark: #0e0505; --dots: #1d0b0b; --frame: #9a2323;
+            --panel-a: #2e1111; --panel-b: #150707; --card-a: #1a0a0a; --well: #0a0404;
+            --card-border: #4a1818; --badge-border: #a02a2a; --line: #3a1616;
+            --btn-a: #401818; --btn-b: #240b0b; --btn-border: #7a2626; --btn-dark: #120505;
+            --btn-ha: #552020; --btn-hb: #311010; --btn-text: #d79a90; --btn-htext: #f2c8c0;
+            --text: #b3857d; --dim: #815953; --dim2: #85605a;
+            --osrs-gold-text: #e65a4d; --osrs-green-text: #3fa64f; --osrs-red-text: #ff8c7c; --osrs-yellow-text: #e6d84a;
+            --reset: #e04848; --plant: #38a85a; --flash-a: #311010; --flash-b: #5a1010;
+        }
+        /* Group Ironman: teal / blue */
+        html[data-theme="gim"] {
+            --osrs-bg-dark: #050d10; --dots: #0b1c21; --frame: #2f8091;
+            --panel-a: #12303a; --panel-b: #08181d; --card-a: #0d242b; --well: #06141a;
+            --card-border: #1d4a56; --badge-border: #3a95a8; --line: #18404a;
+            --btn-a: #1a4652; --btn-b: #0e272f; --btn-border: #2f7585; --btn-dark: #071318;
+            --btn-ha: #245b69; --btn-hb: #143640; --btn-text: #93d2de; --btn-htext: #d6f2f8;
+            --text: #80b2bc; --dim: #55808a; --dim2: #5b8791;
+            --osrs-gold-text: #4fc9de; --osrs-green-text: #3fb36a; --osrs-red-text: #e0675f; --osrs-yellow-text: #e3de4c;
+            --reset: #d24a4a; --plant: #34b36a; --flash-a: #143640; --flash-b: #4a1a1a;
+        }
+        /* Ultimate Ironman: white / silver with black trim (a light theme) */
+        html[data-theme="uim"] {
+            --osrs-bg-dark: #b9b8b3; --dots: #aeada8; --frame: #2a2a2a;
+            --panel-a: #f3f2ee; --panel-b: #dedcd5; --card-a: #fdfcf9; --well: #ecebe5;
+            --card-border: #a9a69c; --badge-border: #2a2a2a; --line: #c4c1b7;
+            --btn-a: #f7f6f2; --btn-b: #d6d4cc; --btn-border: #5c5b57; --btn-dark: #34332f;
+            --btn-ha: #ffffff; --btn-hb: #e6e4dc; --btn-text: #2a2a28; --btn-htext: #000000;
+            --text: #45443f; --dim: #6a6963; --dim2: #6a6963;
+            --osrs-gold-text: #1d1d1c; --osrs-green-text: #17702a; --osrs-red-text: #b3201f; --osrs-yellow-text: #7d6e00;
+            --reset: #b3201f; --plant: #17702a; --flash-a: #f3f2ee; --flash-b: #f1b9b6;
+        }
+        html[data-theme="uim"] .osrs-panel { box-shadow: inset 0 0 8px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.35); }
+        html[data-theme="uim"] .osrs-card { box-shadow: inset 0 0 6px rgba(0,0,0,0.08), 0 2px 5px rgba(0,0,0,0.2); }
+        html[data-theme="uim"] .osrs-btn { box-shadow: 0 2px 3px rgba(0,0,0,0.25); }
+        html[data-theme="uim"] .timer, html[data-theme="uim"] .patch-name-text { text-shadow: none; }
+        html[data-theme="uim"] .osrs-font-title { filter: none; }
+        html[data-theme="iron"] .corner-flourish { filter: grayscale(1) brightness(1.15); }
+        html[data-theme="hcim"] .corner-flourish { filter: hue-rotate(-42deg) saturate(1.5); }
+        html[data-theme="gim"] .corner-flourish { filter: hue-rotate(148deg) saturate(1.3); }
+        html[data-theme="uim"] .corner-flourish { filter: grayscale(1) brightness(0.3); }
+        html[data-theme="uim"] .modal-overlay { background: rgba(30, 30, 28, 0.7); }
+
+        /* ---------- Dark Mode (AMOLED): pure black behind whichever theme is chosen ---------- */
+        html.amoled {
+            --osrs-bg-dark: #000; --dots: transparent;
+            --panel-a: #000; --panel-b: #000; --card-a: #000; --well: #000;
+            --btn-a: #0d0d0d; --btn-b: #000; --btn-ha: #151515; --btn-hb: #0a0a0a;
+            --flash-a: #000; --flash-b: #3a0000;
+        }
+        html.amoled:not([data-theme]) {
+            --frame: #2a2112; --badge-border: #2a2112; --card-border: #1f1a12; --btn-border: #2a2112; --line: #1f1a12;
+            --osrs-gold-text: #c29a1c; --osrs-green-text: #35a035; --osrs-red-text: #c94242;
+            --btn-text: #a3966f; --btn-htext: #c4b78f; --dim: #77736a; --reset: #d03a3a; --plant: #2fae5a;
+        }
+        html[data-theme="uim"].amoled {
+            --frame: #8a8a8a; --badge-border: #8a8a8a; --card-border: #3a3a3a; --line: #2a2a2a; --btn-border: #555;
+            --btn-dark: #000; --btn-text: #d8d8d8; --btn-htext: #fff; --text: #bdbdbd; --dim: #808080; --dim2: #808080;
+            --osrs-gold-text: #f2f2f2; --osrs-green-text: #4cc46a; --osrs-red-text: #e05a58; --osrs-yellow-text: #e6dc5a;
+            --reset: #e05a58; --plant: #4cc46a;
+        }
+        html[data-theme="uim"].amoled .corner-flourish { filter: grayscale(1) brightness(1.1); }
+        html[data-theme="uim"].amoled .modal-overlay { background: rgba(0, 0, 0, 0.92); }
+        html.amoled .osrs-panel, html.amoled .osrs-card, html.amoled .header-badge, html.amoled .osrs-btn { box-shadow: none; }
+        html.amoled .timer, html.amoled .patch-name-text { text-shadow: none; }
+        html.amoled .modal-overlay { background: rgba(0, 0, 0, 0.92); }
+</style>
 </head>
 <body>
 
@@ -569,7 +639,7 @@
         <!-- HEADER -->
         <div class="app-header">
             <button class="header-badge gear-btn" onclick="openAbout()" aria-label="About">
-                <svg viewBox="0 0 24 24"><path d="M8.2 8.6a3.9 3.9 0 1 1 6.3 3.1c-1.4 1.1-2.5 1.8-2.5 3.6" fill="none" stroke="#9a7208" stroke-width="2.6" stroke-linecap="round"/><circle cx="12" cy="19.6" r="1.7" fill="#9a7208"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M8.2 8.6a3.9 3.9 0 1 1 6.3 3.1c-1.4 1.1-2.5 1.8-2.5 3.6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="12" cy="19.6" r="1.7" fill="currentColor"/></svg>
             </button>
             <h1 class="osrs-font-title">Herb Patch Timers</h1>
             <button class="header-badge gear-btn" onclick="openTickSettings(false)" aria-label="Farming tick settings">
@@ -635,6 +705,8 @@
             <div class="section-title">My Patches</div>
             <p class="modal-text">Tap to hide the patches you don't use. Hidden patches are left out of the timers, notifications and widgets.</p>
             <div class="patch-picks" id="patch-picks"></div>
+            <div class="section-title">Theme</div>
+            <div class="theme-picks" id="theme-picks"></div>
             <div class="theme-row">
                 <div class="theme-text">
                     <span class="theme-title">Dark Mode</span>
@@ -655,8 +727,6 @@
             <h2 class="modal-title">Timers</h2>
             <div class="info-block">
                 <div class="info-row"><span>Game time</span><b id="rs-time">--:--</b></div>
-                <div class="info-row"><span>Daily reset</span><b id="rs-daily">--</b></div>
-                <div class="info-row"><span>Weekly reset</span><b id="rs-weekly">--</b></div>
             </div>
             <div class="section-title">Other timers</div>
             <div id="extra-list"></div>
@@ -671,7 +741,7 @@
                 </div>
             </div>
             <div class="modal-error" id="ex-error"></div>
-            <p class="modal-text note">Alerts arrive even when the app is closed. Game time is UTC, which is what the game's resets use.</p>
+            <p class="modal-text note">Alerts arrive even when the app is closed. Game time is UTC, the same clock the game uses.</p>
             <div class="modal-actions">
                 <button class="osrs-btn modal-btn modal-save" onclick="closeMore()">Close</button>
             </div>
@@ -964,6 +1034,7 @@
                     await HW.clearDirty();
                     updateAll();
                 }
+                await pullBird();
             } catch (e) { console.error('Could not read native state', e); }
         }
 
@@ -1108,29 +1179,73 @@
         function openStats() { renderStats(); document.getElementById('stats-modal').hidden = false; }
         function closeStats() { disarmClear(); document.getElementById('stats-modal').hidden = true; }
 
-        // ---------- Game time + resets (the game runs on UTC) ----------
-        function nextDailyReset(now) {
-            const d = new Date(now);
-            return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1);
-        }
-        function nextWeeklyReset(now) {      // Wednesday 00:00 UTC
-            const d = new Date(now);
-            const add = (3 - d.getUTCDay() + 7) % 7;
-            let at = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + add);
-            if (at <= now) at += 7 * 86400000;
-            return at;
-        }
-        function tickResets() {
-            const now = Date.now();
-            const u = new Date(now);
+        // ---------- Game time (the game runs on UTC) ----------
+        function tickGameTime() {
+            const u = new Date();
             document.getElementById('rs-time').innerText = `${pad2(u.getUTCHours())}:${pad2(u.getUTCMinutes())} UTC`;
-            document.getElementById('rs-daily').innerText = fmtDur(nextDailyReset(now) - now);
-            document.getElementById('rs-weekly').innerText = fmtDur(nextWeeklyReset(now) - now);
         }
 
-        // ---------- Other timers (birdhouses, trees, anything custom) ----------
+        // ---------- Birdhouse timer (also drives the Birdhouse widget) ----------
+        const BIRD_NID = 2000000;
+        const BIRD_MS = 50 * 60 * 1000;
+        function loadBird() {
+            try {
+                const b = JSON.parse(localStorage.getItem('bird_timer'));
+                if (b && typeof b === 'object') return { finish: parseInt(b.finish) || 0, ms: parseInt(b.ms) || BIRD_MS };
+            } catch (e) {}
+            return { finish: 0, ms: BIRD_MS };
+        }
+        function saveBird(b) { localStorage.setItem('bird_timer', JSON.stringify(b)); }
+
+        // Hands the birdhouse timer to the Android side (alert + widget). Falls back to the notification plugin.
+        async function pushBird() {
+            const b = loadBird();
+            if (HW) {
+                try { await HW.setBird({ finish: b.finish, ms: b.ms }); return; } catch (e) { /* older build: fall through */ }
+            }
+            if (!LN) return;
+            try {
+                if (b.finish > Date.now()) {
+                    await ensureExtraChannel();
+                    await LN.schedule({ notifications: [{
+                        id: BIRD_NID, title: 'Birdhouses ready!', body: 'Time to collect and reset your birdhouses.',
+                        channelId: 'extra-timers', smallIcon: NOTIF_ICON,
+                        schedule: { at: new Date(b.finish), allowWhileIdle: true }
+                    }] });
+                } else {
+                    await LN.cancel({ notifications: [{ id: BIRD_NID }] });
+                }
+            } catch (e) { console.error('Could not schedule birdhouse alert', e); }
+        }
+        // The widget (or the notification button) restarted the countdown while the app was closed
+        async function pullBird() {
+            if (!HW) return;
+            try {
+                const s = await HW.getBird();
+                if (s && s.dirty) {
+                    saveBird({ finish: parseInt(s.finish) || 0, ms: parseInt(s.ms) || BIRD_MS });
+                    await HW.clearBirdDirty();
+                    if (!document.getElementById('more-modal').hidden) tickExtra();
+                }
+            } catch (e) { /* older build without the birdhouse widget */ }
+        }
+        function mainBird() {
+            const b = loadBird();
+            b.finish = (!b.finish || Date.now() >= b.finish) ? Date.now() + b.ms : 0;
+            saveBird(b);
+            pushBird();
+            tickExtra();
+        }
+        function clearBird() {
+            const b = loadBird();
+            b.finish = 0;
+            saveBird(b);
+            pushBird();
+            tickExtra();
+        }
+
+        // ---------- Other timers (trees, anything custom) ----------
         const EXTRA_PRESETS = [
-            { name: 'Birdhouses', h: 0, m: 50 },
             { name: 'Oak tree', h: 3, m: 20 },
             { name: 'Willow tree', h: 4, m: 0 },
             { name: 'Maple tree', h: 5, m: 20 },
@@ -1146,16 +1261,24 @@
             return n;
         }
         function loadExtra() {
+            let list = [];
             try {
                 const a = JSON.parse(localStorage.getItem('extra_timers'));
-                if (Array.isArray(a)) return a;
+                if (Array.isArray(a)) list = a;
             } catch (e) {}
-            if (localStorage.getItem('extra_timers') === null) {
-                const seed = [{ id: 'x' + Date.now(), nid: nextNid(), name: 'Birdhouses', ms: 50 * 60000, finish: 0 }];
-                saveExtra(seed);
-                return seed;
+            // The Birdhouse timer used to live in this list: move it to its own permanent entry
+            const legacy = list.filter(x => x.name === 'Birdhouses' && x.ms === BIRD_MS);
+            if (legacy.length) {
+                if (!localStorage.getItem('bird_timer')) {
+                    const running = legacy.find(x => x.finish > Date.now());
+                    saveBird({ finish: running ? running.finish : 0, ms: BIRD_MS });
+                    pushBird();
+                }
+                legacy.forEach(x => cancelExtra(x));
+                list = list.filter(x => !legacy.includes(x));
+                saveExtra(list);
             }
-            return [];
+            return list;
         }
         function saveExtra(list) { localStorage.setItem('extra_timers', JSON.stringify(list)); }
 
@@ -1189,36 +1312,38 @@
             const h = Math.floor(ms / 3600000), m = Math.round((ms % 3600000) / 60000);
             return h ? (m ? `${h}h ${m}m` : `${h}h`) : `${m}m`;
         }
+        function buildExtraRow(id, label, deletable) {
+            const row = document.createElement('div');
+            row.className = 'ex-row';
+            row.dataset.id = id;
+            row.innerHTML = `
+                <div class="ex-top"><span class="ex-name"></span><span class="ex-time"></span></div>
+                <div class="ex-actions">
+                    <button type="button" class="osrs-btn mini-btn ex-main"></button>
+                    <button type="button" class="osrs-btn mini-btn ex-clear" hidden>Clear</button>
+                    ${deletable ? '<button type="button" class="osrs-btn mini-btn ex-del" aria-label="Delete timer">&#10005;</button>' : ''}
+                </div>`;
+            row.querySelector('.ex-name').textContent = label;
+            row.querySelector('.ex-main').onclick = () => mainExtra(id);
+            row.querySelector('.ex-clear').onclick = () => clearExtra(id);
+            if (deletable) row.querySelector('.ex-del').onclick = () => deleteExtra(id);
+            return row;
+        }
         function renderExtraList() {
             const box = document.getElementById('extra-list');
             box.innerHTML = '';
-            const list = loadExtra();
-            if (!list.length) {
-                box.innerHTML = '<div class="empty-note">No timers yet. Add one below.</div>';
-                return;
-            }
-            list.forEach(x => {
-                const row = document.createElement('div');
-                row.className = 'ex-row';
-                row.dataset.id = x.id;
-                row.innerHTML = `
-                    <div class="ex-top"><span class="ex-name"></span><span class="ex-time"></span></div>
-                    <div class="ex-actions">
-                        <button type="button" class="osrs-btn mini-btn ex-main"></button>
-                        <button type="button" class="osrs-btn mini-btn ex-clear" hidden>Clear</button>
-                        <button type="button" class="osrs-btn mini-btn ex-del" aria-label="Delete timer">&#10005;</button>
-                    </div>`;
-                row.querySelector('.ex-name').textContent = `${x.name} (${fmtMs(x.ms)})`;
-                row.querySelector('.ex-main').onclick = () => mainExtra(x.id);
-                row.querySelector('.ex-clear').onclick = () => clearExtra(x.id);
-                row.querySelector('.ex-del').onclick = () => deleteExtra(x.id);
-                box.appendChild(row);
-            });
+            box.appendChild(buildExtraRow('bird', `Birdhouses (${fmtMs(loadBird().ms)})`, false));
+            const hint = document.createElement('div');
+            hint.className = 'ex-hint';
+            hint.textContent = 'Add the Birdhouse widget to your home screen: one tap restarts this timer.';
+            box.appendChild(hint);
+            loadExtra().forEach(x => box.appendChild(buildExtraRow(x.id, `${x.name} (${fmtMs(x.ms)})`, true)));
             tickExtra();
         }
         function tickExtra() {
             const now = Date.now();
-            loadExtra().forEach(x => {
+            const bird = loadBird();
+            [{ id: 'bird', finish: bird.finish }].concat(loadExtra()).forEach(x => {
                 const row = document.querySelector(`.ex-row[data-id="${x.id}"]`);
                 if (!row) return;
                 const time = row.querySelector('.ex-time');
@@ -1237,6 +1362,7 @@
             });
         }
         function mainExtra(id) {
+            if (id === 'bird') { mainBird(); return; }
             const list = loadExtra();
             const x = list.find(e => e.id === id);
             if (!x) return;
@@ -1252,6 +1378,7 @@
             tickExtra();
         }
         function clearExtra(id) {
+            if (id === 'bird') { clearBird(); return; }
             const list = loadExtra();
             const x = list.find(e => e.id === id);
             if (!x) return;
@@ -1300,16 +1427,53 @@
         function openMore() {
             fillPresetSelect();
             renderExtraList();
-            tickResets();
+            tickGameTime();
             document.getElementById('more-modal').hidden = false;
         }
         function closeMore() { document.getElementById('more-modal').hidden = true; }
 
-        // ---------- Theme: Old School (default) or Dark Mode (AMOLED) ----------
+        // ---------- Themes: Old School (default), the four Ironman modes, plus Dark Mode (AMOLED) ----------
+        const THEMES = [
+            { id: 'oldschool', name: 'Old School', swatch: '#c29a1c' },
+            { id: 'iron',      name: 'Ironman',    swatch: '#aab1ba' },
+            { id: 'uim',       name: 'Ultimate',   swatch: '#f4f3ee' },
+            { id: 'hcim',      name: 'Hardcore',   swatch: '#d9443a' },
+            { id: 'gim',       name: 'Group',      swatch: '#3fbad0' }
+        ];
+        function currentTheme() {
+            const id = localStorage.getItem('theme');
+            return THEMES.some(th => th.id === id) ? id : 'oldschool';
+        }
+        function applyTheme(id) {
+            if (id === 'oldschool') document.documentElement.removeAttribute('data-theme');
+            else document.documentElement.setAttribute('data-theme', id);
+        }
+        function setTheme(id) {
+            try { localStorage.setItem('theme', id); } catch (e) {}
+            applyTheme(id);
+            renderThemePicks();
+        }
+        function renderThemePicks() {
+            const box = document.getElementById('theme-picks');
+            if (!box) return;
+            const cur = currentTheme();
+            box.innerHTML = '';
+            THEMES.forEach(th => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'theme-pick';
+                b.setAttribute('aria-pressed', th.id === cur ? 'true' : 'false');
+                b.innerHTML = '<span class="swatch"></span><span class="swatch-name"></span>';
+                b.querySelector('.swatch').style.background = th.swatch;
+                b.querySelector('.swatch-name').textContent = th.name;
+                b.onclick = () => setTheme(th.id);
+                box.appendChild(b);
+            });
+        }
         function syncThemeSwitch() {
             const dark = document.documentElement.classList.contains('amoled');
             document.getElementById('dark-switch').setAttribute('aria-checked', dark ? 'true' : 'false');
-            document.getElementById('theme-note').innerText = dark ? 'AMOLED black theme' : 'Old School theme';
+            document.getElementById('theme-note').innerText = dark ? 'Pure black background' : 'Normal background';
         }
         function toggleDarkMode() {
             const dark = !document.documentElement.classList.contains('amoled');
@@ -1324,6 +1488,7 @@
             renderPatchPicks();
             document.getElementById('tick-error').innerText = '';
             document.getElementById('tick-cancel').style.display = firstRun ? 'none' : '';
+            renderThemePicks();
             syncThemeSwitch();
             document.getElementById('tick-modal').hidden = false;
         }
@@ -1568,7 +1733,7 @@
             const tickTimeEl = document.getElementById('global-tick-time');
             if (tickTimeEl) tickTimeEl.innerText = formatClock(nextTick.getTime());
 
-            if (!document.getElementById('more-modal').hidden) { tickResets(); tickExtra(); }
+            if (!document.getElementById('more-modal').hidden) { tickGameTime(); tickExtra(); }
 
             // Plant All button status
             const plantText = document.getElementById('plant-text');
@@ -1594,6 +1759,7 @@
             await pullNativeState();      // must come before the first push, so nothing gets overwritten
             await setupNotifications();
             syncNotifications();
+            pushBird();
 
             // Keep in step with the notification / widget replant buttons
             setInterval(pullNativeState, 3000);

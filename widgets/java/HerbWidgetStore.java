@@ -92,4 +92,29 @@ final class HerbWidgetStore {
     static void setAlarmList(Context c, String s) {
         prefs(c).edit().putString("alarms", s).apply();
     }
+
+    // ---------- birdhouse timer ----------
+    static final long BIRD_DEFAULT_MS = 50L * 60 * 1000;
+
+    static long birdFinish(Context c) {
+        return prefs(c).getLong("bird_finish", 0);
+    }
+
+    static long birdMs(Context c) {
+        long ms = prefs(c).getLong("bird_ms", BIRD_DEFAULT_MS);
+        return ms > 0 ? ms : BIRD_DEFAULT_MS;
+    }
+
+    static void setBird(Context c, long finish, long ms) {
+        prefs(c).edit().putLong("bird_finish", Math.max(0, finish)).putLong("bird_ms", ms > 0 ? ms : BIRD_DEFAULT_MS).apply();
+    }
+
+    /** True when the widget / notification button restarted the countdown and the app hasn't read that yet. */
+    static boolean isBirdDirty(Context c) {
+        return prefs(c).getBoolean("bird_dirty", false);
+    }
+
+    static void setBirdDirty(Context c, boolean dirty) {
+        prefs(c).edit().putBoolean("bird_dirty", dirty).apply();
+    }
 }

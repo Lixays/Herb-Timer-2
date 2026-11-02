@@ -67,7 +67,7 @@ final class HerbNotifier {
         return PendingIntent.getBroadcast(c, 0, i, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
-    private static void setAlarm(Context c, long at, PendingIntent pi) {
+    static void setAlarm(Context c, long at, PendingIntent pi) {
         AlarmManager am = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
         if (am == null) return;
         try {

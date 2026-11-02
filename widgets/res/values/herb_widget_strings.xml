@@ -2,4 +2,5 @@
 <resources>
     <string name="herb_widget_1x1_desc">Plant and countdown until your last herb patch is ready.</string>
     <string name="herb_widget_2x1_desc">Plant, countdown and finish time for your herb patches.</string>
+    <string name="bird_widget_1x1_desc">Birdhouse timer. Tap it to restart the 50 minute countdown.</string>
 </resources>

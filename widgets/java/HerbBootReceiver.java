@@ -12,6 +12,7 @@ public class HerbBootReceiver extends BroadcastReceiver {
         String a = intent.getAction();
         if (Intent.ACTION_BOOT_COMPLETED.equals(a) || Intent.ACTION_MY_PACKAGE_REPLACED.equals(a)) {
             HerbNotifier.sync(context);
+            HerbBird.sync(context);
         }
     }
 }

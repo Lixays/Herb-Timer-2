@@ -39,4 +39,37 @@ public class HerbWidgetPlugin extends Plugin {
         HerbWidgetStore.setDirty(getContext(), false);
         call.resolve();
     }
+
+    // ---------- birdhouse timer ----------
+
+    /** The app tells us when the birdhouse countdown ends. We schedule the alert and redraw the widget. */
+    @PluginMethod
+    public void setBird(PluginCall call) {
+        JSObject ret = new JSObject();
+        if (HerbWidgetStore.isBirdDirty(getContext())) {
+            ret.put("ignored", true);   // the widget changed it first; the app will pull that shortly
+            call.resolve(ret);
+            return;
+        }
+        long finish = call.getData().optLong("finish", 0);
+        long ms = call.getData().optLong("ms", HerbWidgetStore.BIRD_DEFAULT_MS);
+        HerbWidgetStore.setBird(getContext(), finish, ms);
+        HerbBird.sync(getContext());
+        call.resolve(ret);
+    }
+
+    @PluginMethod
+    public void getBird(PluginCall call) {
+        JSObject ret = new JSObject();
+        ret.put("dirty", HerbWidgetStore.isBirdDirty(getContext()));
+        ret.put("finish", HerbWidgetStore.birdFinish(getContext()));
+        ret.put("ms", HerbWidgetStore.birdMs(getContext()));
+        call.resolve(ret);
+    }
+
+    @PluginMethod
+    public void clearBirdDirty(PluginCall call) {
+        HerbWidgetStore.setBirdDirty(getContext(), false);
+        call.resolve();
+    }
 }

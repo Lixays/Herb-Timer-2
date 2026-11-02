@@ -11,6 +11,9 @@ public class HerbReceiver extends BroadcastReceiver {
     static final String ACTION_SNOOZE = "com.example.herbtimer.HERB_SNOOZE";
     static final String ACTION_SNOOZE_FIRE = "com.example.herbtimer.HERB_SNOOZE_FIRE";
     static final String ACTION_PLANT_ALL = "com.example.herbtimer.HERB_PLANT_ALL";
+    static final String ACTION_BIRD_READY = "com.example.herbtimer.BIRD_READY";
+    static final String ACTION_BIRD_RESTART = "com.example.herbtimer.BIRD_RESTART";
+    static final String ACTION_BIRD_REFRESH = "com.example.herbtimer.BIRD_REFRESH";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -39,6 +42,16 @@ public class HerbReceiver extends BroadcastReceiver {
                 break;
             case ACTION_SNOOZE_FIRE:
                 HerbNotifier.postSnoozed(c);
+                break;
+            case ACTION_BIRD_READY:       // the birdhouse countdown ended
+                HerbBird.postReady(c);
+                HerbBird.sync(c);
+                break;
+            case ACTION_BIRD_RESTART:     // widget tap / notification button: start the countdown again
+                HerbBird.restart(c);
+                break;
+            case ACTION_BIRD_REFRESH:     // once a minute while counting down
+                BirdWidgetRenderer.refreshAll(c);
                 break;
             default:
                 break;

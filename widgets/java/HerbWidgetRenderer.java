@@ -142,7 +142,7 @@ final class HerbWidgetRenderer {
     }
 
     /** "42m" or "1h 2m" - rounded up, so it reaches 0 exactly when the timer ends. */
-    private static String minutesLeft(long ms) {
+    static String minutesLeft(long ms) {
         long mins = Math.max(1, (ms + 59999) / 60000);
         long h = mins / 60;
         long m = mins % 60;
