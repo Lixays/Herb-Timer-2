@@ -179,7 +179,8 @@ final class HerbNotifier {
         NotificationManager nm = (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
         if (nm == null || Build.VERSION.SDK_INT < 23) return;
         for (StatusBarNotification sbn : nm.getActiveNotifications()) {
-            if (sbn.getId() != STATUS_ID) nm.cancel(sbn.getId());
+            // ids from 2,000,000 up belong to the app's other timers (birdhouses etc.): leave those alone
+            if (sbn.getId() != STATUS_ID && sbn.getId() < 2000000) nm.cancel(sbn.getId());
         }
     }
 

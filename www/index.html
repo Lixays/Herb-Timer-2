@@ -33,7 +33,7 @@
             --cols: 2;
             --panel-u: 214;   /* panel width in units */
             --h-u: 450;       /* panel height in units */
-            --h-px: 90px;     /* fixed pixel parts of the height (borders, gaps, footer) */
+            --h-px: 104px;     /* fixed pixel parts of the height (borders, gaps, footer) */
             --u: min(
                 calc((100vw - var(--sal) - var(--sar) - 28px) / var(--panel-u)),
                 calc((var(--vh) - var(--sat) - var(--sab) - var(--h-px)) / var(--h-u))
@@ -42,7 +42,7 @@
         @supports (height: 100dvh) { :root { --vh: 100dvh; } }
         /* Landscape or tablet: 3 x 3 patches with Reset / Next Tick / Plant All in a 4th column */
         @media (orientation: landscape), (min-width: 600px) {
-            :root { --cols: 4; --panel-u: 405; --h-u: 250; --h-px: 102px; }
+            :root { --cols: 4; --panel-u: 405; --h-u: 250; --h-px: 116px; }
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -434,14 +434,113 @@
         .switch[aria-checked="true"] { border-color: var(--osrs-gold-text); }
         .switch[aria-checked="true"]::after { transform: translateX(24px); background: var(--osrs-gold-text); }
 
-        /* ---------- Footer credit ---------- */
-        .app-credit {
+        /* ---------- Footer row, other-timers, stats and patch picker ---------- */
+        .app-footer {
             margin-top: auto;
             flex-shrink: 0;
-            padding: 6px 0 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px 4px;
+        }
+        .foot-btn { flex: 0 0 auto; min-width: 66px; padding: 8px 10px; font-size: 12px; letter-spacing: 0; }
+        .app-footer .app-credit { flex: 1; margin: 0; padding: 0; font-size: 13px; }
+
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--osrs-gold-text);
+            text-align: left;
+            margin: 14px 2px 6px;
+            padding-top: 10px;
+            border-top: 1px solid #2a2016;
+        }
+        .section-title.first { margin-top: 2px; padding-top: 0; border-top: none; }
+        .modal-text.note { font-size: 11px; margin: 10px 0 4px; color: #6f6652; }
+
+        .info-block { display: flex; flex-direction: column; gap: 6px; margin: 2px 0; }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 10px;
+            padding: 6px 10px;
+            background: #090604;
+            border: 1px solid #281d14;
+            border-radius: 4px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 13px;
+            color: #8c7f62;
+            text-align: left;
+        }
+        .info-row b { color: var(--osrs-gold-text); font-weight: 700; text-align: right; }
+
+        .ex-row { padding: 8px 10px; margin-bottom: 6px; background: #090604; border: 1px solid #281d14; border-radius: 4px; text-align: left; }
+        .ex-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+        .ex-name { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; color: var(--osrs-gold-text); }
+        .ex-time { font-family: 'Roboto Mono', monospace; font-size: 13px; font-weight: 700; white-space: nowrap; }
+        .ex-time.idle { color: #6f6652; }
+        .ex-time.running { color: var(--osrs-green-text); }
+        .ex-time.done { color: var(--osrs-yellow-text); }
+        .ex-actions { display: flex; gap: 6px; margin-top: 8px; }
+        .mini-btn { padding: 7px 10px; font-size: 12px; letter-spacing: 0; }
+        .ex-main { flex: 1; }
+        .ex-clear[hidden] { display: none; }
+        .empty-note { font-family: 'Roboto Mono', monospace; font-size: 12px; color: #6f6652; padding: 6px 0 2px; }
+
+        .add-form { display: flex; flex-direction: column; gap: 8px; }
+        .osrs-input {
+            width: 100%;
+            padding: 8px 10px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 14px;
+            color: var(--osrs-gold-text);
+            background: #090604;
+            border: 2px solid #41321f;
+            border-radius: 4px;
+            outline: none;
+            user-select: text;
+            -webkit-user-select: text;
+        }
+        .osrs-input:focus { border-color: var(--osrs-gold-text); }
+        .dur-row { display: flex; align-items: center; gap: 6px; font-family: 'Roboto Mono', monospace; font-size: 13px; color: #8c7f62; }
+        .dur-row .osrs-input { width: 58px; text-align: center; padding: 8px 4px; -moz-appearance: textfield; }
+        .dur-row .osrs-input::-webkit-outer-spin-button, .dur-row .osrs-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .add-btn { margin-left: auto; min-width: 64px; }
+
+        .patch-picks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+        .pick {
+            padding: 8px 2px;
+            font-family: 'Cinzel', serif;
+            font-size: 12px;
+            font-weight: 700;
+            color: #5e5a52;
+            background: #090604;
+            border: 2px solid #281d14;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: line-through;
+        }
+        .pick[aria-pressed="true"] { color: var(--osrs-gold-text); border-color: var(--osrs-gold-text); text-decoration: none; }
+
+        html.amoled .info-row, html.amoled .ex-row, html.amoled .osrs-input, html.amoled .pick, html.amoled .switch { background: #000; border-color: #2a2112; }
+        html.amoled .info-row { border-width: 1px; }
+        html.amoled .pick[aria-pressed="true"] { border-color: var(--osrs-gold-text); }
+        html.amoled .switch[aria-checked="true"] { border-color: var(--osrs-gold-text); }
+        html.amoled .section-title, html.amoled .theme-row { border-color: #1f1a12; }
+
+        .app-footer .app-credit { white-space: nowrap; }
+        @media (max-width: 400px) {
+            .app-footer { padding: 6px 4px 4px; gap: 4px; }
+            .foot-btn { min-width: 0; padding: 8px 7px; font-size: 11px; }
+            .app-footer .app-credit { font-size: 12px; }
+        }
+
+        /* ---------- Footer credit ---------- */
+        .app-credit {
             text-align: center;
             font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-            font-size: 14px;
             font-weight: 600;
             color: var(--osrs-gold-text);
         }
@@ -495,10 +594,10 @@
             </div>
 
             <!-- Reset Button -->
-            <button class="osrs-btn ctrl-btn ctrl-reset" id="reset-btn" onclick="resetAllPatches()">
+            <button class="osrs-btn ctrl-btn ctrl-reset" id="reset-btn" onclick="confirmReset()">
                 <div class="ctrl-inner">
                     <img class="uim-icon" src="https://oldschool.runescape.wiki/images/Watch.png" alt="Watch">
-                    RESET
+                    <span id="reset-text">RESET</span>
                     <img class="uim-icon" src="https://oldschool.runescape.wiki/images/Watch.png" alt="Watch">
                 </div>
             </button>
@@ -513,14 +612,19 @@
             </button>
         </div>
 
-        <div class="app-credit">Created by: Rikku</div>
+        <div class="app-footer">
+            <button class="osrs-btn foot-btn" onclick="openMore()">Timers</button>
+            <div class="app-credit">Created by: Rikku</div>
+            <button class="osrs-btn foot-btn" onclick="openStats()">Stats</button>
+        </div>
 
     </div>
 
     <!-- FARMING TICK SETTINGS -->
     <div class="modal-overlay" id="tick-modal" hidden>
         <div class="modal-card osrs-panel">
-            <h2 class="modal-title">Farming Tick</h2>
+            <h2 class="modal-title">Settings</h2>
+            <div class="section-title first">Farming Tick</div>
             <p class="modal-text">Enter the minutes past the hour when your herb patches tick. Ticks are 20 minutes apart, so the other two fill in automatically.</p>
             <div class="tick-inputs">
                 <label>Tick 1<input id="tick-in-0" type="number" inputmode="numeric" min="0" max="59" onchange="onTickInputChange(0)"></label>
@@ -528,6 +632,9 @@
                 <label>Tick 3<input id="tick-in-2" type="number" inputmode="numeric" min="0" max="59" onchange="onTickInputChange(2)"></label>
             </div>
             <div class="modal-error" id="tick-error"></div>
+            <div class="section-title">My Patches</div>
+            <p class="modal-text">Tap to hide the patches you don't use. Hidden patches are left out of the timers, notifications and widgets.</p>
+            <div class="patch-picks" id="patch-picks"></div>
             <div class="theme-row">
                 <div class="theme-text">
                     <span class="theme-title">Dark Mode</span>
@@ -538,6 +645,48 @@
             <div class="modal-actions">
                 <button class="osrs-btn modal-btn" id="tick-cancel" onclick="closeTickSettings()">Cancel</button>
                 <button class="osrs-btn modal-btn modal-save" onclick="saveTickSettings()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- OTHER TIMERS + RESETS -->
+    <div class="modal-overlay" id="more-modal" hidden onclick="if (event.target === this) closeMore()">
+        <div class="modal-card osrs-panel">
+            <h2 class="modal-title">Timers</h2>
+            <div class="info-block">
+                <div class="info-row"><span>Game time</span><b id="rs-time">--:--</b></div>
+                <div class="info-row"><span>Daily reset</span><b id="rs-daily">--</b></div>
+                <div class="info-row"><span>Weekly reset</span><b id="rs-weekly">--</b></div>
+            </div>
+            <div class="section-title">Other timers</div>
+            <div id="extra-list"></div>
+            <div class="section-title">Add a timer</div>
+            <div class="add-form">
+                <select id="ex-preset" class="osrs-input" onchange="onPresetChange()"></select>
+                <input id="ex-name" class="osrs-input" type="text" maxlength="20" placeholder="Name">
+                <div class="dur-row">
+                    <input id="ex-h" class="osrs-input" type="number" inputmode="numeric" min="0" max="99" placeholder="0"> <span>h</span>
+                    <input id="ex-m" class="osrs-input" type="number" inputmode="numeric" min="0" max="59" placeholder="0"> <span>min</span>
+                    <button class="osrs-btn mini-btn add-btn" onclick="addExtra()">Add</button>
+                </div>
+            </div>
+            <div class="modal-error" id="ex-error"></div>
+            <p class="modal-text note">Alerts arrive even when the app is closed. Game time is UTC, which is what the game's resets use.</p>
+            <div class="modal-actions">
+                <button class="osrs-btn modal-btn modal-save" onclick="closeMore()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RUN STATS -->
+    <div class="modal-overlay" id="stats-modal" hidden onclick="if (event.target === this) closeStats()">
+        <div class="modal-card osrs-panel">
+            <h2 class="modal-title">Run Stats</h2>
+            <div class="info-block" id="stats-body"></div>
+            <p class="modal-text note">A run is counted whenever you plant patches. Plants less than 30 minutes apart count as the same run.</p>
+            <div class="modal-actions">
+                <button class="osrs-btn modal-btn" id="stats-clear" onclick="clearStats()">Clear</button>
+                <button class="osrs-btn modal-btn modal-save" onclick="closeStats()">Close</button>
             </div>
         </div>
     </div>
@@ -583,7 +732,7 @@
             { name: 'Torstol', icon: 'https://oldschool.runescape.wiki/images/Grimy_torstol.png' }
         ];
 
-        const patches = [
+        const ALL_PATCHES = [
             { id: 'ardougne', name: 'Ardougne', icon: 'https://oldschool.runescape.wiki/images/Ardougne_cloak_4.png' },
             { id: 'varlamore', name: 'Varlamore', icon: 'https://oldschool.runescape.wiki/images/Perfected_quetzal_whistle.png' },
             { id: 'ecto', name: 'Morytania', icon: 'https://oldschool.runescape.wiki/images/Ectophial.png' },
@@ -594,6 +743,22 @@
             { id: 'cabbage', name: 'Falador', icon: 'https://oldschool.runescape.wiki/images/Cabbage.png' },
             { id: 'farming_guild', name: 'Guild', icon: 'https://oldschool.runescape.wiki/images/thumb/Seed_pack_detail.png/150px-Seed_pack_detail.png?2567b' },
         ];
+
+        // The patches you actually use (Settings > My Patches). Everything else in the app works from this list.
+        let patches = ALL_PATCHES.slice();
+        function loadEnabledIds() {
+            try {
+                const a = JSON.parse(localStorage.getItem('enabled_patches'));
+                if (Array.isArray(a)) return a.filter(id => ALL_PATCHES.some(p => p.id === id));
+            } catch (e) {}
+            return ALL_PATCHES.map(p => p.id);
+        }
+        function applyEnabledPatches() {
+            const ids = loadEnabledIds();
+            patches = ALL_PATCHES.filter(p => ids.includes(p.id));
+            if (!patches.length) patches = ALL_PATCHES.slice();
+        }
+        applyEnabledPatches();
 
         // ---------- Notifications & widget ----------
         // Main path: the app hands its timers to the Android side, which shows the "ready" notifications,
@@ -763,10 +928,12 @@
         async function restartFinishedTimers() {
             const now = Date.now();
             const newFinish = getFirstTick(new Date(now)).getTime() + GROW_MS;
+            let restarted = 0;
             patches.forEach(p => {
                 const finish = parseInt(localStorage.getItem(`finish_${p.id}`));
-                if (finish && finish <= now) localStorage.setItem(`finish_${p.id}`, newFinish.toString());
+                if (finish && finish <= now) { localStorage.setItem(`finish_${p.id}`, newFinish.toString()); restarted++; }
             });
+            logPlants(restarted);
             if (LN) { try { await LN.removeAllDeliveredNotifications(); } catch (e) {} }
             updateAll();
             await syncNotifications();
@@ -785,10 +952,15 @@
             try {
                 const state = await HW.getState();
                 if (state && state.dirty) {
+                    let planted = 0;
                     JSON.parse(state.timers || '[]').forEach(t => {
+                        if (!patches.some(p => p.id === t.id)) return;
+                        const old = parseInt(localStorage.getItem(`finish_${t.id}`)) || 0;
+                        if (t.finish > 0 && t.finish > old) planted++;
                         if (t.finish > 0) localStorage.setItem(`finish_${t.id}`, String(t.finish));
                         else localStorage.removeItem(`finish_${t.id}`);
                     });
+                    logPlants(planted);
                     await HW.clearDirty();
                     updateAll();
                 }
@@ -821,6 +993,318 @@
             return true;
         }
 
+        // ---------- Which patches you use ----------
+        let pendingPicks = new Set();
+        function renderPatchPicks() {
+            const box = document.getElementById('patch-picks');
+            box.innerHTML = '';
+            ALL_PATCHES.forEach(p => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'pick';
+                b.textContent = p.name;
+                const paint = () => b.setAttribute('aria-pressed', pendingPicks.has(p.id) ? 'true' : 'false');
+                paint();
+                b.onclick = () => {
+                    if (pendingPicks.has(p.id)) pendingPicks.delete(p.id); else pendingPicks.add(p.id);
+                    paint();
+                    document.getElementById('tick-error').innerText = '';
+                };
+                box.appendChild(b);
+            });
+        }
+        function applyPatchPicks() {
+            ALL_PATCHES.forEach(p => { if (!pendingPicks.has(p.id)) localStorage.removeItem(`finish_${p.id}`); });
+            localStorage.setItem('enabled_patches', JSON.stringify(ALL_PATCHES.filter(p => pendingPicks.has(p.id)).map(p => p.id)));
+            applyEnabledPatches();
+            buildPatchCards();
+        }
+
+        // ---------- Time helpers ----------
+        function fmtDur(ms, withSeconds) {
+            ms = Math.max(0, ms);
+            const d = Math.floor(ms / 86400000);
+            const h = Math.floor(ms / 3600000) % 24;
+            const m = Math.floor(ms / 60000) % 60;
+            const s = Math.floor(ms / 1000) % 60;
+            if (d > 0) return `${d}d ${h}h`;
+            if (h > 0) return withSeconds ? `${h}h ${m}m ${s}s` : `${h}h ${m}m`;
+            return withSeconds ? `${m}m ${pad2(s)}s` : `${m}m`;
+        }
+
+        // ---------- Run stats ----------
+        const RUN_GAP_MS = 30 * 60 * 1000;
+        function loadRunLog() {
+            try {
+                const a = JSON.parse(localStorage.getItem('run_log'));
+                if (Array.isArray(a)) return a.filter(e => e && e.t > 0 && e.n > 0);
+            } catch (e) {}
+            return [];
+        }
+        function logPlants(n) {
+            if (!(n > 0)) return;
+            const log = loadRunLog();
+            log.push({ t: Date.now(), n: n });
+            try { localStorage.setItem('run_log', JSON.stringify(log.slice(-600))); } catch (e) {}
+        }
+        function computeRuns(log) {
+            const runs = [];
+            log.slice().sort((a, b) => a.t - b.t).forEach(e => {
+                const last = runs[runs.length - 1];
+                if (last && e.t - last.end <= RUN_GAP_MS) { last.end = e.t; last.n += e.n; }
+                else runs.push({ start: e.t, end: e.t, n: e.n });
+            });
+            return runs;
+        }
+        function renderStats() {
+            const log = loadRunLog();
+            const runs = computeRuns(log);
+            const now = Date.now();
+            const midnight = new Date(); midnight.setHours(0, 0, 0, 0);
+            const today = runs.filter(r => r.start >= midnight.getTime()).length;
+            const week = runs.filter(r => r.start >= now - 7 * 86400000).length;
+            const planted = log.reduce((s, e) => s + e.n, 0);
+
+            // streak = days in a row (ending today, or yesterday) with at least one run
+            const days = new Set(runs.map(r => new Date(r.start).toDateString()));
+            const d = new Date(); d.setHours(0, 0, 0, 0);
+            if (!days.has(d.toDateString())) d.setDate(d.getDate() - 1);
+            let streak = 0;
+            while (days.has(d.toDateString())) { streak++; d.setDate(d.getDate() - 1); }
+
+            let avgGap = '-';
+            if (runs.length >= 2) {
+                const gaps = [];
+                for (let i = Math.max(1, runs.length - 10); i < runs.length; i++) gaps.push(runs[i].start - runs[i - 1].start);
+                avgGap = fmtDur(gaps.reduce((a, b) => a + b, 0) / gaps.length);
+            }
+            const last = runs.length ? `${fmtDur(now - runs[runs.length - 1].start)} ago` : '-';
+            const rows = [
+                ['Runs today', today], ['Runs this week', week], ['Total runs', runs.length],
+                ['Day streak', streak], ['Last run', last], ['Avg. time between runs', avgGap],
+                ['Patches planted', planted]
+            ];
+            document.getElementById('stats-body').innerHTML =
+                rows.map(r => `<div class="info-row"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('');
+            disarmClear();
+        }
+        let clearArmed = false, clearTimer = null;
+        function disarmClear() {
+            clearArmed = false;
+            clearTimeout(clearTimer);
+            const b = document.getElementById('stats-clear');
+            if (b) b.innerText = 'Clear';
+        }
+        function clearStats() {
+            if (!clearArmed) {
+                clearArmed = true;
+                document.getElementById('stats-clear').innerText = 'Tap again';
+                clearTimer = setTimeout(disarmClear, 3000);
+                return;
+            }
+            localStorage.removeItem('run_log');
+            renderStats();
+        }
+        function openStats() { renderStats(); document.getElementById('stats-modal').hidden = false; }
+        function closeStats() { disarmClear(); document.getElementById('stats-modal').hidden = true; }
+
+        // ---------- Game time + resets (the game runs on UTC) ----------
+        function nextDailyReset(now) {
+            const d = new Date(now);
+            return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1);
+        }
+        function nextWeeklyReset(now) {      // Wednesday 00:00 UTC
+            const d = new Date(now);
+            const add = (3 - d.getUTCDay() + 7) % 7;
+            let at = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + add);
+            if (at <= now) at += 7 * 86400000;
+            return at;
+        }
+        function tickResets() {
+            const now = Date.now();
+            const u = new Date(now);
+            document.getElementById('rs-time').innerText = `${pad2(u.getUTCHours())}:${pad2(u.getUTCMinutes())} UTC`;
+            document.getElementById('rs-daily').innerText = fmtDur(nextDailyReset(now) - now);
+            document.getElementById('rs-weekly').innerText = fmtDur(nextWeeklyReset(now) - now);
+        }
+
+        // ---------- Other timers (birdhouses, trees, anything custom) ----------
+        const EXTRA_PRESETS = [
+            { name: 'Birdhouses', h: 0, m: 50 },
+            { name: 'Oak tree', h: 3, m: 20 },
+            { name: 'Willow tree', h: 4, m: 0 },
+            { name: 'Maple tree', h: 5, m: 20 },
+            { name: 'Yew tree', h: 6, m: 40 },
+            { name: 'Magic tree', h: 8, m: 0 },
+            { name: 'Fruit trees', h: 16, m: 0 }
+        ];
+        let extraChannelReady = false;
+
+        function nextNid() {
+            const n = (parseInt(localStorage.getItem('extra_nid')) || 2000000) + 1;
+            localStorage.setItem('extra_nid', String(n));
+            return n;
+        }
+        function loadExtra() {
+            try {
+                const a = JSON.parse(localStorage.getItem('extra_timers'));
+                if (Array.isArray(a)) return a;
+            } catch (e) {}
+            if (localStorage.getItem('extra_timers') === null) {
+                const seed = [{ id: 'x' + Date.now(), nid: nextNid(), name: 'Birdhouses', ms: 50 * 60000, finish: 0 }];
+                saveExtra(seed);
+                return seed;
+            }
+            return [];
+        }
+        function saveExtra(list) { localStorage.setItem('extra_timers', JSON.stringify(list)); }
+
+        async function ensureExtraChannel() {
+            if (extraChannelReady || !LN) return;
+            try {
+                await LN.createChannel({ id: 'extra-timers', name: 'Other timers', description: 'Alerts for birdhouses, trees and custom timers', importance: 5, visibility: 1, vibration: true });
+                extraChannelReady = true;
+            } catch (e) { console.error('Channel failed', e); }
+        }
+        async function scheduleExtra(x) {
+            if (!LN || !x.finish) return;
+            try {
+                await ensureExtraChannel();
+                await LN.schedule({ notifications: [{
+                    id: x.nid,
+                    title: `${x.name} ready!`,
+                    body: `Your ${x.name} timer has finished.`,
+                    channelId: 'extra-timers',
+                    smallIcon: NOTIF_ICON,
+                    schedule: { at: new Date(x.finish), allowWhileIdle: true }
+                }] });
+            } catch (e) { console.error('Could not schedule timer alert', e); }
+        }
+        async function cancelExtra(x) {
+            if (!LN) return;
+            try { await LN.cancel({ notifications: [{ id: x.nid }] }); } catch (e) {}
+        }
+
+        function fmtMs(ms) {
+            const h = Math.floor(ms / 3600000), m = Math.round((ms % 3600000) / 60000);
+            return h ? (m ? `${h}h ${m}m` : `${h}h`) : `${m}m`;
+        }
+        function renderExtraList() {
+            const box = document.getElementById('extra-list');
+            box.innerHTML = '';
+            const list = loadExtra();
+            if (!list.length) {
+                box.innerHTML = '<div class="empty-note">No timers yet. Add one below.</div>';
+                return;
+            }
+            list.forEach(x => {
+                const row = document.createElement('div');
+                row.className = 'ex-row';
+                row.dataset.id = x.id;
+                row.innerHTML = `
+                    <div class="ex-top"><span class="ex-name"></span><span class="ex-time"></span></div>
+                    <div class="ex-actions">
+                        <button type="button" class="osrs-btn mini-btn ex-main"></button>
+                        <button type="button" class="osrs-btn mini-btn ex-clear" hidden>Clear</button>
+                        <button type="button" class="osrs-btn mini-btn ex-del" aria-label="Delete timer">&#10005;</button>
+                    </div>`;
+                row.querySelector('.ex-name').textContent = `${x.name} (${fmtMs(x.ms)})`;
+                row.querySelector('.ex-main').onclick = () => mainExtra(x.id);
+                row.querySelector('.ex-clear').onclick = () => clearExtra(x.id);
+                row.querySelector('.ex-del').onclick = () => deleteExtra(x.id);
+                box.appendChild(row);
+            });
+            tickExtra();
+        }
+        function tickExtra() {
+            const now = Date.now();
+            loadExtra().forEach(x => {
+                const row = document.querySelector(`.ex-row[data-id="${x.id}"]`);
+                if (!row) return;
+                const time = row.querySelector('.ex-time');
+                const main = row.querySelector('.ex-main');
+                const clear = row.querySelector('.ex-clear');
+                if (!x.finish) {
+                    time.innerText = 'Not started'; time.className = 'ex-time idle';
+                    main.innerText = 'Start'; clear.hidden = true;
+                } else if (now >= x.finish) {
+                    time.innerText = 'Ready!'; time.className = 'ex-time done';
+                    main.innerText = 'Restart'; clear.hidden = false;
+                } else {
+                    time.innerText = fmtDur(x.finish - now, true); time.className = 'ex-time running';
+                    main.innerText = 'Cancel'; clear.hidden = true;
+                }
+            });
+        }
+        function mainExtra(id) {
+            const list = loadExtra();
+            const x = list.find(e => e.id === id);
+            if (!x) return;
+            if (!x.finish || Date.now() >= x.finish) {
+                x.finish = Date.now() + x.ms;
+                saveExtra(list);
+                scheduleExtra(x);
+            } else {
+                x.finish = 0;
+                saveExtra(list);
+                cancelExtra(x);
+            }
+            tickExtra();
+        }
+        function clearExtra(id) {
+            const list = loadExtra();
+            const x = list.find(e => e.id === id);
+            if (!x) return;
+            x.finish = 0; saveExtra(list); cancelExtra(x); tickExtra();
+        }
+        function deleteExtra(id) {
+            const list = loadExtra();
+            const x = list.find(e => e.id === id);
+            if (!x) return;
+            cancelExtra(x);
+            saveExtra(list.filter(e => e.id !== id));
+            renderExtraList();
+        }
+        function fillPresetSelect() {
+            const sel = document.getElementById('ex-preset');
+            if (sel.options.length) return;
+            sel.innerHTML = '<option value="">Custom timer</option>' +
+                EXTRA_PRESETS.map((p, i) => `<option value="${i}">${p.name} (${fmtMs((p.h * 60 + p.m) * 60000)})</option>`).join('');
+        }
+        function onPresetChange() {
+            const v = document.getElementById('ex-preset').value;
+            if (v === '') return;
+            const p = EXTRA_PRESETS[parseInt(v, 10)];
+            document.getElementById('ex-name').value = p.name;
+            document.getElementById('ex-h').value = p.h;
+            document.getElementById('ex-m').value = p.m;
+            document.getElementById('ex-error').innerText = '';
+        }
+        function addExtra() {
+            const name = document.getElementById('ex-name').value.trim();
+            const h = parseInt(document.getElementById('ex-h').value, 10) || 0;
+            const m = parseInt(document.getElementById('ex-m').value, 10) || 0;
+            const err = document.getElementById('ex-error');
+            if (!name) { err.innerText = 'Give the timer a name'; return; }
+            if (h < 0 || m < 0 || m > 59 || h > 99 || h * 60 + m < 1) { err.innerText = 'Enter a time between 1 minute and 99 hours'; return; }
+            err.innerText = '';
+            const list = loadExtra();
+            list.push({ id: 'x' + Date.now(), nid: nextNid(), name: name, ms: (h * 60 + m) * 60000, finish: 0 });
+            saveExtra(list);
+            document.getElementById('ex-name').value = '';
+            document.getElementById('ex-h').value = '';
+            document.getElementById('ex-m').value = '';
+            document.getElementById('ex-preset').value = '';
+            renderExtraList();
+        }
+        function openMore() {
+            fillPresetSelect();
+            renderExtraList();
+            tickResets();
+            document.getElementById('more-modal').hidden = false;
+        }
+        function closeMore() { document.getElementById('more-modal').hidden = true; }
+
         // ---------- Theme: Old School (default) or Dark Mode (AMOLED) ----------
         function syncThemeSwitch() {
             const dark = document.documentElement.classList.contains('amoled');
@@ -836,6 +1320,8 @@
 
         function openTickSettings(firstRun) {
             fillTickInputs(WINDOWS);
+            pendingPicks = new Set(patches.map(p => p.id));
+            renderPatchPicks();
             document.getElementById('tick-error').innerText = '';
             document.getElementById('tick-cancel').style.display = firstRun ? 'none' : '';
             syncThemeSwitch();
@@ -860,8 +1346,13 @@
                 document.getElementById('tick-error').innerText = 'Enter a minute between 0 and 59';
                 return;
             }
+            if (pendingPicks.size === 0) {
+                document.getElementById('tick-error').innerText = 'Keep at least one patch';
+                return;
+            }
             WINDOWS = windowsFromBox(first, 0);
             localStorage.setItem('tick_windows', JSON.stringify(WINDOWS));
+            applyPatchPicks();
             closeTickSettings();
             updateAll();
             syncNotifications();
@@ -880,27 +1371,32 @@
             return new Date(ms).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
         }
 
-        function initData() {
+        function buildPatchCards() {
             const grid = document.getElementById('patches-grid');
             const tickCard = document.getElementById('tick-card');
+            grid.querySelectorAll('.patch-card').forEach(c => c.remove());
 
-            patches.forEach((patch, index) => {
+            patches.forEach((patch) => {
                 const card = document.createElement('div');
-                card.className = 'osrs-card';
+                card.className = 'osrs-card patch-card';
                 card.onclick = () => togglePatch(patch.id);
                 card.innerHTML = `
                     <div class="patch-name-text">${patch.name}</div>
                     <div class="timer-row">
                         <img class="farming-icon" src="${patch.icon}" alt="">
                         <div class="timer" id="timer-${patch.id}">Empty</div>
-                        <img class="farming-icon" src="${herbs[index % herbs.length].icon}" alt="">
+                        <img class="farming-icon" src="${herbs[ALL_PATCHES.indexOf(patch) % herbs.length].icon}" alt="">
                     </div>
                     <div class="cycle-text" id="cycle-${patch.id}"></div>
                     <button class="osrs-btn card-btn" id="btn-${patch.id}">Plant</button>
                 `;
                 grid.insertBefore(card, tickCard);
             });
+        }
 
+        function initData() {
+            const tickCard = document.getElementById('tick-card');
+            buildPatchCards();
             setupTickCardGestures(tickCard);
 
             setInterval(updateAll, 1000);
@@ -948,21 +1444,47 @@
             } else {
                 const firstTick = getFirstTick(new Date());
                 localStorage.setItem(`finish_${id}`, (firstTick.getTime() + GROW_MS).toString());
+                logPlants(1);
             }
             updateAll();
             syncNotifications();
         }
 
+        // Plants empty patches AND restarts the ones that are ready to harvest (same as the widget button).
         function plantAllPatches() {
-            const firstTick = getFirstTick(new Date());
-            const finishTime = firstTick.getTime() + GROW_MS;
+            const now = Date.now();
+            const finishTime = getFirstTick(new Date()).getTime() + GROW_MS;
+            let planted = 0;
             patches.forEach(p => {
-                if (!localStorage.getItem(`finish_${p.id}`)) {
+                const f = parseInt(localStorage.getItem(`finish_${p.id}`));
+                if (!f || f <= now) {
                     localStorage.setItem(`finish_${p.id}`, finishTime.toString());
+                    planted++;
                 }
             });
+            logPlants(planted);
             updateAll();
             syncNotifications();
+        }
+
+        // Reset needs a second tap within 3 seconds, so one stray tap can't wipe a run.
+        let resetArmed = false, resetTimer = null;
+        function disarmReset() {
+            resetArmed = false;
+            clearTimeout(resetTimer);
+            document.getElementById('reset-text').innerText = 'RESET';
+        }
+        function confirmReset() {
+            const anyPlanted = patches.some(p => localStorage.getItem(`finish_${p.id}`));
+            if (!anyPlanted) { resetAllPatches(); return; }
+            if (!resetArmed) {
+                resetArmed = true;
+                document.getElementById('reset-text').innerText = 'TAP AGAIN';
+                resetTimer = setTimeout(disarmReset, 3000);
+                return;
+            }
+            disarmReset();
+            resetAllPatches();
         }
 
         function resetAllPatches() {
@@ -1045,6 +1567,8 @@
             }
             const tickTimeEl = document.getElementById('global-tick-time');
             if (tickTimeEl) tickTimeEl.innerText = formatClock(nextTick.getTime());
+
+            if (!document.getElementById('more-modal').hidden) { tickResets(); tickExtra(); }
 
             // Plant All button status
             const plantText = document.getElementById('plant-text');
