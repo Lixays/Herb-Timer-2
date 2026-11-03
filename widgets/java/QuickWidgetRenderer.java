@@ -30,17 +30,22 @@ final class QuickWidgetRenderer {
         boolean running = !idle && !ready;
 
         RemoteViews v = new RemoteViews(app.getPackageName(), R.layout.widget_quick_1x1);
-        v.setImageViewResource(R.id.quick_image, qt.imageRes);
+        WidgetTheme th = WidgetTheme.current(app);   // follows the app's theme
+        v.setInt(R.id.quick_root, "setBackgroundResource", th.bgRes);
+
+        // Warning state (deathpile): the last stretch of the countdown, and after it has expired
+        boolean warn = qt.warnImageRes != 0 && (ready || (running && finish - now <= qt.alertBeforeMs));
+        v.setImageViewResource(R.id.quick_image, warn ? qt.warnImageRes : qt.imageRes);
 
         // Top line (like the herb widget): what to do next
         v.setTextViewText(R.id.quick_title, running ? qt.runningTop : ready ? qt.readyTop : qt.idleTop);
-        v.setTextColor(R.id.quick_title, ready ? 0xFFE8D83A : 0xFFC9A227);
+        v.setTextColor(R.id.quick_title, warn ? th.idle : ready ? th.ready : th.accent);
 
-        // Bottom line: minutes left, "Ready!" or "Start"
-        v.setTextViewText(R.id.quick_status, running ? HerbWidgetRenderer.minutesLeft(finish - now) : ready ? "Ready!" : "Start");
-        v.setTextColor(R.id.quick_status, running ? 0xFFE8D9A8 : ready ? 0xFFE8D83A : 0xFFC25A5A);
+        // Bottom line: minutes left, the "over" text or "Start"
+        v.setTextViewText(R.id.quick_status, running ? HerbWidgetRenderer.minutesLeft(finish - now) : ready ? qt.readyBottom : "Start");
+        v.setTextColor(R.id.quick_status, warn ? th.idle : running ? th.text : ready ? th.ready : th.idle);
 
-        v.setContentDescription(R.id.quick_root, running ? qt.runningTop + " timer running" : ready ? qt.runningTop + " ready" : qt.runningTop + " timer not started");
+        v.setContentDescription(R.id.quick_root, running ? qt.runningTop + " timer running" : ready ? qt.runningTop + (qt.warnImageRes != 0 ? " expired" : " ready") : qt.runningTop + " timer not started");
         v.setContentDescription(R.id.quick_image, "Restart " + qt.runningTop + " timer");
 
         // Tap the picture: restart. Tap the rest: open the app.

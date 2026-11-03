@@ -117,4 +117,26 @@ final class HerbWidgetStore {
     static void setQuickDirty(Context c, String key, boolean dirty) {
         prefs(c).edit().putBoolean(key + "_dirty", dirty).apply();
     }
+
+    // ---------- theme (set by the app so widgets and the app icon can match it) ----------
+    static String theme(Context c) {
+        return prefs(c).getString("theme", "oldschool");
+    }
+
+    static boolean dark(Context c) {
+        return prefs(c).getBoolean("dark", false);
+    }
+
+    static void setTheme(Context c, String theme, boolean dark) {
+        prefs(c).edit().putString("theme", theme).putBoolean("dark", dark).apply();
+    }
+
+    /** Which launcher icon variant is currently switched on. */
+    static String iconApplied(Context c) {
+        return prefs(c).getString("icon_applied", "oldschool");
+    }
+
+    static void setIconApplied(Context c, String id) {
+        prefs(c).edit().putString("icon_applied", id).apply();
+    }
 }

@@ -19,4 +19,8 @@ Added on top of the web app, all in `widgets/` (copied into the Android project 
   Each has its own alert when it ends, with a restart button. Timers: Limpwurt 20 min, Birdhouses 50 min.
   The pictures are downloaded from the OSRS wiki during the build; if that fails, drawn ones are used.
   To use your own, put them at `android-res/drawable-nodpi/limp_root.png` and `bird_house.png`.
+- **Deathpile widget (1x1)** - white skull, turns into the red skull for the last 15 minutes. Tap the skull = start the 60 minute countdown.
+  An alert "DEATHPILE EXPIRES SOON" (white skull icon) arrives 15 minutes before it ends.
+- **Themes everywhere** - all widgets use the app's theme (and Dark Mode). The app icon has one variant per theme
+  (`android-res/`), switched with activity-aliases that `apply_widgets.py` adds to the manifest.
 

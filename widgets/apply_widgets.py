@@ -177,6 +177,19 @@ COMPONENTS = {
                 android:resource="@xml/limp_widget_1x1_info" />
         </receiver>
 ''',
+    "DeathWidgetProvider1x1": '''
+        <receiver
+            android:name="com.example.herbtimer.DeathWidgetProvider1x1"
+            android:exported="false"
+            android:label="Deathpile Timer 1x1">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/death_widget_1x1_info" />
+        </receiver>
+''',
     "HerbReceiver": '''
         <receiver
             android:name="com.example.herbtimer.HerbReceiver"
@@ -202,6 +215,40 @@ for name in ("RECEIVE_BOOT_COMPLETED", "POST_NOTIFICATIONS", "SCHEDULE_EXACT_ALA
     if "android.permission." + name not in text:
         text = text.replace("</manifest>", f'    <uses-permission android:name="android.permission.{name}" />\n</manifest>', 1)
         added.append(name)
+
+# Launcher icon that follows the app theme: one <activity-alias> per theme, exactly one enabled at a time.
+# The launcher entry moves from MainActivity to the Old School alias; the app switches aliases at runtime.
+ICONS = [("Oldschool", "ic_launcher", "ic_launcher_round", "true"),
+         ("Iron", "ic_launcher_iron", "ic_launcher_iron_round", "false"),
+         ("Uim", "ic_launcher_uim", "ic_launcher_uim_round", "false"),
+         ("Hcim", "ic_launcher_hcim", "ic_launcher_hcim_round", "false"),
+         ("Gim", "ic_launcher_gim", "ic_launcher_gim_round", "false")]
+if "com.example.herbtimer.IconOldschool" not in text:
+    launcher = re.compile(r'[ \t]*<intent-filter>\s*<action android:name="android\.intent\.action\.MAIN"\s*/>\s*'
+                          r'<category android:name="android\.intent\.category\.LAUNCHER"\s*/>\s*</intent-filter>[ \t]*\n?')
+    stripped, n = launcher.subn("", text, count=1)
+    if n == 1:
+        aliases = ""
+        for name, icon, round_icon, enabled in ICONS:
+            aliases += f'''
+        <activity-alias
+            android:name="com.example.herbtimer.Icon{name}"
+            android:enabled="{enabled}"
+            android:exported="true"
+            android:icon="@mipmap/{icon}"
+            android:roundIcon="@mipmap/{round_icon}"
+            android:label="@string/app_name"
+            android:targetActivity="com.example.herbtimer.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+'''
+        text = stripped.replace("</application>", aliases + "\n    </application>", 1)
+        added.append("theme icons")
+    else:
+        print("manifest  WARNING: launcher entry not found, theme icons skipped")
 manifest.write_text(text, encoding="utf-8")
 print("manifest ", "added " + ", ".join(added) if added else "already patched")
 

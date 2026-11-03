@@ -60,6 +60,9 @@ final class HerbWidgetRenderer {
         boolean ready = !empty && finish <= now;
         boolean running = !empty && !ready;
 
+        WidgetTheme th = WidgetTheme.current(app);   // follows the app's theme
+        v.setInt(R.id.herb_root, "setBackgroundResource", th.bgRes);
+
         // Which plant picture: soil only / seed / 3 growth stages / ready to harvest
         int plant;
         if (empty) {
@@ -77,10 +80,10 @@ final class HerbWidgetRenderer {
         v.setViewVisibility(R.id.herb_status, android.view.View.VISIBLE);
         if (running) {
             v.setTextViewText(R.id.herb_status, minutesLeft(finish - now));   // e.g. "1h 2m", redrawn once a minute
-            v.setTextColor(R.id.herb_status, 0xFFE8D9A8);
+            v.setTextColor(R.id.herb_status, th.text);
         } else {
             v.setTextViewText(R.id.herb_status, ready ? "Ready!" : "Empty");
-            v.setTextColor(R.id.herb_status, ready ? 0xFFE8D83A : 0xFFC25A5A);
+            v.setTextColor(R.id.herb_status, ready ? th.ready : th.idle);
         }
 
         // Top line (both sizes): the patch name, "Growing", "Harvest" or "Plant"
@@ -99,7 +102,7 @@ final class HerbWidgetRenderer {
         else if (growing >= 2) caption = "Growing";
         else if (growing == 1) caption = lastName;
         else caption = "Plant";
-        int captionColor = done > 0 ? 0xFFE8D83A : 0xFFC9A227;
+        int captionColor = done > 0 ? th.ready : th.accent;
         int captionId = wide ? R.id.herb_caption : R.id.herb_finish;
         v.setTextViewText(captionId, caption);
         v.setTextColor(captionId, captionColor);
@@ -110,6 +113,7 @@ final class HerbWidgetRenderer {
             if (running) {
                 String time = DateFormat.getTimeFormat(app).format(new Date(finish));
                 v.setTextViewText(R.id.herb_sub, "Done " + time);
+                v.setTextColor(R.id.herb_sub, th.dim);
                 v.setViewVisibility(R.id.herb_sub, android.view.View.VISIBLE);
             } else {
                 v.setViewVisibility(R.id.herb_sub, android.view.View.GONE);

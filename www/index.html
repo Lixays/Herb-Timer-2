@@ -309,6 +309,13 @@
         .gear-btn { cursor: pointer; padding: 0; font: inherit; color: inherit; }
         .about-text { font-size: 14px; line-height: 1.55; margin-bottom: 4px; }
         .gear-btn svg { width: calc(var(--u) * 17); height: calc(var(--u) * 17); fill: var(--osrs-gold-text); }
+        /* each game-mode theme swaps the cog for that mode's icon */
+        .settings-btn .mode-icon { display: none; height: calc(var(--u) * 19); width: auto; image-rendering: pixelated; }
+        html[data-theme="iron"] .settings-btn svg, html[data-theme="uim"] .settings-btn svg,
+        html[data-theme="hcim"] .settings-btn svg, html[data-theme="gim"] .settings-btn svg { display: none; }
+        html[data-theme="iron"] .mode-icon.m-iron, html[data-theme="uim"] .mode-icon.m-uim,
+        html[data-theme="hcim"] .mode-icon.m-hcim, html[data-theme="gim"] .mode-icon.m-gim { display: block; }
+        html[data-theme="uim"]:not(.amoled) .settings-btn { background: #2f2f2d; }
 
         .modal-overlay {
             position: fixed;
@@ -470,6 +477,7 @@
         .ex-time { font-family: 'Roboto Mono', monospace; font-size: 13px; font-weight: 700; white-space: nowrap; }
         .ex-time.idle { color: var(--dim2); }
         .ex-time.running { color: var(--osrs-green-text); }
+        .ex-time.running.warn { color: var(--osrs-red-text); }
         .ex-time.done { color: var(--osrs-yellow-text); }
         .ex-actions { display: flex; gap: 6px; margin-top: 8px; }
         .mini-btn { padding: 7px 10px; font-size: 12px; letter-spacing: 0; }
@@ -569,16 +577,16 @@
             --osrs-gold-text: #e65a4d; --osrs-green-text: #3fa64f; --osrs-red-text: #ff8c7c; --osrs-yellow-text: #e6d84a;
             --reset: #e04848; --plant: #38a85a; --flash-a: #311010; --flash-b: #5a1010;
         }
-        /* Group Ironman: teal / blue */
+        /* Group Ironman: blue */
         html[data-theme="gim"] {
-            --osrs-bg-dark: #050d10; --dots: #0b1c21; --frame: #2f8091;
-            --panel-a: #12303a; --panel-b: #08181d; --card-a: #0d242b; --well: #06141a;
-            --card-border: #1d4a56; --badge-border: #3a95a8; --line: #18404a;
-            --btn-a: #1a4652; --btn-b: #0e272f; --btn-border: #2f7585; --btn-dark: #071318;
-            --btn-ha: #245b69; --btn-hb: #143640; --btn-text: #93d2de; --btn-htext: #d6f2f8;
-            --text: #80b2bc; --dim: #55808a; --dim2: #5b8791;
-            --osrs-gold-text: #4fc9de; --osrs-green-text: #3fb36a; --osrs-red-text: #e0675f; --osrs-yellow-text: #e3de4c;
-            --reset: #d24a4a; --plant: #34b36a; --flash-a: #143640; --flash-b: #4a1a1a;
+            --osrs-bg-dark: #050a14; --dots: #0b1426; --frame: #2f5fb0;
+            --panel-a: #142a52; --panel-b: #08122a; --card-a: #0d1d3d; --well: #060e20;
+            --card-border: #1d3d73; --badge-border: #3f74cc; --line: #182f5c;
+            --btn-a: #1d3f78; --btn-b: #0f2248; --btn-border: #2f61b5; --btn-dark: #070f22;
+            --btn-ha: #27508f; --btn-hb: #163060; --btn-text: #9fc0f2; --btn-htext: #dbe8fb;
+            --text: #86a8dc; --dim: #5a79ad; --dim2: #6482b5;
+            --osrs-gold-text: #6aa0f2; --osrs-green-text: #3fb36a; --osrs-red-text: #e0675f; --osrs-yellow-text: #e3de4c;
+            --reset: #d24a4a; --plant: #34b36a; --flash-a: #163060; --flash-b: #4a1a1a;
         }
         /* Ultimate Ironman: white / silver with black trim (a light theme) */
         html[data-theme="uim"] {
@@ -598,7 +606,7 @@
         html[data-theme="uim"] .osrs-font-title { filter: none; }
         html[data-theme="iron"] .corner-flourish { filter: grayscale(1) brightness(1.15); }
         html[data-theme="hcim"] .corner-flourish { filter: hue-rotate(-42deg) saturate(1.5); }
-        html[data-theme="gim"] .corner-flourish { filter: hue-rotate(148deg) saturate(1.3); }
+        html[data-theme="gim"] .corner-flourish { filter: hue-rotate(172deg) saturate(1.3); }
         html[data-theme="uim"] .corner-flourish { filter: grayscale(1) brightness(0.3); }
         html[data-theme="uim"] .modal-overlay { background: rgba(30, 30, 28, 0.7); }
 
@@ -643,7 +651,11 @@
                 <svg viewBox="0 0 24 24"><path d="M8.2 8.6a3.9 3.9 0 1 1 6.3 3.1c-1.4 1.1-2.5 1.8-2.5 3.6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="12" cy="19.6" r="1.7" fill="currentColor"/></svg>
             </button>
             <h1 class="osrs-font-title">Herb Patch Timers</h1>
-            <button class="header-badge gear-btn" onclick="openTickSettings(false)" aria-label="Farming tick settings">
+            <button class="settings-btn header-badge gear-btn" onclick="openTickSettings(false)" aria-label="Settings">
+                <img class="mode-icon m-iron" src="img/ironman.png" alt="">
+                <img class="mode-icon m-uim" src="img/uim.png" alt="">
+                <img class="mode-icon m-hcim" src="img/hcim.png" alt="">
+                <img class="mode-icon m-gim" src="img/gim.png" alt="">
                 <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
             </button>
         </div>
@@ -714,6 +726,13 @@
                     <span class="theme-note" id="theme-note">Old School theme</span>
                 </div>
                 <button class="switch" id="dark-switch" role="switch" aria-checked="false" aria-label="Dark Mode" onclick="toggleDarkMode()"></button>
+            </div>
+            <div class="theme-row">
+                <div class="theme-text">
+                    <span class="theme-title">App icon</span>
+                    <span class="theme-note">Matches the theme</span>
+                </div>
+                <button class="switch" id="icon-switch" role="switch" aria-checked="true" aria-label="App icon matches the theme" onclick="toggleIconFollow()"></button>
             </div>
             <div class="modal-actions">
                 <button class="osrs-btn modal-btn" id="tick-cancel" onclick="closeTickSettings()">Cancel</button>
@@ -1178,6 +1197,9 @@
 
         // ---------- Timers with a home-screen widget: limpwurt roots and birdhouses ----------
         const QUICK_TIMERS = [
+            { key: 'death', label: 'DEATHPILE', ms: 60 * 60 * 1000, nid: 2910000,
+              alertBeforeMs: 15 * 60 * 1000, warnMs: 15 * 60 * 1000, smallIcon: 'ic_stat_deathpile',
+              readyTitle: 'DEATHPILE EXPIRES SOON', readyBody: 'Your deathpile has 15 minutes left.' },
             { key: 'limp', label: 'Limpwurt Root', ms: 20 * 60 * 1000, nid: 2900000,
               readyTitle: 'Limpwurt roots ready!', readyBody: 'Time to harvest and replant your limpwurt.' },
             { key: 'bird', label: 'Birdhouses', ms: 50 * 60 * 1000, nid: 2000000,
@@ -1202,12 +1224,13 @@
             }
             if (!LN) return;
             try {
-                if (b.finish > Date.now()) {
+                const alertAt = b.finish - (d.alertBeforeMs || 0);
+                if (b.finish > 0 && alertAt > Date.now()) {
                     await ensureExtraChannel();
                     await LN.schedule({ notifications: [{
                         id: d.nid, title: d.readyTitle, body: d.readyBody,
-                        channelId: 'extra-timers', smallIcon: NOTIF_ICON,
-                        schedule: { at: new Date(b.finish), allowWhileIdle: true }
+                        channelId: 'extra-timers', smallIcon: d.smallIcon || NOTIF_ICON,
+                        schedule: { at: new Date(alertAt), allowWhileIdle: true }
                     }] });
                 } else {
                     await LN.cancel({ notifications: [{ id: d.nid }] });
@@ -1363,7 +1386,9 @@
                     time.innerText = 'Ready!'; time.className = 'ex-time done';
                     main.innerText = 'Restart'; clear.hidden = false;
                 } else {
-                    time.innerText = fmtDur(x.finish - now, true); time.className = 'ex-time running';
+                    const q = quickDef(x.id);
+                    const warn = q && q.warnMs && (x.finish - now) <= q.warnMs;
+                    time.innerText = fmtDur(x.finish - now, true); time.className = 'ex-time running' + (warn ? ' warn' : '');
                     main.innerText = 'Cancel'; clear.hidden = true;
                 }
             });
@@ -1444,7 +1469,7 @@
             { id: 'iron',      name: 'Ironman',    swatch: '#aab1ba' },
             { id: 'uim',       name: 'Ultimate',   swatch: '#f4f3ee' },
             { id: 'hcim',      name: 'Hardcore',   swatch: '#d9443a' },
-            { id: 'gim',       name: 'Group',      swatch: '#3fbad0' }
+            { id: 'gim',       name: 'Group',      swatch: '#3f78d8' }
         ];
         function currentTheme() {
             const id = localStorage.getItem('theme');
@@ -1454,10 +1479,22 @@
             if (id === 'oldschool') document.documentElement.removeAttribute('data-theme');
             else document.documentElement.setAttribute('data-theme', id);
         }
+        // Tells the Android side which theme is active so the widgets (and the app icon) can match it
+        async function pushTheme() {
+            if (!HW) return;
+            try {
+                await HW.setTheme({
+                    theme: currentTheme(),
+                    dark: document.documentElement.classList.contains('amoled'),
+                    icon: localStorage.getItem('icon_follow') !== '0'
+                });
+            } catch (e) { /* older build without themed widgets */ }
+        }
         function setTheme(id) {
             try { localStorage.setItem('theme', id); } catch (e) {}
             applyTheme(id);
             renderThemePicks();
+            pushTheme();
         }
         function renderThemePicks() {
             const box = document.getElementById('theme-picks');
@@ -1480,12 +1517,21 @@
             const dark = document.documentElement.classList.contains('amoled');
             document.getElementById('dark-switch').setAttribute('aria-checked', dark ? 'true' : 'false');
             document.getElementById('theme-note').innerText = dark ? 'Pure black background' : 'Normal background';
+            const iconOn = localStorage.getItem('icon_follow') !== '0';
+            document.getElementById('icon-switch').setAttribute('aria-checked', iconOn ? 'true' : 'false');
+        }
+        function toggleIconFollow() {
+            const on = localStorage.getItem('icon_follow') !== '0';
+            try { localStorage.setItem('icon_follow', on ? '0' : '1'); } catch (e) {}
+            syncThemeSwitch();
+            pushTheme();
         }
         function toggleDarkMode() {
             const dark = !document.documentElement.classList.contains('amoled');
             document.documentElement.classList.toggle('amoled', dark);
             try { localStorage.setItem('dark_mode', dark ? '1' : '0'); } catch (e) {}
             syncThemeSwitch();
+            pushTheme();
         }
 
         function openTickSettings(firstRun) {
@@ -1766,6 +1812,7 @@
             await setupNotifications();
             syncNotifications();
             pushAllQuick();
+            pushTheme();
 
             // Keep in step with the notification / widget replant buttons
             setInterval(pullNativeState, 3000);

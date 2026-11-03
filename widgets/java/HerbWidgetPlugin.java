@@ -78,4 +78,17 @@ public class HerbWidgetPlugin extends Plugin {
         HerbWidgetStore.setQuickDirty(getContext(), qt.key, false);
         call.resolve();
     }
+
+    // ---------- theme: widgets + app icon follow the app ----------
+    @PluginMethod
+    public void setTheme(PluginCall call) {
+        String theme = call.getString("theme", "oldschool");
+        boolean dark = call.getData().optBoolean("dark", false);
+        boolean icon = call.getData().optBoolean("icon", true);
+        HerbWidgetStore.setTheme(getContext(), theme, dark);
+        HerbWidgetRenderer.refreshAll(getContext());
+        for (QuickTimer q : QuickTimer.ALL) QuickWidgetRenderer.refresh(getContext(), q);
+        IconSwitcher.apply(getContext(), theme, icon);
+        call.resolve();
+    }
 }
