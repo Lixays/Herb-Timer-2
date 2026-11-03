@@ -475,6 +475,7 @@
         .mini-btn { padding: 7px 10px; font-size: 12px; letter-spacing: 0; }
         .ex-main { flex: 1; }
         .ex-clear[hidden] { display: none; }
+        .ex-divider { height: 1px; margin: 12px 2px; background: var(--line); }
         .empty-note { font-family: 'Roboto Mono', monospace; font-size: 12px; color: var(--dim2); padding: 6px 0 2px; }
 
         .add-form { display: flex; flex-direction: column; gap: 8px; }
@@ -725,10 +726,6 @@
     <div class="modal-overlay" id="more-modal" hidden onclick="if (event.target === this) closeMore()">
         <div class="modal-card osrs-panel">
             <h2 class="modal-title">Timers</h2>
-            <div class="info-block">
-                <div class="info-row"><span>Game time</span><b id="rs-time">--:--</b></div>
-            </div>
-            <div class="section-title">Other timers</div>
             <div id="extra-list"></div>
             <div class="section-title">Add a timer</div>
             <div class="add-form">
@@ -741,7 +738,7 @@
                 </div>
             </div>
             <div class="modal-error" id="ex-error"></div>
-            <p class="modal-text note">Alerts arrive even when the app is closed. Game time is UTC, the same clock the game uses.</p>
+            <p class="modal-text note">Alerts arrive even when the app is closed.</p>
             <div class="modal-actions">
                 <button class="osrs-btn modal-btn modal-save" onclick="closeMore()">Close</button>
             </div>
@@ -1034,7 +1031,7 @@
                     await HW.clearDirty();
                     updateAll();
                 }
-                await pullBird();
+                await pullAllQuick();
             } catch (e) { console.error('Could not read native state', e); }
         }
 
@@ -1179,68 +1176,72 @@
         function openStats() { renderStats(); document.getElementById('stats-modal').hidden = false; }
         function closeStats() { disarmClear(); document.getElementById('stats-modal').hidden = true; }
 
-        // ---------- Game time (the game runs on UTC) ----------
-        function tickGameTime() {
-            const u = new Date();
-            document.getElementById('rs-time').innerText = `${pad2(u.getUTCHours())}:${pad2(u.getUTCMinutes())} UTC`;
-        }
-
-        // ---------- Birdhouse timer (also drives the Birdhouse widget) ----------
-        const BIRD_NID = 2000000;
-        const BIRD_MS = 50 * 60 * 1000;
-        function loadBird() {
+        // ---------- Timers with a home-screen widget: limpwurt roots and birdhouses ----------
+        const QUICK_TIMERS = [
+            { key: 'limp', label: 'Limpwurt Root', ms: 20 * 60 * 1000, nid: 2900000,
+              readyTitle: 'Limpwurt roots ready!', readyBody: 'Time to harvest and replant your limpwurt.' },
+            { key: 'bird', label: 'Birdhouses', ms: 50 * 60 * 1000, nid: 2000000,
+              readyTitle: 'Birdhouses ready!', readyBody: 'Time to collect and reset your birdhouses.' }
+        ];
+        function quickDef(key) { return QUICK_TIMERS.find(q => q.key === key); }
+        function loadQuick(key) {
+            const d = quickDef(key);
             try {
-                const b = JSON.parse(localStorage.getItem('bird_timer'));
-                if (b && typeof b === 'object') return { finish: parseInt(b.finish) || 0, ms: parseInt(b.ms) || BIRD_MS };
+                const b = JSON.parse(localStorage.getItem(key + '_timer'));
+                if (b && typeof b === 'object') return { finish: parseInt(b.finish) || 0, ms: parseInt(b.ms) || d.ms };
             } catch (e) {}
-            return { finish: 0, ms: BIRD_MS };
+            return { finish: 0, ms: d.ms };
         }
-        function saveBird(b) { localStorage.setItem('bird_timer', JSON.stringify(b)); }
+        function saveQuick(key, b) { localStorage.setItem(key + '_timer', JSON.stringify(b)); }
 
-        // Hands the birdhouse timer to the Android side (alert + widget). Falls back to the notification plugin.
-        async function pushBird() {
-            const b = loadBird();
+        // Hands the timer to the Android side (alert + widget). Falls back to the notification plugin.
+        async function pushQuick(key) {
+            const d = quickDef(key), b = loadQuick(key);
             if (HW) {
-                try { await HW.setBird({ finish: b.finish, ms: b.ms }); return; } catch (e) { /* older build: fall through */ }
+                try { await HW.setQuick({ kind: key, finish: b.finish, ms: b.ms }); return; } catch (e) { /* older build: fall through */ }
             }
             if (!LN) return;
             try {
                 if (b.finish > Date.now()) {
                     await ensureExtraChannel();
                     await LN.schedule({ notifications: [{
-                        id: BIRD_NID, title: 'Birdhouses ready!', body: 'Time to collect and reset your birdhouses.',
+                        id: d.nid, title: d.readyTitle, body: d.readyBody,
                         channelId: 'extra-timers', smallIcon: NOTIF_ICON,
                         schedule: { at: new Date(b.finish), allowWhileIdle: true }
                     }] });
                 } else {
-                    await LN.cancel({ notifications: [{ id: BIRD_NID }] });
+                    await LN.cancel({ notifications: [{ id: d.nid }] });
                 }
-            } catch (e) { console.error('Could not schedule birdhouse alert', e); }
+            } catch (e) { console.error('Could not schedule alert', e); }
         }
-        // The widget (or the notification button) restarted the countdown while the app was closed
-        async function pullBird() {
+        function pushAllQuick() { QUICK_TIMERS.forEach(q => pushQuick(q.key)); }
+
+        // The widget (or the notification button) restarted a countdown while the app was closed
+        async function pullQuick(key) {
             if (!HW) return;
             try {
-                const s = await HW.getBird();
+                const s = await HW.getQuick({ kind: key });
                 if (s && s.dirty) {
-                    saveBird({ finish: parseInt(s.finish) || 0, ms: parseInt(s.ms) || BIRD_MS });
-                    await HW.clearBirdDirty();
+                    saveQuick(key, { finish: parseInt(s.finish) || 0, ms: parseInt(s.ms) || quickDef(key).ms });
+                    await HW.clearQuickDirty({ kind: key });
                     if (!document.getElementById('more-modal').hidden) tickExtra();
                 }
-            } catch (e) { /* older build without the birdhouse widget */ }
+            } catch (e) { /* older build without these widgets */ }
         }
-        function mainBird() {
-            const b = loadBird();
+        async function pullAllQuick() { for (const q of QUICK_TIMERS) await pullQuick(q.key); }
+
+        function mainQuick(key) {
+            const b = loadQuick(key);
             b.finish = (!b.finish || Date.now() >= b.finish) ? Date.now() + b.ms : 0;
-            saveBird(b);
-            pushBird();
+            saveQuick(key, b);
+            pushQuick(key);
             tickExtra();
         }
-        function clearBird() {
-            const b = loadBird();
+        function clearQuick(key) {
+            const b = loadQuick(key);
             b.finish = 0;
-            saveBird(b);
-            pushBird();
+            saveQuick(key, b);
+            pushQuick(key);
             tickExtra();
         }
 
@@ -1267,12 +1268,12 @@
                 if (Array.isArray(a)) list = a;
             } catch (e) {}
             // The Birdhouse timer used to live in this list: move it to its own permanent entry
-            const legacy = list.filter(x => x.name === 'Birdhouses' && x.ms === BIRD_MS);
+            const legacy = list.filter(x => x.name === 'Birdhouses' && x.ms === quickDef('bird').ms);
             if (legacy.length) {
                 if (!localStorage.getItem('bird_timer')) {
                     const running = legacy.find(x => x.finish > Date.now());
-                    saveBird({ finish: running ? running.finish : 0, ms: BIRD_MS });
-                    pushBird();
+                    saveQuick('bird', { finish: running ? running.finish : 0, ms: quickDef('bird').ms });
+                    pushQuick('bird');
                 }
                 legacy.forEach(x => cancelExtra(x));
                 list = list.filter(x => !legacy.includes(x));
@@ -1285,7 +1286,7 @@
         async function ensureExtraChannel() {
             if (extraChannelReady || !LN) return;
             try {
-                await LN.createChannel({ id: 'extra-timers', name: 'Other timers', description: 'Alerts for birdhouses, trees and custom timers', importance: 5, visibility: 1, vibration: true });
+                await LN.createChannel({ id: 'extra-timers', name: 'Other timers', description: 'Alerts for limpwurt, birdhouses, trees and custom timers', importance: 5, visibility: 1, vibration: true });
                 extraChannelReady = true;
             } catch (e) { console.error('Channel failed', e); }
         }
@@ -1312,7 +1313,8 @@
             const h = Math.floor(ms / 3600000), m = Math.round((ms % 3600000) / 60000);
             return h ? (m ? `${h}h ${m}m` : `${h}h`) : `${m}m`;
         }
-        function buildExtraRow(id, label, deletable) {
+        // mode: 'delete' = custom timer (removes it), 'reset' = built-in timer (sets it back to "Not started")
+        function buildExtraRow(id, label, mode) {
             const row = document.createElement('div');
             row.className = 'ex-row';
             row.dataset.id = id;
@@ -1321,29 +1323,34 @@
                 <div class="ex-actions">
                     <button type="button" class="osrs-btn mini-btn ex-main"></button>
                     <button type="button" class="osrs-btn mini-btn ex-clear" hidden>Clear</button>
-                    ${deletable ? '<button type="button" class="osrs-btn mini-btn ex-del" aria-label="Delete timer">&#10005;</button>' : ''}
+                    <button type="button" class="osrs-btn mini-btn ex-del" aria-label="${mode === 'delete' ? 'Delete timer' : 'Reset timer'}">&#10005;</button>
                 </div>`;
             row.querySelector('.ex-name').textContent = label;
             row.querySelector('.ex-main').onclick = () => mainExtra(id);
             row.querySelector('.ex-clear').onclick = () => clearExtra(id);
-            if (deletable) row.querySelector('.ex-del').onclick = () => deleteExtra(id);
+            row.querySelector('.ex-del').onclick = () => (mode === 'delete' ? deleteExtra(id) : clearExtra(id));
             return row;
+        }
+        function divider() {
+            const d = document.createElement('div');
+            d.className = 'ex-divider';
+            return d;
         }
         function renderExtraList() {
             const box = document.getElementById('extra-list');
             box.innerHTML = '';
-            box.appendChild(buildExtraRow('bird', `Birdhouses (${fmtMs(loadBird().ms)})`, false));
-            const hint = document.createElement('div');
-            hint.className = 'ex-hint';
-            hint.textContent = 'Add the Birdhouse widget to your home screen: one tap restarts this timer.';
-            box.appendChild(hint);
-            loadExtra().forEach(x => box.appendChild(buildExtraRow(x.id, `${x.name} (${fmtMs(x.ms)})`, true)));
+            QUICK_TIMERS.forEach((q, i) => {
+                box.appendChild(buildExtraRow(q.key, `${q.label} (${fmtMs(loadQuick(q.key).ms)})`, 'reset'));
+                if (i < QUICK_TIMERS.length - 1) box.appendChild(divider());
+            });
+            const custom = loadExtra();
+            if (custom.length) box.appendChild(divider());
+            custom.forEach(x => box.appendChild(buildExtraRow(x.id, `${x.name} (${fmtMs(x.ms)})`, 'delete')));
             tickExtra();
         }
         function tickExtra() {
             const now = Date.now();
-            const bird = loadBird();
-            [{ id: 'bird', finish: bird.finish }].concat(loadExtra()).forEach(x => {
+            QUICK_TIMERS.map(q => ({ id: q.key, finish: loadQuick(q.key).finish })).concat(loadExtra()).forEach(x => {
                 const row = document.querySelector(`.ex-row[data-id="${x.id}"]`);
                 if (!row) return;
                 const time = row.querySelector('.ex-time');
@@ -1362,7 +1369,7 @@
             });
         }
         function mainExtra(id) {
-            if (id === 'bird') { mainBird(); return; }
+            if (quickDef(id)) { mainQuick(id); return; }
             const list = loadExtra();
             const x = list.find(e => e.id === id);
             if (!x) return;
@@ -1378,7 +1385,7 @@
             tickExtra();
         }
         function clearExtra(id) {
-            if (id === 'bird') { clearBird(); return; }
+            if (quickDef(id)) { clearQuick(id); return; }
             const list = loadExtra();
             const x = list.find(e => e.id === id);
             if (!x) return;
@@ -1427,7 +1434,6 @@
         function openMore() {
             fillPresetSelect();
             renderExtraList();
-            tickGameTime();
             document.getElementById('more-modal').hidden = false;
         }
         function closeMore() { document.getElementById('more-modal').hidden = true; }
@@ -1733,7 +1739,7 @@
             const tickTimeEl = document.getElementById('global-tick-time');
             if (tickTimeEl) tickTimeEl.innerText = formatClock(nextTick.getTime());
 
-            if (!document.getElementById('more-modal').hidden) { tickGameTime(); tickExtra(); }
+            if (!document.getElementById('more-modal').hidden) { tickExtra(); }
 
             // Plant All button status
             const plantText = document.getElementById('plant-text');
@@ -1759,7 +1765,7 @@
             await pullNativeState();      // must come before the first push, so nothing gets overwritten
             await setupNotifications();
             syncNotifications();
-            pushBird();
+            pushAllQuick();
 
             // Keep in step with the notification / widget replant buttons
             setInterval(pullNativeState, 3000);

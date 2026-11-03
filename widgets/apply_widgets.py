@@ -30,15 +30,27 @@ if not MAIN.is_dir():
 
 # 1. Java sources
 PKG_DIR.mkdir(parents=True, exist_ok=True)
+# Classes from older versions of this package that no longer exist (they would break the build if copied)
+OBSOLETE_JAVA = {"HerbBird.java", "BirdWidgetRenderer.java"}
 for src in sorted((HERE / "java").glob("*.java")):
+    if src.name in OBSOLETE_JAVA:
+        continue
     shutil.copy2(src, PKG_DIR / src.name)
 print("java      ok")
 
 
 # 2. Resources (layouts, drawables, widget info, strings).
-#    Never overwrite a birdhouse picture that is already there (e.g. one you put in android-res/).
+#    Never overwrite a widget picture that is already there (e.g. one you put in android-res/).
+PICTURES = {
+    # file name        : wiki pictures to try, in order
+    "bird_house.png": ["Bird_house_detail.png", "Oak_bird_house_detail.png",
+                       "Maple_bird_house_detail.png", "Redwood_bird_house_detail.png"],
+    "limp_root.png": ["Limpwurt_root_detail.png"],
+}
+
+
 def copy_res(src, dst):
-    if os.path.basename(dst) == "bird_house.png" and os.path.exists(dst):
+    if os.path.basename(dst) in PICTURES and os.path.exists(dst):
         return dst
     return shutil.copy2(src, dst)
 
@@ -47,18 +59,16 @@ shutil.copytree(HERE / "res", RES, dirs_exist_ok=True, copy_function=copy_res)
 print("res       ok")
 
 
-# 3. Birdhouse picture: use the real one from the OSRS wiki if the build can download it.
-#    Falls back to the drawn birdhouse that ships in widgets/res if anything goes wrong.
-def fetch_birdhouse():
-    own = REPO / "android-res" / "drawable-nodpi" / "bird_house.png"
+# 3. Widget pictures: use the real ones from the OSRS wiki if the build can download them.
+#    Falls back to the drawn pictures that ship in widgets/res if anything goes wrong.
+def fetch_picture(file_name, candidates):
+    own = REPO / "android-res" / "drawable-nodpi" / file_name
     if own.exists():
-        print("birdhouse using your own android-res/drawable-nodpi/bird_house.png")
+        print(f"picture {file_name}: using your own android-res/drawable-nodpi/{file_name}")
         return
-    dest = RES / "drawable-nodpi" / "bird_house.png"
+    dest = RES / "drawable-nodpi" / file_name
     base = os.environ.get("HERB_WIKI_IMAGES", "https://oldschool.runescape.wiki/images/")
-    names = ["Bird_house_detail.png", "Oak_bird_house_detail.png",
-             "Maple_bird_house_detail.png", "Redwood_bird_house_detail.png"]
-    for name in names:
+    for name in candidates:
         try:
             req = urllib.request.Request(base + name, headers={
                 "User-Agent": "HerbTimerBuild/1.0 (personal GitHub Actions build of a timer app)"})
@@ -67,8 +77,12 @@ def fetch_birdhouse():
             if data[:8] != b"\x89PNG\r\n\x1a\n" or len(data) < 2000:
                 continue
             tmp = dest.with_suffix(".download.png")
-            tmp.write_bytes(data)
             small = dest.with_suffix(".small.png")
+            tmp.write_bytes(data)
+            width = int.from_bytes(data[16:20], "big")
+            if width < 64:          # a tiny inventory icon would look blurry: keep the drawn picture instead
+                tmp.unlink()
+                continue
             resized = False
             for tool in (["magick"], ["convert"]):
                 if shutil.which(tool[0]):
@@ -91,17 +105,18 @@ def fetch_birdhouse():
             for leftover in (tmp, small):
                 if leftover.exists():
                     leftover.unlink()
-            print(f"birdhouse using the wiki picture ({name})")
+            print(f"picture {file_name}: using the wiki picture ({name})")
             return
         except Exception as e:  # network / missing file: try the next name
-            print(f"birdhouse {name}: {e}")
-    print("birdhouse using the drawn birdhouse (could not download the wiki picture)")
+            print(f"picture {file_name}: {name}: {e}")
+    print(f"picture {file_name}: using the drawn picture (could not download one)")
 
 
-try:
-    fetch_birdhouse()
-except Exception as e:
-    print("birdhouse fallback in use:", e)
+for _file, _candidates in PICTURES.items():
+    try:
+        fetch_picture(_file, _candidates)
+    except Exception as e:
+        print(f"picture {_file}: fallback in use:", e)
 
 # 4. Manifest: widget + receiver entries and permissions (each added only if missing)
 manifest = MAIN / "AndroidManifest.xml"
@@ -147,6 +162,19 @@ COMPONENTS = {
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/bird_widget_1x1_info" />
+        </receiver>
+''',
+    "LimpWidgetProvider1x1": '''
+        <receiver
+            android:name="com.example.herbtimer.LimpWidgetProvider1x1"
+            android:exported="false"
+            android:label="Limpwurt Timer 1x1">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/limp_widget_1x1_info" />
         </receiver>
 ''',
     "HerbReceiver": '''

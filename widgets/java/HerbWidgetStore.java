@@ -93,28 +93,28 @@ final class HerbWidgetStore {
         prefs(c).edit().putString("alarms", s).apply();
     }
 
-    // ---------- birdhouse timer ----------
-    static final long BIRD_DEFAULT_MS = 50L * 60 * 1000;
+    // ---------- quick timers (limpwurt roots, birdhouses) ----------
+    // Stored per timer under "<key>_finish", "<key>_ms" and "<key>_dirty".
 
-    static long birdFinish(Context c) {
-        return prefs(c).getLong("bird_finish", 0);
+    static long quickFinish(Context c, String key) {
+        return prefs(c).getLong(key + "_finish", 0);
     }
 
-    static long birdMs(Context c) {
-        long ms = prefs(c).getLong("bird_ms", BIRD_DEFAULT_MS);
-        return ms > 0 ? ms : BIRD_DEFAULT_MS;
+    static long quickMs(Context c, String key, long fallback) {
+        long ms = prefs(c).getLong(key + "_ms", fallback);
+        return ms > 0 ? ms : fallback;
     }
 
-    static void setBird(Context c, long finish, long ms) {
-        prefs(c).edit().putLong("bird_finish", Math.max(0, finish)).putLong("bird_ms", ms > 0 ? ms : BIRD_DEFAULT_MS).apply();
+    static void setQuick(Context c, String key, long finish, long ms, long fallbackMs) {
+        prefs(c).edit().putLong(key + "_finish", Math.max(0, finish)).putLong(key + "_ms", ms > 0 ? ms : fallbackMs).apply();
     }
 
     /** True when the widget / notification button restarted the countdown and the app hasn't read that yet. */
-    static boolean isBirdDirty(Context c) {
-        return prefs(c).getBoolean("bird_dirty", false);
+    static boolean isQuickDirty(Context c, String key) {
+        return prefs(c).getBoolean(key + "_dirty", false);
     }
 
-    static void setBirdDirty(Context c, boolean dirty) {
-        prefs(c).edit().putBoolean("bird_dirty", dirty).apply();
+    static void setQuickDirty(Context c, String key, boolean dirty) {
+        prefs(c).edit().putBoolean(key + "_dirty", dirty).apply();
     }
 }

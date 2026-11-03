@@ -40,36 +40,42 @@ public class HerbWidgetPlugin extends Plugin {
         call.resolve();
     }
 
-    // ---------- birdhouse timer ----------
+    // ---------- quick timers: limpwurt roots + birdhouses ----------
 
-    /** The app tells us when the birdhouse countdown ends. We schedule the alert and redraw the widget. */
+    /** The app tells us when a countdown ends. We schedule the alert and redraw that timer's widget. */
     @PluginMethod
-    public void setBird(PluginCall call) {
+    public void setQuick(PluginCall call) {
+        QuickTimer qt = QuickTimer.byKey(call.getString("kind", ""));
+        if (qt == null) { call.reject("Unknown timer"); return; }
         JSObject ret = new JSObject();
-        if (HerbWidgetStore.isBirdDirty(getContext())) {
+        if (HerbWidgetStore.isQuickDirty(getContext(), qt.key)) {
             ret.put("ignored", true);   // the widget changed it first; the app will pull that shortly
             call.resolve(ret);
             return;
         }
         long finish = call.getData().optLong("finish", 0);
-        long ms = call.getData().optLong("ms", HerbWidgetStore.BIRD_DEFAULT_MS);
-        HerbWidgetStore.setBird(getContext(), finish, ms);
-        HerbBird.sync(getContext());
+        long ms = call.getData().optLong("ms", qt.defaultMs);
+        HerbWidgetStore.setQuick(getContext(), qt.key, finish, ms, qt.defaultMs);
+        qt.sync(getContext());
         call.resolve(ret);
     }
 
     @PluginMethod
-    public void getBird(PluginCall call) {
+    public void getQuick(PluginCall call) {
+        QuickTimer qt = QuickTimer.byKey(call.getString("kind", ""));
+        if (qt == null) { call.reject("Unknown timer"); return; }
         JSObject ret = new JSObject();
-        ret.put("dirty", HerbWidgetStore.isBirdDirty(getContext()));
-        ret.put("finish", HerbWidgetStore.birdFinish(getContext()));
-        ret.put("ms", HerbWidgetStore.birdMs(getContext()));
+        ret.put("dirty", HerbWidgetStore.isQuickDirty(getContext(), qt.key));
+        ret.put("finish", qt.finish(getContext()));
+        ret.put("ms", qt.ms(getContext()));
         call.resolve(ret);
     }
 
     @PluginMethod
-    public void clearBirdDirty(PluginCall call) {
-        HerbWidgetStore.setBirdDirty(getContext(), false);
+    public void clearQuickDirty(PluginCall call) {
+        QuickTimer qt = QuickTimer.byKey(call.getString("kind", ""));
+        if (qt == null) { call.reject("Unknown timer"); return; }
+        HerbWidgetStore.setQuickDirty(getContext(), qt.key, false);
         call.resolve();
     }
 }
