@@ -23,4 +23,7 @@ Added on top of the web app, all in `widgets/` (copied into the Android project 
   An alert "DEATHPILE EXPIRES SOON" (white skull icon) arrives 15 minutes before it ends.
 - **Themes everywhere** - all widgets use the app's theme (and Dark Mode). The app icon has one variant per theme
   (`android-res/`), switched with activity-aliases that `apply_widgets.py` adds to the manifest.
+- **Deathpile** - while a deathpile countdown runs there is a silent notification "Deathpile ACTIVE / Despawn in 42m" that stays
+  and updates every minute (it disappears when the timer is cleared or runs out). The widget shows a pile of bones while idle.
+- **Limpwurt widget** - flower growth stages (5-minute tick lined up with the herb tick); says "Empty" when nothing is planted.
 

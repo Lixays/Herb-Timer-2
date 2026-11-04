@@ -29,7 +29,7 @@
         android:layout_weight="1"
         android:contentDescription="@null"
         android:scaleType="fitCenter"
-        android:src="@drawable/bird_house" />
+        android:src="@drawable/bird_empty" />
 
     <TextView
         android:id="@+id/quick_status"

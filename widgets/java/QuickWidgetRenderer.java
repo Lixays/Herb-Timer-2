@@ -35,14 +35,14 @@ final class QuickWidgetRenderer {
 
         // Warning state (deathpile): the last stretch of the countdown, and after it has expired
         boolean warn = qt.warnImageRes != 0 && (ready || (running && finish - now <= qt.alertBeforeMs));
-        v.setImageViewResource(R.id.quick_image, warn ? qt.warnImageRes : qt.imageRes);
+        v.setImageViewResource(R.id.quick_image, qt.imageFor(now, finish));
 
         // Top line (like the herb widget): what to do next
         v.setTextViewText(R.id.quick_title, running ? qt.runningTop : ready ? qt.readyTop : qt.idleTop);
         v.setTextColor(R.id.quick_title, warn ? th.idle : ready ? th.ready : th.accent);
 
         // Bottom line: minutes left, the "over" text or "Start"
-        v.setTextViewText(R.id.quick_status, running ? HerbWidgetRenderer.minutesLeft(finish - now) : ready ? qt.readyBottom : "Start");
+        v.setTextViewText(R.id.quick_status, running ? HerbWidgetRenderer.minutesLeft(finish - now) : ready ? qt.readyBottom : qt.idleBottom);
         v.setTextColor(R.id.quick_status, warn ? th.idle : running ? th.text : ready ? th.ready : th.idle);
 
         v.setContentDescription(R.id.quick_root, running ? qt.runningTop + " timer running" : ready ? qt.runningTop + (qt.warnImageRes != 0 ? " expired" : " ready") : qt.runningTop + " timer not started");

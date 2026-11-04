@@ -310,6 +310,7 @@
         .about-text { font-size: 14px; line-height: 1.55; margin-bottom: 4px; }
         .gear-btn svg { width: calc(var(--u) * 17); height: calc(var(--u) * 17); fill: var(--osrs-gold-text); }
         /* each game-mode theme swaps the cog for that mode's icon */
+        .stats-btn img { height: calc(var(--u) * 19); width: auto; display: block; }
         .settings-btn .mode-icon { display: none; height: calc(var(--u) * 19); width: auto; image-rendering: pixelated; }
         html[data-theme="iron"] .settings-btn svg, html[data-theme="uim"] .settings-btn svg,
         html[data-theme="hcim"] .settings-btn svg, html[data-theme="gim"] .settings-btn svg { display: none; }
@@ -439,7 +440,13 @@
             padding: 6px 14px 4px;
         }
         .foot-btn { flex: 0 0 auto; min-width: 66px; padding: 8px 10px; font-size: 12px; letter-spacing: 0; }
-        .app-footer .app-credit { flex: 1; margin: 0; padding: 0; font-size: 13px; }
+        .app-footer .app-credit { flex: 1; margin: 0; padding: 0; font-size: 13px; cursor: pointer; }
+        .app-footer .app-credit { white-space: nowrap; min-width: 0; }
+        @media (max-width: 400px) {
+            .app-footer { padding: 6px 4px 4px; gap: 4px; }
+            .foot-btn { min-width: 0; padding: 8px 6px; font-size: 10px; }
+            .app-footer .app-credit { font-size: 10px; letter-spacing: 0; }
+        }
 
         .section-title {
             font-family: 'Cinzel', serif;
@@ -483,6 +490,7 @@
         .mini-btn { padding: 7px 10px; font-size: 12px; letter-spacing: 0; }
         .ex-main { flex: 1; }
         .ex-clear[hidden] { display: none; }
+        .death-skull { display: block; margin: 2px auto 12px; height: 84px; width: auto; }
         .ex-divider { height: 1px; margin: 12px 2px; background: var(--line); }
         .empty-note { font-family: 'Roboto Mono', monospace; font-size: 12px; color: var(--dim2); padding: 6px 0 2px; }
 
@@ -647,8 +655,8 @@
 
         <!-- HEADER -->
         <div class="app-header">
-            <button class="header-badge gear-btn" onclick="openAbout()" aria-label="About">
-                <svg viewBox="0 0 24 24"><path d="M8.2 8.6a3.9 3.9 0 1 1 6.3 3.1c-1.4 1.1-2.5 1.8-2.5 3.6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="12" cy="19.6" r="1.7" fill="currentColor"/></svg>
+            <button class="header-badge stats-btn" onclick="openStats()" aria-label="Run stats">
+                <img src="img/stats.png" alt="">
             </button>
             <h1 class="osrs-font-title">Herb Patch Timers</h1>
             <button class="settings-btn header-badge gear-btn" onclick="openTickSettings(false)" aria-label="Settings">
@@ -697,8 +705,8 @@
 
         <div class="app-footer">
             <button class="osrs-btn foot-btn" onclick="openMore()">Timers</button>
-            <div class="app-credit">Created by: Rikku</div>
-            <button class="osrs-btn foot-btn" onclick="openStats()">Stats</button>
+            <div class="app-credit" onclick="openAbout()" role="button" tabindex="0">Created by: Rikku</div>
+            <button class="osrs-btn foot-btn" onclick="openDeath()">Deathpile</button>
         </div>
 
     </div>
@@ -760,6 +768,19 @@
             <p class="modal-text note">Alerts arrive even when the app is closed.</p>
             <div class="modal-actions">
                 <button class="osrs-btn modal-btn modal-save" onclick="closeMore()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DEATHPILE -->
+    <div class="modal-overlay" id="death-modal" hidden onclick="if (event.target === this) closeDeath()">
+        <div class="modal-card osrs-panel">
+            <h2 class="modal-title">Deathpile</h2>
+            <img id="death-skull" class="death-skull" src="img/bones.png" alt="">
+            <div id="death-box"></div>
+            <p class="modal-text note">A UIM deathpile lasts 60 minutes. You get an alert when 15 minutes are left, and the skull turns red.</p>
+            <div class="modal-actions">
+                <button class="osrs-btn modal-btn modal-save" onclick="closeDeath()">Close</button>
             </div>
         </div>
     </div>
@@ -1159,16 +1180,10 @@
             let streak = 0;
             while (days.has(d.toDateString())) { streak++; d.setDate(d.getDate() - 1); }
 
-            let avgGap = '-';
-            if (runs.length >= 2) {
-                const gaps = [];
-                for (let i = Math.max(1, runs.length - 10); i < runs.length; i++) gaps.push(runs[i].start - runs[i - 1].start);
-                avgGap = fmtDur(gaps.reduce((a, b) => a + b, 0) / gaps.length);
-            }
             const last = runs.length ? `${fmtDur(now - runs[runs.length - 1].start)} ago` : '-';
             const rows = [
                 ['Runs today', today], ['Runs this week', week], ['Total runs', runs.length],
-                ['Day streak', streak], ['Last run', last], ['Avg. time between runs', avgGap],
+                ['Day streak', streak], ['Last run', last],
                 ['Patches planted', planted]
             ];
             document.getElementById('stats-body').innerHTML =
@@ -1197,10 +1212,10 @@
 
         // ---------- Timers with a home-screen widget: limpwurt roots and birdhouses ----------
         const QUICK_TIMERS = [
-            { key: 'death', label: 'DEATHPILE', ms: 60 * 60 * 1000, nid: 2910000,
+            { key: 'death', label: 'DEATHPILE', ms: 60 * 60 * 1000, nid: 2910000, ownModal: true,
               alertBeforeMs: 15 * 60 * 1000, warnMs: 15 * 60 * 1000, smallIcon: 'ic_stat_deathpile',
               readyTitle: 'DEATHPILE EXPIRES SOON', readyBody: 'Your deathpile has 15 minutes left.' },
-            { key: 'limp', label: 'Limpwurt Root', ms: 20 * 60 * 1000, nid: 2900000,
+            { key: 'limp', label: 'Limpwurt Root', ms: 20 * 60 * 1000, nid: 2900000, tickEvery: 5, growMs: 15 * 60 * 1000,
               readyTitle: 'Limpwurt roots ready!', readyBody: 'Time to harvest and replant your limpwurt.' },
             { key: 'bird', label: 'Birdhouses', ms: 50 * 60 * 1000, nid: 2000000,
               readyTitle: 'Birdhouses ready!', readyBody: 'Time to collect and reset your birdhouses.' }
@@ -1247,15 +1262,31 @@
                 if (s && s.dirty) {
                     saveQuick(key, { finish: parseInt(s.finish) || 0, ms: parseInt(s.ms) || quickDef(key).ms });
                     await HW.clearQuickDirty({ kind: key });
-                    if (!document.getElementById('more-modal').hidden) tickExtra();
+                    if (timerModalOpen()) tickExtra();
                 }
             } catch (e) { /* older build without these widgets */ }
         }
         async function pullAllQuick() { for (const q of QUICK_TIMERS) await pullQuick(q.key); }
 
+        // Flowers grow on a 5-minute tick that lines up with the herb tick (herb :09 -> flowers :04, :09, :14 ...).
+        // Planting waits for the next tick, then three more ticks = ready.
+        function quickStartFinish(key, b) {
+            const d = quickDef(key);
+            if (d.tickEvery) {
+                const every = d.tickEvery, off = WINDOWS[0] % every;
+                const when = new Date();
+                const m = when.getMinutes();
+                let step = ((off - (m % every)) + every) % every;
+                if (step === 0) step = every;
+                when.setSeconds(0, 0);
+                when.setMinutes(m + step);
+                return when.getTime() + d.growMs;
+            }
+            return Date.now() + b.ms;
+        }
         function mainQuick(key) {
             const b = loadQuick(key);
-            b.finish = (!b.finish || Date.now() >= b.finish) ? Date.now() + b.ms : 0;
+            b.finish = (!b.finish || Date.now() >= b.finish) ? quickStartFinish(key, b) : 0;
             saveQuick(key, b);
             pushQuick(key);
             tickExtra();
@@ -1362,9 +1393,10 @@
         function renderExtraList() {
             const box = document.getElementById('extra-list');
             box.innerHTML = '';
-            QUICK_TIMERS.forEach((q, i) => {
+            const onPage = QUICK_TIMERS.filter(q => !q.ownModal);
+            onPage.forEach((q, i) => {
                 box.appendChild(buildExtraRow(q.key, `${q.label} (${fmtMs(loadQuick(q.key).ms)})`, 'reset'));
-                if (i < QUICK_TIMERS.length - 1) box.appendChild(divider());
+                if (i < onPage.length - 1) box.appendChild(divider());
             });
             const custom = loadExtra();
             if (custom.length) box.appendChild(divider());
@@ -1392,7 +1424,29 @@
                     main.innerText = 'Cancel'; clear.hidden = true;
                 }
             });
+            updateDeathSkull(now);
         }
+        function timerModalOpen() {
+            return !document.getElementById('more-modal').hidden || !document.getElementById('death-modal').hidden;
+        }
+        function updateDeathSkull(now) {
+            const sk = document.getElementById('death-skull');
+            if (!sk) return;
+            const d = loadQuick('death'), q = quickDef('death');
+            const red = d.finish > 0 && (d.finish - now) <= q.warnMs;      // last 15 minutes, and once it has expired
+            // nothing running: a pile of bones. Running: white skull, red for the last 15 minutes
+            const want = d.finish <= 0 ? 'img/bones.png' : red ? 'img/skull_red.png' : 'img/skull_white.png';
+            if (!sk.src.endsWith(want)) sk.src = want;
+        }
+        function openDeath() {
+            const box = document.getElementById('death-box');
+            box.innerHTML = '';
+            box.appendChild(buildExtraRow('death', `${quickDef('death').label} (${fmtMs(loadQuick('death').ms)})`, 'reset'));
+            tickExtra();
+            document.getElementById('death-modal').hidden = false;
+        }
+        function closeDeath() { document.getElementById('death-modal').hidden = true; }
+
         function mainExtra(id) {
             if (quickDef(id)) { mainQuick(id); return; }
             const list = loadExtra();
@@ -1785,7 +1839,7 @@
             const tickTimeEl = document.getElementById('global-tick-time');
             if (tickTimeEl) tickTimeEl.innerText = formatClock(nextTick.getTime());
 
-            if (!document.getElementById('more-modal').hidden) { tickExtra(); }
+            if (timerModalOpen()) { tickExtra(); }
 
             // Plant All button status
             const plantText = document.getElementById('plant-text');
