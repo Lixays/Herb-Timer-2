@@ -308,12 +308,12 @@
         /* ---------- Settings gear + farming tick pop-up ---------- */
         .gear-btn { cursor: pointer; padding: 0; font: inherit; color: inherit; }
         .about-text { font-size: 14px; line-height: 1.55; margin-bottom: 4px; }
-        .gear-btn svg { width: calc(var(--u) * 17); height: calc(var(--u) * 17); fill: var(--osrs-gold-text); }
+        .settings-icon { width: calc(var(--u) * 17); height: auto; display: block; image-rendering: pixelated; }
         /* each game-mode theme swaps the cog for that mode's icon */
         .stats-btn img { height: calc(var(--u) * 19); width: auto; display: block; }
         .settings-btn .mode-icon { display: none; height: calc(var(--u) * 19); width: auto; image-rendering: pixelated; }
-        html[data-theme="iron"] .settings-btn svg, html[data-theme="uim"] .settings-btn svg,
-        html[data-theme="hcim"] .settings-btn svg, html[data-theme="gim"] .settings-btn svg { display: none; }
+        html[data-theme="iron"] .settings-btn .settings-icon, html[data-theme="uim"] .settings-btn .settings-icon,
+        html[data-theme="hcim"] .settings-btn .settings-icon, html[data-theme="gim"] .settings-btn .settings-icon { display: none; }
         html[data-theme="iron"] .mode-icon.m-iron, html[data-theme="uim"] .mode-icon.m-uim,
         html[data-theme="hcim"] .mode-icon.m-hcim, html[data-theme="gim"] .mode-icon.m-gim { display: block; }
         html[data-theme="uim"]:not(.amoled) .settings-btn { background: #2f2f2d; }
@@ -440,7 +440,7 @@
             padding: 6px 14px 4px;
         }
         .foot-btn { flex: 0 0 auto; min-width: 66px; padding: 8px 10px; font-size: 12px; letter-spacing: 0; }
-        .app-footer .app-credit { flex: 1; margin: 0; padding: 0; font-size: 13px; cursor: pointer; }
+        .app-footer .app-credit { flex: 0 1 auto; margin: 0 auto; padding: 0; line-height: 1.1; font-size: 13px; cursor: pointer; }
         .app-footer .app-credit { white-space: nowrap; min-width: 0; }
         @media (max-width: 400px) {
             .app-footer { padding: 6px 4px 4px; gap: 4px; }
@@ -490,7 +490,9 @@
         .mini-btn { padding: 7px 10px; font-size: 12px; letter-spacing: 0; }
         .ex-main { flex: 1; }
         .ex-clear[hidden] { display: none; }
-        .death-skull { display: block; margin: 2px auto 12px; height: 84px; width: auto; }
+        /* the Deathpile card is a patch card, drawn bigger */
+        .death-card { --u: 3px; margin-bottom: 12px; }
+        .death-card .farming-icon { width: calc(var(--u) * 19); height: calc(var(--u) * 14); image-rendering: auto; }
         .ex-divider { height: 1px; margin: 12px 2px; background: var(--line); }
         .empty-note { font-family: 'Roboto Mono', monospace; font-size: 12px; color: var(--dim2); padding: 6px 0 2px; }
 
@@ -664,7 +666,7 @@
                 <img class="mode-icon m-uim" src="img/uim.png" alt="">
                 <img class="mode-icon m-hcim" src="img/hcim.png" alt="">
                 <img class="mode-icon m-gim" src="img/gim.png" alt="">
-                <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                <img class="settings-icon" src="img/settings.png" alt="">
             </button>
         </div>
 
@@ -704,7 +706,7 @@
         </div>
 
         <div class="app-footer">
-            <button class="osrs-btn foot-btn" onclick="openMore()">Timers</button>
+            <button class="osrs-btn foot-btn" onclick="openMore()">Extras</button>
             <div class="app-credit" onclick="openAbout()" role="button" tabindex="0">Created by: Rikku</div>
             <button class="osrs-btn foot-btn" onclick="openDeath()">Deathpile</button>
         </div>
@@ -752,7 +754,7 @@
     <!-- OTHER TIMERS + RESETS -->
     <div class="modal-overlay" id="more-modal" hidden onclick="if (event.target === this) closeMore()">
         <div class="modal-card osrs-panel">
-            <h2 class="modal-title">Timers</h2>
+            <h2 class="modal-title">Extras</h2>
             <div id="extra-list"></div>
             <div class="section-title">Add a timer</div>
             <div class="add-form">
@@ -775,10 +777,16 @@
     <!-- DEATHPILE -->
     <div class="modal-overlay" id="death-modal" hidden onclick="if (event.target === this) closeDeath()">
         <div class="modal-card osrs-panel">
-            <h2 class="modal-title">Deathpile</h2>
-            <img id="death-skull" class="death-skull" src="img/bones.png" alt="">
-            <div id="death-box"></div>
-            <p class="modal-text note">A UIM deathpile lasts 60 minutes. You get an alert when 15 minutes are left, and the skull turns red.</p>
+            <div class="osrs-card death-card" onclick="toggleDeath()">
+                <div class="patch-name-text">Deathpile</div>
+                <div class="timer-row">
+                    <img class="farming-icon" id="death-icon-l" src="img/death_idle.png" alt="">
+                    <div class="timer" id="death-timer">Empty</div>
+                    <img class="farming-icon" id="death-icon-r" src="img/death_idle.png" alt="">
+                </div>
+                <button class="osrs-btn card-btn" id="death-btn">Start</button>
+            </div>
+            <p class="modal-text note">Tap the card to start a 60 minute UIM deathpile, and again to cancel it. You get an alert when 15 minutes are left, and the bones turn red.</p>
             <div class="modal-actions">
                 <button class="osrs-btn modal-btn modal-save" onclick="closeDeath()">Close</button>
             </div>
@@ -842,7 +850,7 @@
         const ALL_PATCHES = [
             { id: 'ardougne', name: 'Ardougne', icon: 'https://oldschool.runescape.wiki/images/Ardougne_cloak_4.png' },
             { id: 'varlamore', name: 'Varlamore', icon: 'https://oldschool.runescape.wiki/images/Perfected_quetzal_whistle.png' },
-            { id: 'ecto', name: 'Morytania', icon: 'https://oldschool.runescape.wiki/images/Ectophial.png' },
+            { id: 'ecto', name: 'Morytania', icon: 'img/teleport.png' },
             { id: 'catherby', name: 'Catherby', icon: 'https://oldschool.runescape.wiki/images/Catherby_Teleport_icon_%28mobile%29.png' },
             { id: 'weiss', name: 'Weiss', icon: 'https://oldschool.runescape.wiki/images/Icy_basalt.png' },
             { id: 'stronghold', name: 'Stronghold', icon: 'https://oldschool.runescape.wiki/images/Stony_basalt.png' },
@@ -1424,25 +1432,48 @@
                     main.innerText = 'Cancel'; clear.hidden = true;
                 }
             });
-            updateDeathSkull(now);
+            updateDeathCard(now);
         }
         function timerModalOpen() {
             return !document.getElementById('more-modal').hidden || !document.getElementById('death-modal').hidden;
         }
-        function updateDeathSkull(now) {
-            const sk = document.getElementById('death-skull');
-            if (!sk) return;
+        // Deathpile card: picture + text depend on the state
+        //   not running -> dark bones | running -> white bones | last 15 minutes -> red bones | reached zero -> WIPED
+        function deathState(now) {
             const d = loadQuick('death'), q = quickDef('death');
-            const red = d.finish > 0 && (d.finish - now) <= q.warnMs;      // last 15 minutes, and once it has expired
-            // nothing running: a pile of bones. Running: white skull, red for the last 15 minutes
-            const want = d.finish <= 0 ? 'img/bones.png' : red ? 'img/skull_red.png' : 'img/skull_white.png';
-            if (!sk.src.endsWith(want)) sk.src = want;
+            if (!d.finish) return 'idle';
+            if (now >= d.finish) return 'wiped';
+            return (d.finish - now) <= q.warnMs ? 'warn' : 'run';
+        }
+        const DEATH_IMG = { idle: 'img/death_idle.png', run: 'img/death_run.png', warn: 'img/death_warn.png', wiped: 'img/death_wiped.png' };
+        function updateDeathCard(now) {
+            const timer = document.getElementById('death-timer');
+            if (!timer) return;
+            const d = loadQuick('death');
+            const st = deathState(now);
+            ['death-icon-l', 'death-icon-r'].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el.src.endsWith(DEATH_IMG[st])) el.src = DEATH_IMG[st];
+            });
+            const btn = document.getElementById('death-btn');
+            if (st === 'idle') {
+                timer.innerText = 'Empty'; timer.style.color = 'var(--osrs-red-text)'; btn.innerText = 'Start';
+            } else if (st === 'wiped') {
+                timer.innerText = 'WIPED'; timer.style.color = 'var(--osrs-red-text)'; btn.innerText = 'Restart';
+            } else {
+                const rem = d.finish - now;
+                timer.innerText = `${Math.floor(rem / 60000)}m ${pad2(Math.floor(rem / 1000) % 60)}s`;
+                timer.style.color = st === 'warn' ? 'var(--osrs-red-text)' : 'var(--osrs-green-text)';
+                btn.innerText = formatClock(d.finish);
+            }
+        }
+        function toggleDeath() {
+            const d = loadQuick('death');
+            if (d.finish && Date.now() < d.finish) clearQuick('death'); else mainQuick('death');
+            updateDeathCard(Date.now());
         }
         function openDeath() {
-            const box = document.getElementById('death-box');
-            box.innerHTML = '';
-            box.appendChild(buildExtraRow('death', `${quickDef('death').label} (${fmtMs(loadQuick('death').ms)})`, 'reset'));
-            tickExtra();
+            updateDeathCard(Date.now());
             document.getElementById('death-modal').hidden = false;
         }
         function closeDeath() { document.getElementById('death-modal').hidden = true; }
@@ -1721,19 +1752,25 @@
             syncNotifications();
         }
 
-        // Plants empty patches AND restarts the ones that are ready to harvest (same as the widget button).
+        // The big button next to RESET:
+        //   HARVEST (everything planted is ready)  -> clears the finished timers, nothing is replanted
+        //   PLANT ALL / GROWING                    -> plants the empty patches (growing ones are left alone)
         function plantAllPatches() {
             const now = Date.now();
-            const finishTime = getFirstTick(new Date()).getTime() + GROW_MS;
-            let planted = 0;
-            patches.forEach(p => {
-                const f = parseInt(localStorage.getItem(`finish_${p.id}`));
-                if (!f || f <= now) {
-                    localStorage.setItem(`finish_${p.id}`, finishTime.toString());
-                    planted++;
-                }
-            });
-            logPlants(planted);
+            const active = patches.filter(p => localStorage.getItem(`finish_${p.id}`));
+            if (active.length && active.every(p => now >= parseInt(localStorage.getItem(`finish_${p.id}`)))) {
+                active.forEach(p => localStorage.removeItem(`finish_${p.id}`));
+            } else {
+                const finishTime = getFirstTick(new Date()).getTime() + GROW_MS;
+                let planted = 0;
+                patches.forEach(p => {
+                    if (!localStorage.getItem(`finish_${p.id}`)) {
+                        localStorage.setItem(`finish_${p.id}`, finishTime.toString());
+                        planted++;
+                    }
+                });
+                logPlants(planted);
+            }
             updateAll();
             syncNotifications();
         }

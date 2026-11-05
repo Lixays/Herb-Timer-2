@@ -134,7 +134,8 @@ final class HerbWidgetRenderer {
         }
         PendingIntent plantAllTap = open;   // until the app has sent its timers, just open it
         if (HerbWidgetStore.hasTimers(app)) {
-            Intent plantAll = new Intent(app, HerbReceiver.class).setAction(HerbReceiver.ACTION_PLANT_ALL);
+            // 2x1: plant / restart. 1x1: the same, and when everything is already growing a tap cancels it all.
+            Intent plantAll = new Intent(app, HerbReceiver.class).setAction(wide ? HerbReceiver.ACTION_PLANT_ALL : HerbReceiver.ACTION_TOGGLE_ALL);
             plantAllTap = PendingIntent.getBroadcast(app, 5, plantAll,
                     PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         }

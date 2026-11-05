@@ -26,4 +26,8 @@ Added on top of the web app, all in `widgets/` (copied into the Android project 
 - **Deathpile** - while a deathpile countdown runs there is a silent notification "Deathpile ACTIVE / Despawn in 42m" that stays
   and updates every minute (it disappears when the timer is cleared or runs out). The widget shows a pile of bones while idle.
 - **Limpwurt widget** - flower growth stages (5-minute tick lined up with the herb tick); says "Empty" when nothing is planted.
+- **Tap to cancel** - on the limpwurt, birdhouse and deathpile 1x1 widgets, tapping the picture cancels a running countdown
+  (and starts it / restarts it when it is not running). On the herb 1x1, tapping when everything is already growing cancels it all.
+- **Deathpile pictures** - not running: dark bones; running: white bones; last 15 minutes: red bones; at zero: the "wiped"
+  picture and the text WIPED.
 

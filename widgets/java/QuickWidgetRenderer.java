@@ -46,15 +46,15 @@ final class QuickWidgetRenderer {
         v.setTextColor(R.id.quick_status, warn ? th.idle : running ? th.text : ready ? th.ready : th.idle);
 
         v.setContentDescription(R.id.quick_root, running ? qt.runningTop + " timer running" : ready ? qt.runningTop + (qt.warnImageRes != 0 ? " expired" : " ready") : qt.runningTop + " timer not started");
-        v.setContentDescription(R.id.quick_image, "Restart " + qt.runningTop + " timer");
+        v.setContentDescription(R.id.quick_image, (running ? "Cancel " : "Start ") + qt.runningTop + " timer");
 
-        // Tap the picture: restart. Tap the rest: open the app.
+        // Tap the picture: cancel while running, otherwise start / restart. Tap the rest: open the app.
         Intent launch = app.getPackageManager().getLaunchIntentForPackage(app.getPackageName());
         if (launch != null) {
             v.setOnClickPendingIntent(R.id.quick_root, PendingIntent.getActivity(app, 0, launch,
                     PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE));
         }
-        v.setOnClickPendingIntent(R.id.quick_image, qt.restartIntent(app));
+        v.setOnClickPendingIntent(R.id.quick_image, qt.toggleIntent(app));
 
         mgr.updateAppWidget(ids, v);
         scheduleRefresh(app, qt, now, finish);

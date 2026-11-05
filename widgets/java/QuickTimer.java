@@ -39,7 +39,7 @@ final class QuickTimer {
     int ongoingNid = 0;
     int smallIconRes = R.drawable.ic_stat_herb;    // status-bar icon of the alert
     final Class<?> provider;
-    final String readyAction, restartAction, refreshAction, tickAction;
+    final String readyAction, restartAction, refreshAction, tickAction, toggleAction;
 
     private QuickTimer(String key, long defaultMs, int nid, String notifTitle, String notifText, String restartLabel,
                        String runningTop, String readyTop, String idleTop, int imageRes, Class<?> provider) {
@@ -59,6 +59,7 @@ final class QuickTimer {
         this.restartAction = "com.example.herbtimer." + up + "_RESTART";
         this.refreshAction = "com.example.herbtimer." + up + "_REFRESH";
         this.tickAction = "com.example.herbtimer." + up + "_TICK";
+        this.toggleAction = "com.example.herbtimer." + up + "_TOGGLE";
     }
 
     static final QuickTimer LIMP = new QuickTimer("limp", 20L * 60 * 1000, 2900000,
@@ -74,10 +75,10 @@ final class QuickTimer {
     /** UIM deathpile: 60 minutes, warns 15 minutes before it expires. The widget turns red for those last 15 minutes. */
     static final QuickTimer DEATH = new QuickTimer("death", 60L * 60 * 1000, 2910000,
             "DEATHPILE EXPIRES SOON", "Your deathpile has 15 minutes left.", null,
-            "Deathpile", "Deathpile", "Deathpile", R.drawable.skull_white, DeathWidgetProvider1x1.class)
+            "Deathpile", "Deathpile", "Deathpile", R.drawable.death_run, DeathWidgetProvider1x1.class)
             .alertBefore(15L * 60 * 1000)
-            .warnImage(R.drawable.skull_red)
-            .readyBottom("Expired")
+            .warnImage(R.drawable.death_warn)
+            .readyBottom("WIPED")
             .smallIcon(R.drawable.ic_stat_deathpile)
             .ongoing("Deathpile ACTIVE", "Despawn in ", 2920000);
 
@@ -150,9 +151,9 @@ final class QuickTimer {
             case "bird":
                 return idle ? R.drawable.bird_empty : ready ? R.drawable.bird_done : R.drawable.bird_running;
             default: {                                                  // deathpile
-                if (idle) return R.drawable.deathpile_bones;            // nothing running: a pile of bones
-                boolean warn = ready || (!idle && finish - now <= alertBeforeMs);
-                return warn ? R.drawable.skull_red : R.drawable.skull_white;
+                if (idle) return R.drawable.death_idle;                 // not running: dark bones
+                if (ready) return R.drawable.death_wiped;               // reached zero: wiped
+                return finish - now <= alertBeforeMs ? R.drawable.death_warn : R.drawable.death_run;   // red in the last 15 minutes
             }
         }
     }
@@ -167,6 +168,24 @@ final class QuickTimer {
         sync(c);
     }
 
+    boolean isRunning(Context c) {
+        return finish(c) > System.currentTimeMillis();
+    }
+
+    /** Widget tap on a running countdown: stop it. */
+    void cancel(Context ctx) {
+        Context c = ctx.getApplicationContext();
+        HerbWidgetStore.setQuick(c, key, 0, ms(c), defaultMs);
+        HerbWidgetStore.setQuickDirty(c, key, true);
+        dismissAlert(c);
+        sync(c);
+    }
+
+    /** Widget tap: cancel while running, otherwise start (or restart once it has finished). */
+    void toggle(Context c) {
+        if (isRunning(c)) cancel(c); else restart(c);
+    }
+
     /** Handles this timer's broadcasts. Returns true if the action belonged to one of them. */
     static boolean handleAction(Context c, String action) {
         for (QuickTimer q : ALL) {
@@ -177,6 +196,10 @@ final class QuickTimer {
             }
             if (q.restartAction.equals(action)) {
                 q.restart(c);
+                return true;
+            }
+            if (q.toggleAction.equals(action)) {
+                q.toggle(c);
                 return true;
             }
             if (q.tickAction.equals(action)) {
@@ -196,6 +219,10 @@ final class QuickTimer {
     private PendingIntent broadcast(Context c, String action, String what, int flags) {
         Intent i = new Intent(c, HerbReceiver.class).setAction(action).setData(Uri.parse("herb://quick/" + key + "/" + what));
         return PendingIntent.getBroadcast(c, 0, i, flags | PendingIntent.FLAG_IMMUTABLE);
+    }
+
+    PendingIntent toggleIntent(Context c) {
+        return broadcast(c, toggleAction, "toggle", PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     PendingIntent restartIntent(Context c) {

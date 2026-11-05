@@ -2,7 +2,7 @@
 <resources>
     <string name="herb_widget_1x1_desc">Plant and countdown until your last herb patch is ready.</string>
     <string name="herb_widget_2x1_desc">Plant, countdown and finish time for your herb patches.</string>
-    <string name="bird_widget_1x1_desc">Birdhouse timer. Tap the picture to restart the 50 minute countdown.</string>
-    <string name="limp_widget_1x1_desc">Limpwurt root timer. Tap the picture to restart the 20 minute countdown.</string>
-    <string name="death_widget_1x1_desc">UIM deathpile timer. Tap the skull to start the 60 minute countdown; it turns red for the last 15 minutes.</string>
+    <string name="bird_widget_1x1_desc">Birdhouse timer. Tap the picture to start, restart or cancel the 50 minute countdown.</string>
+    <string name="limp_widget_1x1_desc">Limpwurt root timer. Tap the picture to start, restart or cancel the flower timer.</string>
+    <string name="death_widget_1x1_desc">UIM deathpile timer. Tap the bones to start the 60 minute countdown (tap again to cancel). They turn red for the last 15 minutes.</string>
 </resources>

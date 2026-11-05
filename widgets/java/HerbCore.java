@@ -69,6 +69,29 @@ final class HerbCore {
         return changed;
     }
 
+    /** Clears every timer (all patches back to empty). Returns how many were running, or -1 if the app hasn't sent its timers yet. */
+    static int clearAll(Context c) {
+        JSONArray arr = HerbWidgetStore.timers(c);
+        if (arr.length() == 0) return -1;
+        int changed = 0;
+        try {
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject o = arr.getJSONObject(i);
+                if (o.optLong("finish", 0) > 0) {
+                    o.put("finish", 0);
+                    changed++;
+                }
+            }
+        } catch (JSONException e) {
+            return -1;
+        }
+        if (changed > 0) {
+            HerbWidgetStore.saveTimers(c, arr.toString());
+            HerbWidgetStore.setDirty(c, true);
+        }
+        return changed;
+    }
+
     static String clock(long ms) {
         return new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date(ms));
     }
