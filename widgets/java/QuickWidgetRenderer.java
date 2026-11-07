@@ -72,8 +72,7 @@ final class QuickWidgetRenderer {
         PendingIntent pi = qt.refreshIntent(c);
         am.cancel(pi);
         if (finish <= now) return;   // nothing left to count down
-        long delay = (finish - now) % 60000L;   // when the minute number changes
-        if (delay == 0) delay = 60000L;
+        long delay = PowerMode.delay(c, finish - now);   // next minute change (every 5 minutes in battery saver)
         HerbNotifier.setAlarm(c, now + delay + 300, pi);
     }
 }

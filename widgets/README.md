@@ -34,4 +34,10 @@ Added on top of the web app, all in `widgets/` (copied into the Android project 
   stores them inside the app (`assets/public/img/wiki`, `assets/public/fonts`), rewriting `index.html` to use them. The installed app makes
   no internet requests. The build stops with a clear error if any download fails (so an online-dependent app is never shipped);
   adding an empty file `allow_online.txt` to the repo turns that into a warning.
-
+- **Deathpile at zero** - a notification "Deathpile despawned, #UIM Mistakes" (white skull icon) when the countdown reaches zero.
+  Idle text in the app is "Nothing".
+- **Battery saver** (Settings) - the countdown text on the widgets and the Deathpile notification is redrawn every 5 minutes instead of
+  every minute. The redraws sit on 5-minute marks counted back from the end, so growth stages, the red 15-minute mark and the finish are still on time.
+- **Version** - shown in the info box (tap "Created by"). It is the `APP_VERSION` line in `www/index.html` and the "version" in `package.json`
+  (which also becomes the Android app's version name).
+- **App icon** - the grown herb on its soil patch with a gold sparkle, on a dark disc; the trim colour fills out to the edge of the icon. One variant per theme (Old School gold, Ironman steel, Ultimate black/white, Hardcore red, Group blue), plus a one-colour version for Android's themed icons.

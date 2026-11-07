@@ -212,6 +212,20 @@ else:
         activity.write_text(t, encoding="utf-8")
         print("activity  patched")
 
+# 5b. Version: the Android app info shows the same version as the app's info box
+try:
+    import json
+    version = json.loads((REPO / "package.json").read_text(encoding="utf-8")).get("version", "")
+    gradle = MAIN.parent.parent / "build.gradle"
+    if version and gradle.exists():
+        g = gradle.read_text(encoding="utf-8")
+        g2, n = re.subn(r'versionName\s+"[^"]*"', f'versionName "{version}"', g, count=1)
+        if n:
+            gradle.write_text(g2, encoding="utf-8")
+            print(f"version   {version}")
+except Exception as e:
+    print("version   skipped:", e)
+
 # 6. Offline: bundle every picture and font the page uses into the app (nothing is loaded from the internet)
 PUBLIC = MAIN / "assets" / "public"
 if (PUBLIC / "index.html").exists():
