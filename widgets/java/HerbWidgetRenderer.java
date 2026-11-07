@@ -181,7 +181,8 @@ final class HerbWidgetRenderer {
             if (boundary > now && boundary < next) next = boundary;
         }
         if (minuteTicks) {   // the 2x1 shows whole minutes, so redraw when the minute number changes
-            long delay = PowerMode.delay(c, finish - now);   // next minute change (every 5 minutes in battery saver)
+            long delay = (finish - now) % 60000L;
+            if (delay == 0) delay = 60000L;
             if (now + delay < next) next = now + delay;
         }
         long at = next + 300;   // just after the boundary

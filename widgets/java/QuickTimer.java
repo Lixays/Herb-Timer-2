@@ -37,11 +37,9 @@ final class QuickTimer {
     String ongoingTitle = null;                    // silent "still running" notification (null = none)
     String ongoingPrefix = "";
     int ongoingNid = 0;
-    String endTitle = null;                        // alert shown when the countdown reaches zero (null = none)
-    int endNid = 0;
     int smallIconRes = R.drawable.ic_stat_herb;    // status-bar icon of the alert
     final Class<?> provider;
-    final String readyAction, restartAction, refreshAction, tickAction, toggleAction, endAction;
+    final String readyAction, restartAction, refreshAction, tickAction, toggleAction;
 
     private QuickTimer(String key, long defaultMs, int nid, String notifTitle, String notifText, String restartLabel,
                        String runningTop, String readyTop, String idleTop, int imageRes, Class<?> provider) {
@@ -62,7 +60,6 @@ final class QuickTimer {
         this.refreshAction = "com.example.herbtimer." + up + "_REFRESH";
         this.tickAction = "com.example.herbtimer." + up + "_TICK";
         this.toggleAction = "com.example.herbtimer." + up + "_TOGGLE";
-        this.endAction = "com.example.herbtimer." + up + "_END";
     }
 
     static final QuickTimer LIMP = new QuickTimer("limp", 20L * 60 * 1000, 2900000,
@@ -83,15 +80,13 @@ final class QuickTimer {
             .warnImage(R.drawable.death_warn)
             .readyBottom("WIPED")
             .smallIcon(R.drawable.ic_stat_deathpile)
-            .ongoing("Deathpile ACTIVE", "Despawn in ", 2920000)
-            .endAlert("Deathpile despawned, #UIM Mistakes", 2930000);
+            .ongoing("Deathpile ACTIVE", "Despawn in ", 2920000);
 
     static final QuickTimer[] ALL = { DEATH, LIMP, BIRD };
 
     private QuickTimer tickTimes(int everyMin, long growMs) { this.tickEveryMin = everyMin; this.growMs = growMs; return this; }
     private QuickTimer idleBottom(String s) { this.idleBottom = s; return this; }
     private QuickTimer ongoing(String title, String prefix, int nid) { this.ongoingTitle = title; this.ongoingPrefix = prefix; this.ongoingNid = nid; return this; }
-    private QuickTimer endAlert(String title, int nid) { this.endTitle = title; this.endNid = nid; return this; }
     private QuickTimer alertBefore(long ms) { this.alertBeforeMs = ms; return this; }
     private QuickTimer warnImage(int res) { this.warnImageRes = res; return this; }
     private QuickTimer readyBottom(String s) { this.readyBottom = s; return this; }
@@ -112,7 +107,6 @@ final class QuickTimer {
     void sync(Context ctx) {
         Context c = ctx.getApplicationContext();
         scheduleAlert(c);
-        scheduleEnd(c);
         QuickWidgetRenderer.refresh(c, this);
         updateOngoing(c);
     }
@@ -208,11 +202,6 @@ final class QuickTimer {
                 q.toggle(c);
                 return true;
             }
-            if (q.endAction.equals(action)) {
-                q.postEnd(c);
-                q.sync(c);
-                return true;
-            }
             if (q.tickAction.equals(action)) {
                 q.updateOngoing(c);
                 return true;
@@ -240,10 +229,6 @@ final class QuickTimer {
         return broadcast(c, restartAction, "restart", PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    private PendingIntent endIntent(Context c) {
-        return broadcast(c, endAction, "end", PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
     private PendingIntent tickIntent(Context c) {
         return broadcast(c, tickAction, "tick", PendingIntent.FLAG_UPDATE_CURRENT);
     }
@@ -266,48 +251,6 @@ final class QuickTimer {
         long finish = finish(c);
         long alertAt = finish - alertBeforeMs;
         if (finish > 0 && alertAt > System.currentTimeMillis()) HerbNotifier.setAlarm(c, alertAt + 250, pi);
-    }
-
-    /** One alarm at the moment the countdown reaches zero (only for timers that have an end alert). */
-    private void scheduleEnd(Context c) {
-        if (endTitle == null) return;
-        AlarmManager am = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
-        if (am == null) return;
-        PendingIntent pi = endIntent(c);
-        am.cancel(pi);
-        long finish = finish(c);
-        if (finish > System.currentTimeMillis()) HerbNotifier.setAlarm(c, finish + 250, pi);
-    }
-
-    /** The countdown reached zero and has not been cancelled or restarted since. */
-    static boolean endDue(long finish, long now) {
-        return finish > 0 && finish <= now + 2000;
-    }
-
-    /** "Deathpile despawned, #UIM Mistakes": the alert at zero. */
-    void postEnd(Context ctx) {
-        if (endTitle == null) return;
-        Context c = ctx.getApplicationContext();
-        if (!endDue(finish(c), System.currentTimeMillis())) return;
-        NotificationManager nm = (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
-        if (nm == null) return;
-        if (Build.VERSION.SDK_INT >= 26) {
-            NotificationChannel ch = new NotificationChannel(CHANNEL, "Other timers", NotificationManager.IMPORTANCE_HIGH);
-            ch.setDescription("Alerts for deathpile, limpwurt, birdhouses, trees and custom timers");
-            ch.enableVibration(true);
-            nm.createNotificationChannel(ch);
-        }
-        Intent launch = c.getPackageManager().getLaunchIntentForPackage(c.getPackageName());
-        if (launch == null) launch = new Intent();
-        PendingIntent open = PendingIntent.getActivity(c, 0, launch, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        NotificationCompat.Builder b = new NotificationCompat.Builder(c, CHANNEL)
-                .setSmallIcon(smallIconRes)
-                .setContentTitle(endTitle)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setDefaults(NotificationCompat.DEFAULT_ALL)
-                .setAutoCancel(true)
-                .setContentIntent(open);
-        nm.notify(endNid, b.build());
     }
 
     /** The alarm fired: tell the user the timer is done. */
@@ -382,16 +325,14 @@ final class QuickTimer {
                 .setContentIntent(open);
         nm.notify(ongoingNid, b.build());
         if (am != null) {                          // refresh the text when the minute number changes
-            long delay = PowerMode.delay(c, finish - now);   // next minute change (every 5 minutes in battery saver)
+            long delay = (finish - now) % 60000L;
+            if (delay == 0) delay = 60000L;
             HerbNotifier.setAlarm(c, now + delay + 300, tick);
         }
     }
 
     void dismissAlert(Context c) {
         NotificationManager nm = (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
-        if (nm != null) {
-            nm.cancel(nid);
-            if (endTitle != null) nm.cancel(endNid);   // a restarted / cancelled countdown also clears the old "despawned" alert
-        }
+        if (nm != null) nm.cancel(nid);
     }
 }

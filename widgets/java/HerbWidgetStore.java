@@ -139,13 +139,4 @@ final class HerbWidgetStore {
     static void setIconApplied(Context c, String id) {
         prefs(c).edit().putString("icon_applied", id).apply();
     }
-
-    // ---------- battery saver ----------
-    static boolean saver(Context c) {
-        return prefs(c).getBoolean("saver", false);
-    }
-
-    static void setSaver(Context c, boolean on) {
-        prefs(c).edit().putBoolean("saver", on).apply();
-    }
 }

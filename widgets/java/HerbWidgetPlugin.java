@@ -86,9 +86,8 @@ public class HerbWidgetPlugin extends Plugin {
         boolean dark = call.getData().optBoolean("dark", false);
         boolean icon = call.getData().optBoolean("icon", true);
         HerbWidgetStore.setTheme(getContext(), theme, dark);
-        HerbWidgetStore.setSaver(getContext(), call.getData().optBoolean("saver", false));
-        HerbWidgetRenderer.refreshAll(getContext());   // redraws and re-plans the refresh alarms (battery saver changes how often)
-        QuickTimer.syncAll(getContext());
+        HerbWidgetRenderer.refreshAll(getContext());
+        for (QuickTimer q : QuickTimer.ALL) QuickWidgetRenderer.refresh(getContext(), q);
         IconSwitcher.apply(getContext(), theme, icon);
         call.resolve();
     }
