@@ -491,7 +491,6 @@
         .ex-main { flex: 1; }
         .ex-clear[hidden] { display: none; }
         /* the Deathpile card is a patch card, drawn bigger */
-        .version-line { text-align: center; margin: 10px 0 2px; font-family: 'Roboto Mono', monospace; font-size: 12px; color: var(--dim2); }
         .death-card { --u: 3px; margin-bottom: 12px; }
         .death-card .farming-icon { width: calc(var(--u) * 19); height: calc(var(--u) * 14); image-rendering: auto; }
         .ex-divider { height: 1px; margin: 12px 2px; background: var(--line); }
@@ -745,13 +744,6 @@
                 </div>
                 <button class="switch" id="icon-switch" role="switch" aria-checked="true" aria-label="App icon matches the theme" onclick="toggleIconFollow()"></button>
             </div>
-            <div class="theme-row">
-                <div class="theme-text">
-                    <span class="theme-title">Battery saver</span>
-                    <span class="theme-note">Widgets update every 5 min, not every minute</span>
-                </div>
-                <button class="switch" id="saver-switch" role="switch" aria-checked="false" aria-label="Battery saver" onclick="toggleBatterySaver()"></button>
-            </div>
             <div class="modal-actions">
                 <button class="osrs-btn modal-btn" id="tick-cancel" onclick="closeTickSettings()">Cancel</button>
                 <button class="osrs-btn modal-btn modal-save" onclick="saveTickSettings()">Save</button>
@@ -789,7 +781,7 @@
                 <div class="patch-name-text">Deathpile</div>
                 <div class="timer-row">
                     <img class="farming-icon" id="death-icon-l" src="img/death_idle.png" alt="">
-                    <div class="timer" id="death-timer">Nothing</div>
+                    <div class="timer" id="death-timer">Empty</div>
                     <img class="farming-icon" id="death-icon-r" src="img/death_idle.png" alt="">
                 </div>
                 <button class="osrs-btn card-btn" id="death-btn">Start</button>
@@ -818,7 +810,6 @@
     <div class="modal-overlay" id="about-modal" hidden onclick="if (event.target === this) closeAbout()">
         <div class="modal-card osrs-panel">
 <p class="modal-text about-text">Heyo! I use a similar timer on PC on a side display for tracking different herb patches. Using AI I've transfered that into an app with some other features for a QOL mobile timer. If you've set your farming tick up wrong you can fix that in the settings. Make sure you give notification/timer permissions for this to work. You can reset all timers from the notification so you don't have to tab out of Scape. Do what you want with this app. Just don't sell it. Selling AI stuff is fucking stupid. Cheers, Rikku.</p>
-            <div class="version-line" id="app-version"></div>
             <div class="modal-actions">
                 <button class="osrs-btn modal-btn modal-save" onclick="closeAbout()">Close</button>
             </div>
@@ -1231,8 +1222,7 @@
         const QUICK_TIMERS = [
             { key: 'death', label: 'DEATHPILE', ms: 60 * 60 * 1000, nid: 2910000, ownModal: true,
               alertBeforeMs: 15 * 60 * 1000, warnMs: 15 * 60 * 1000, smallIcon: 'ic_stat_deathpile',
-              readyTitle: 'DEATHPILE EXPIRES SOON', readyBody: 'Your deathpile has 15 minutes left.',
-              endTitle: 'Deathpile despawned, #UIM Mistakes', endNid: 2930000 },
+              readyTitle: 'DEATHPILE EXPIRES SOON', readyBody: 'Your deathpile has 15 minutes left.' },
             { key: 'limp', label: 'Limpwurt Root', ms: 20 * 60 * 1000, nid: 2900000, tickEvery: 5, growMs: 15 * 60 * 1000,
               readyTitle: 'Limpwurt roots ready!', readyBody: 'Time to harvest and replant your limpwurt.' },
             { key: 'bird', label: 'Birdhouses', ms: 50 * 60 * 1000, nid: 2000000,
@@ -1258,21 +1248,15 @@
             if (!LN) return;
             try {
                 const alertAt = b.finish - (d.alertBeforeMs || 0);
-                const notes = [];
                 if (b.finish > 0 && alertAt > Date.now()) {
-                    notes.push({ id: d.nid, title: d.readyTitle, body: d.readyBody,
-                                 channelId: 'extra-timers', smallIcon: d.smallIcon || NOTIF_ICON,
-                                 schedule: { at: new Date(alertAt), allowWhileIdle: true } });
-                }
-                if (d.endTitle && b.finish > Date.now()) {          // second alert when the countdown reaches zero
-                    notes.push({ id: d.endNid, title: d.endTitle, body: ' ',
-                                 channelId: 'extra-timers', smallIcon: d.smallIcon || NOTIF_ICON,
-                                 schedule: { at: new Date(b.finish), allowWhileIdle: true } });
-                }
-                await LN.cancel({ notifications: [{ id: d.nid }].concat(d.endNid ? [{ id: d.endNid }] : []) });
-                if (notes.length) {
                     await ensureExtraChannel();
-                    await LN.schedule({ notifications: notes });
+                    await LN.schedule({ notifications: [{
+                        id: d.nid, title: d.readyTitle, body: d.readyBody,
+                        channelId: 'extra-timers', smallIcon: d.smallIcon || NOTIF_ICON,
+                        schedule: { at: new Date(alertAt), allowWhileIdle: true }
+                    }] });
+                } else {
+                    await LN.cancel({ notifications: [{ id: d.nid }] });
                 }
             } catch (e) { console.error('Could not schedule alert', e); }
         }
@@ -1473,7 +1457,7 @@
             });
             const btn = document.getElementById('death-btn');
             if (st === 'idle') {
-                timer.innerText = 'Nothing'; timer.style.color = 'var(--osrs-red-text)'; btn.innerText = 'Start';
+                timer.innerText = 'Empty'; timer.style.color = 'var(--osrs-red-text)'; btn.innerText = 'Start';
             } else if (st === 'wiped') {
                 timer.innerText = 'WIPED'; timer.style.color = 'var(--osrs-red-text)'; btn.innerText = 'Restart';
             } else {
@@ -1564,9 +1548,6 @@
         }
         function closeMore() { document.getElementById('more-modal').hidden = true; }
 
-        // Shown in the info box. Change this (and package.json) for each new build.
-        const APP_VERSION = '1.10';
-
         // ---------- Themes: Old School (default), the four Ironman modes, plus Dark Mode (AMOLED) ----------
         const THEMES = [
             { id: 'oldschool', name: 'Old School', swatch: '#c29a1c' },
@@ -1590,8 +1571,7 @@
                 await HW.setTheme({
                     theme: currentTheme(),
                     dark: document.documentElement.classList.contains('amoled'),
-                    icon: localStorage.getItem('icon_follow') !== '0',
-                    saver: localStorage.getItem('battery_saver') === '1'
+                    icon: localStorage.getItem('icon_follow') !== '0'
                 });
             } catch (e) { /* older build without themed widgets */ }
         }
@@ -1624,13 +1604,6 @@
             document.getElementById('theme-note').innerText = dark ? 'Pure black background' : 'Normal background';
             const iconOn = localStorage.getItem('icon_follow') !== '0';
             document.getElementById('icon-switch').setAttribute('aria-checked', iconOn ? 'true' : 'false');
-            document.getElementById('saver-switch').setAttribute('aria-checked', localStorage.getItem('battery_saver') === '1' ? 'true' : 'false');
-        }
-        function toggleBatterySaver() {
-            const on = localStorage.getItem('battery_saver') === '1';
-            try { localStorage.setItem('battery_saver', on ? '0' : '1'); } catch (e) {}
-            syncThemeSwitch();
-            pushTheme();
         }
         function toggleIconFollow() {
             const on = localStorage.getItem('icon_follow') !== '0';
@@ -1657,10 +1630,7 @@
             document.getElementById('tick-modal').hidden = false;
         }
 
-        function openAbout() {
-            document.getElementById('app-version').textContent = 'Version ' + APP_VERSION;
-            document.getElementById('about-modal').hidden = false;
-        }
+        function openAbout() { document.getElementById('about-modal').hidden = false; }
         function closeAbout() { document.getElementById('about-modal').hidden = true; }
 
         function closeTickSettings() {
