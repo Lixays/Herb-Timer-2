@@ -881,18 +881,18 @@
             <!-- Reset Button -->
             <button class="osrs-btn ctrl-btn ctrl-reset" id="reset-btn" onclick="confirmReset()">
                 <div class="ctrl-inner">
-                    <img class="uim-icon" src="img/wiki/Watch.png" alt="Watch">
+                    <img class="uim-icon" src="img/wiki/Watch.webp" alt="Watch">
                     <span id="reset-text">RESET</span>
-                    <img class="uim-icon" src="img/wiki/Watch.png" alt="Watch">
+                    <img class="uim-icon" src="img/wiki/Watch.webp" alt="Watch">
                 </div>
             </button>
 
             <!-- Plant All Button -->
             <button class="osrs-btn ctrl-btn ctrl-plant" id="plant-all-btn" onclick="plantAllPatches()">
                 <div class="ctrl-inner" id="plant-btn-inner">
-                    <img class="uim-icon" src="img/wiki/Spade.png" alt="Spade">
+                    <img class="uim-icon" src="img/wiki/Spade.webp" alt="Spade">
                     <span id="plant-text">PLANT ALL</span>
-                    <img class="uim-icon" src="img/wiki/Spade.png" alt="Spade">
+                    <img class="uim-icon" src="img/wiki/Spade.webp" alt="Spade">
                 </div>
             </button>
         </div>
@@ -1008,7 +1008,7 @@
     <!-- ABOUT -->
     <div class="modal-overlay" id="about-modal" hidden onclick="if (event.target === this) closeAbout()">
         <div class="modal-card osrs-panel">
-<p class="modal-text about-text">Heyo!<br><br>Thanks for checking this out, it's rather useful for mobile farm runs.<br><br>Any problems, find me in Ultimate CC or the UIM Discord<br><br>Feel free to buy me a coffee (Can of Monster)<br><br><a class="kofi-link" href="https://ko-fi.com/rikkuapps" target="_blank" rel="noopener"><img class="kofi-img" src="img/kofi.png" alt="Support me on Ko-fi"></a></p>
+<p class="modal-text about-text">Heyo!<br><br>Thanks for checking this out, it's rather useful for mobile farm runs.<br><br>Any problems, find me in Ultimate CC or the UIM Discord<br><br>Feel free to buy me a can of Monster<br><br><a class="kofi-link" href="https://ko-fi.com/rikkuapps" target="_blank" rel="noopener"><img class="kofi-img" src="img/kofi.png" alt="Support me on Ko-fi"></a></p>
             <div class="version-line" id="app-version"></div>
             <div class="modal-actions">
                 <button class="osrs-btn modal-btn modal-save" onclick="closeAbout()">Close</button>
@@ -1036,27 +1036,27 @@
         const TEST_TIMER_MS = 10000; // test mode sets active timers to this
 
         const herbs = [
-            { name: 'Ranarr', icon: 'img/wiki/Grimy_ranarr_weed.png' },
-            { name: 'Toadflax', icon: 'img/wiki/Grimy_toadflax.png' },
-            { name: 'Irit', icon: 'img/wiki/Grimy_irit_leaf.png' },
-            { name: 'Avantoe', icon: 'img/wiki/Grimy_avantoe.png' },
-            { name: 'Kwuarm', icon: 'img/wiki/Grimy_kwuarm.png' },
-            { name: 'Snapdragon', icon: 'img/wiki/Grimy_snapdragon.png' },
-            { name: 'Cadantine', icon: 'img/wiki/Grimy_cadantine.png' },
-            { name: 'Dwarf Weed', icon: 'img/wiki/Grimy_dwarf_weed.png' },
-            { name: 'Torstol', icon: 'img/wiki/Grimy_torstol.png' }
+            { name: 'Ranarr', icon: 'img/wiki/Grimy_ranarr_weed.webp' },
+            { name: 'Toadflax', icon: 'img/wiki/Grimy_toadflax.webp' },
+            { name: 'Irit', icon: 'img/wiki/Grimy_irit_leaf.webp' },
+            { name: 'Avantoe', icon: 'img/wiki/Grimy_avantoe.webp' },
+            { name: 'Kwuarm', icon: 'img/wiki/Grimy_kwuarm.webp' },
+            { name: 'Snapdragon', icon: 'img/wiki/Grimy_snapdragon.webp' },
+            { name: 'Cadantine', icon: 'img/wiki/Grimy_cadantine.webp' },
+            { name: 'Dwarf Weed', icon: 'img/wiki/Grimy_dwarf_weed.webp' },
+            { name: 'Torstol', icon: 'img/wiki/Grimy_torstol.webp' }
         ];
 
         const ALL_PATCHES = [
-            { id: 'ardougne', name: 'Ardougne', icon: 'img/wiki/Ardougne_cloak_4.png' },
-            { id: 'varlamore', name: 'Varlamore', icon: 'img/wiki/Perfected_quetzal_whistle.png' },
+            { id: 'ardougne', name: 'Ardougne', icon: 'img/wiki/Ardougne_cloak_4.webp' },
+            { id: 'varlamore', name: 'Varlamore', icon: 'img/wiki/Perfected_quetzal_whistle.webp' },
             { id: 'ecto', name: 'Morytania', icon: 'img/teleport.png' },
-            { id: 'catherby', name: 'Catherby', icon: 'img/wiki/Catherby_Teleport_icon__mobile_.png' },
-            { id: 'weiss', name: 'Weiss', icon: 'img/wiki/Icy_basalt.png' },
-            { id: 'stronghold', name: 'Stronghold', icon: 'img/wiki/Stony_basalt.png' },
-            { id: 'hosidius', name: 'Hosidius', icon: 'img/wiki/Teleport_to_House_icon__mobile_.png' },
-            { id: 'cabbage', name: 'Falador', icon: 'img/wiki/Cabbage.png' },
-            { id: 'farming_guild', name: 'Guild', icon: 'img/wiki/thumb_Seed_pack_detail.png_150px-Seed_pack_detail.png' },
+            { id: 'catherby', name: 'Catherby', icon: 'img/wiki/Catherby_Teleport.webp' },
+            { id: 'weiss', name: 'Weiss', icon: 'img/wiki/Icy_basalt.webp' },
+            { id: 'stronghold', name: 'Stronghold', icon: 'img/wiki/Stony_basalt.webp' },
+            { id: 'hosidius', name: 'Hosidius', icon: 'img/wiki/Teleport_to_House.webp' },
+            { id: 'cabbage', name: 'Falador', icon: 'img/wiki/Cabbage.webp' },
+            { id: 'farming_guild', name: 'Guild', icon: 'img/wiki/Seed_pack.webp' },
         ];
 
         // The patches you actually use (Settings > My Patches). Everything else in the app works from this list.
