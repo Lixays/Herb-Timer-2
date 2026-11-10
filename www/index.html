@@ -504,9 +504,11 @@
         .stats-btn img { height: calc(var(--u) * 19); width: auto; display: block; }
         .settings-btn .mode-icon { display: none; height: calc(var(--u) * 19); width: auto; image-rendering: pixelated; }
         html[data-theme="iron"] .settings-btn .settings-icon, html[data-theme="uim"] .settings-btn .settings-icon,
-        html[data-theme="hcim"] .settings-btn .settings-icon, html[data-theme="gim"] .settings-btn .settings-icon { display: none; }
+        html[data-theme="hcim"] .settings-btn .settings-icon, html[data-theme="gim"] .settings-btn .settings-icon,
+        html[data-theme="hcworld"] .settings-btn .settings-icon { display: none; }
         html[data-theme="iron"] .mode-icon.m-iron, html[data-theme="uim"] .mode-icon.m-uim,
-        html[data-theme="hcim"] .mode-icon.m-hcim, html[data-theme="gim"] .mode-icon.m-gim { display: block; }
+        html[data-theme="hcim"] .mode-icon.m-hcim, html[data-theme="gim"] .mode-icon.m-gim,
+        html[data-theme="hcworld"] .mode-icon.m-hcworld { display: block; }
         html[data-theme="uim"]:not(.amoled) .settings-btn { background: #2f2f2d; }
 
         .modal-overlay {
@@ -790,6 +792,17 @@
             --osrs-gold-text: #6aa0f2; --osrs-green-text: #3fb36a; --osrs-red-text: #e0675f; --osrs-yellow-text: #e3de4c;
             --reset: #d24a4a; --plant: #34b36a; --flash-a: #163060; --flash-b: #4a1a1a;
         }
+        /* HC World: charcoal and bone, from the helm icon */
+        html[data-theme="hcworld"] {
+            --osrs-bg-dark: #0a0908; --dots: #141210; --frame: #6b6a66;
+            --panel-a: #272523; --panel-b: #121110; --card-a: #171513; --well: #0b0a09;
+            --card-border: #3d3a36; --badge-border: #7a7872; --line: #2e2c29;
+            --btn-a: #34322f; --btn-b: #1c1b19; --btn-border: #5a5853; --btn-dark: #0d0c0b;
+            --btn-ha: #433f3b; --btn-hb: #272523; --btn-text: #c9bfa4; --btn-htext: #ece4cc;
+            --text: #a79f8b; --dim: #73705f; --dim2: #7a7664;
+            --osrs-gold-text: #d6cba8; --osrs-green-text: #3fa64f; --osrs-red-text: #d95a4e; --osrs-yellow-text: #dcd24a;
+            --reset: #d04444; --plant: #38a85a; --flash-a: #272523; --flash-b: #4e1414;
+        }
         /* Ultimate Ironman: white / silver with black trim (a light theme) */
         html[data-theme="uim"] {
             --osrs-bg-dark: #b9b8b3; --dots: #aeada8; --frame: #2a2a2a;
@@ -810,6 +823,7 @@
         html[data-theme="hcim"] .corner-flourish { filter: hue-rotate(-42deg) saturate(1.5); }
         html[data-theme="gim"] .corner-flourish { filter: hue-rotate(172deg) saturate(1.3); }
         html[data-theme="uim"] .corner-flourish { filter: grayscale(1) brightness(0.3); }
+        html[data-theme="hcworld"] .corner-flourish { filter: grayscale(1) sepia(0.35) brightness(1.1); }
         html[data-theme="uim"] .modal-overlay { background: rgba(30, 30, 28, 0.7); }
 
         /* ---------- Dark Mode (AMOLED): pure black behind whichever theme is chosen ---------- */
@@ -858,6 +872,7 @@
                 <img class="mode-icon m-uim" src="img/uim.png" alt="">
                 <img class="mode-icon m-hcim" src="img/hcim.png" alt="">
                 <img class="mode-icon m-gim" src="img/gim.png" alt="">
+                <img class="mode-icon m-hcworld" src="img/hcworld.png" alt="">
                 <img class="settings-icon" src="img/settings.png" alt="">
             </button>
         </div>
@@ -1764,7 +1779,8 @@
             { id: 'iron',      name: 'Ironman',    swatch: '#aab1ba' },
             { id: 'uim',       name: 'Ultimate',   swatch: '#f4f3ee' },
             { id: 'hcim',      name: 'Hardcore',   swatch: '#d9443a' },
-            { id: 'gim',       name: 'Group',      swatch: '#3f78d8' }
+            { id: 'gim',       name: 'Group',      swatch: '#3f78d8' },
+            { id: 'hcworld',   name: 'HC World',   swatch: '#d6cba8' }
         ];
         function currentTheme() {
             const id = localStorage.getItem('theme');
