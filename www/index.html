@@ -322,7 +322,7 @@
             align-items: center;
             justify-content: center;
             background: var(--well);
-            border-radius: 50%;
+            border-radius: 0;
             border: 2px solid var(--badge-border);
             box-shadow: 0 2px 4px rgba(0,0,0,0.6);
             flex-shrink: 0;
@@ -940,7 +940,7 @@
             <div class="theme-row">
                 <div class="theme-text">
                     <span class="theme-title">Dark Mode</span>
-                    <span class="theme-note" id="theme-note">Old School theme</span>
+                    <span class="theme-note" id="theme-note">Main theme</span>
                 </div>
                 <button class="switch" id="dark-switch" role="switch" aria-checked="false" aria-label="Dark Mode" onclick="toggleDarkMode()"></button>
             </div>
@@ -1775,7 +1775,7 @@
 
         // ---------- Themes: Old School (default), the four Ironman modes, plus Dark Mode (AMOLED) ----------
         const THEMES = [
-            { id: 'oldschool', name: 'Old School', swatch: '#c29a1c' },
+            { id: 'oldschool', name: 'Main', swatch: '#c29a1c' },
             { id: 'iron',      name: 'Ironman',    swatch: '#aab1ba' },
             { id: 'uim',       name: 'Ultimate',   swatch: '#f4f3ee' },
             { id: 'hcim',      name: 'Hardcore',   swatch: '#d9443a' },
