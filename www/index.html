@@ -1797,7 +1797,7 @@
                 await HW.setTheme({
                     theme: currentTheme(),
                     dark: document.documentElement.classList.contains('amoled'),
-                    icon: localStorage.getItem('icon_follow') !== '0',
+                    icon: localStorage.getItem('icon_follow') === '1',
                     saver: localStorage.getItem('battery_saver') === '1'
                 });
             } catch (e) { /* older build without themed widgets */ }
@@ -1829,7 +1829,7 @@
             const dark = document.documentElement.classList.contains('amoled');
             document.getElementById('dark-switch').setAttribute('aria-checked', dark ? 'true' : 'false');
             document.getElementById('theme-note').innerText = dark ? 'Pure black background' : 'Normal background';
-            const iconOn = localStorage.getItem('icon_follow') !== '0';
+            const iconOn = localStorage.getItem('icon_follow') === '1';
             document.getElementById('icon-switch').setAttribute('aria-checked', iconOn ? 'true' : 'false');
             document.getElementById('saver-switch').setAttribute('aria-checked', localStorage.getItem('battery_saver') === '1' ? 'true' : 'false');
         }
@@ -1840,7 +1840,7 @@
             pushTheme();
         }
         function toggleIconFollow() {
-            const on = localStorage.getItem('icon_follow') !== '0';
+            const on = localStorage.getItem('icon_follow') === '1';
             try { localStorage.setItem('icon_follow', on ? '0' : '1'); } catch (e) {}
             syncThemeSwitch();
             pushTheme();
