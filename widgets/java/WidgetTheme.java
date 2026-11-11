@@ -30,9 +30,9 @@ final class WidgetTheme {
             case "iron":
                 return new WidgetTheme(dark ? R.drawable.widget_bg_iron_amoled : R.drawable.widget_bg_iron,
                         0xFFC3CAD3, 0xFFD5DAE0, 0xFF9AA1AB, 0xFFD9D94A, 0xFFD05656);
-            case "uim":   // black with white trim
+            case "uim":   // dark grey (#2A2A2A, like the icon square) with white
                 return new WidgetTheme(dark ? R.drawable.widget_bg_uim_amoled : R.drawable.widget_bg_uim,
-                        0xFFF2F2F2, 0xFFDADADA, 0xFF9A9A9A, 0xFFE6DC5A, 0xFFE05A58);
+                        0xFFFFFFFF, 0xFFF2F2F2, 0xFFB5B5B5, 0xFFE6DC5A, 0xFFE05A58);
             case "hcim":
                 return new WidgetTheme(dark ? R.drawable.widget_bg_hcim_amoled : R.drawable.widget_bg_hcim,
                         0xFFE65A4D, 0xFFF2C8C0, 0xFFC9928A, 0xFFE6D84A, 0xFFFF8C7C);
