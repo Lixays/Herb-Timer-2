@@ -933,7 +933,7 @@
             </div>
             <div class="modal-error" id="tick-error"></div>
             <div class="section-title">My Patches</div>
-            <p class="modal-text">Tap to hide the patches you don't use. Hidden patches are left out of the timers, notifications and widgets.</p>
+            <p class="modal-text">Tap to hide the patches you don't use. The patches appear in the order you turn them on (the numbers show the order). Hidden patches are left out of the timers, notifications and widgets.</p>
             <div class="patch-picks" id="patch-picks"></div>
             <div class="section-title">Theme</div>
             <div class="theme-picks" id="theme-picks"></div>
@@ -1085,7 +1085,8 @@
         }
         function applyEnabledPatches() {
             const ids = loadEnabledIds();
-            patches = ALL_PATCHES.filter(p => ids.includes(p.id));
+            // keep the order you enabled them in (the saved order), not the built-in order
+            patches = ids.map(id => ALL_PATCHES.find(p => p.id === id)).filter(Boolean);
             if (!patches.length) patches = ALL_PATCHES.slice();
         }
         applyEnabledPatches();
@@ -1329,24 +1330,26 @@
         function renderPatchPicks() {
             const box = document.getElementById('patch-picks');
             box.innerHTML = '';
+            const order = Array.from(pendingPicks);
             ALL_PATCHES.forEach(p => {
                 const b = document.createElement('button');
                 b.type = 'button';
                 b.className = 'pick';
-                b.textContent = p.name;
-                const paint = () => b.setAttribute('aria-pressed', pendingPicks.has(p.id) ? 'true' : 'false');
-                paint();
+                const pos = order.indexOf(p.id);
+                // enabled patches show their position, e.g. "1. Ardougne"
+                b.textContent = pos >= 0 ? (pos + 1) + '. ' + p.name : p.name;
+                b.setAttribute('aria-pressed', pos >= 0 ? 'true' : 'false');
                 b.onclick = () => {
                     if (pendingPicks.has(p.id)) pendingPicks.delete(p.id); else pendingPicks.add(p.id);
-                    paint();
                     document.getElementById('tick-error').innerText = '';
+                    renderPatchPicks();
                 };
                 box.appendChild(b);
             });
         }
         function applyPatchPicks() {
             ALL_PATCHES.forEach(p => { if (!pendingPicks.has(p.id)) localStorage.removeItem(`finish_${p.id}`); });
-            localStorage.setItem('enabled_patches', JSON.stringify(ALL_PATCHES.filter(p => pendingPicks.has(p.id)).map(p => p.id)));
+            localStorage.setItem('enabled_patches', JSON.stringify(Array.from(pendingPicks).filter(id => ALL_PATCHES.some(p => p.id === id))));
             applyEnabledPatches();
             buildPatchCards();
         }
