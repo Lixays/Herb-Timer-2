@@ -9,7 +9,7 @@ import android.content.pm.PackageManager;
  * (IconOldschool, IconIron, ...); exactly one of them is enabled at a time.
  */
 final class IconSwitcher {
-    static final String[] THEMES = { "oldschool", "iron", "uim", "hcim", "gim" };
+    static final String[] THEMES = { "oldschool", "iron", "uim", "hcim", "gim", "hcworld" };
 
     private IconSwitcher() {}
 

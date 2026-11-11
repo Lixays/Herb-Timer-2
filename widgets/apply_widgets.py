@@ -147,7 +147,8 @@ ICONS = [("Oldschool", "ic_launcher", "ic_launcher_round", "true"),
          ("Iron", "ic_launcher_iron", "ic_launcher_iron_round", "false"),
          ("Uim", "ic_launcher_uim", "ic_launcher_uim_round", "false"),
          ("Hcim", "ic_launcher_hcim", "ic_launcher_hcim_round", "false"),
-         ("Gim", "ic_launcher_gim", "ic_launcher_gim_round", "false")]
+         ("Gim", "ic_launcher_gim", "ic_launcher_gim_round", "false"),
+         ("Hcworld", "ic_launcher_hcworld", "ic_launcher_hcworld_round", "false")]
 if "com.example.herbtimer.IconOldschool" not in text:
     launcher = re.compile(r'[ \t]*<intent-filter>\s*<action android:name="android\.intent\.action\.MAIN"\s*/>\s*'
                           r'<category android:name="android\.intent\.category\.LAUNCHER"\s*/>\s*</intent-filter>[ \t]*\n?')
