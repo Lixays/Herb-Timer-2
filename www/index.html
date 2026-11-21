@@ -478,15 +478,22 @@
         /* ---------- Pages: Home (main page) and Patches ---------- */
         .view[hidden] { display: none !important; }
 
-        /* Home fills the space between the header and the footer; the four sections are spread evenly */
+        /* Home fills the space between the header and the footer. The four sections and the gaps between them
+           keep the proportions of the reference screenshot (card heights 24 : 18.8 : 23.4 : 19.8). */
         #view-home:not([hidden]) { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
         .home-grid {
             flex: 1 1 auto; min-height: 0;
-            display: flex; flex-direction: column; justify-content: space-between;
-            padding-bottom: 12px;
-            --hw: 1.12;                                   /* size of the home cards */
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            grid-template-rows: minmax(0, 24fr) minmax(0, 2.1fr) minmax(0, 18.8fr) minmax(0, 7fr) minmax(0, 23.4fr) minmax(0, 1.5fr) minmax(0, 19.8fr) minmax(0, 3.3fr);
         }
-        .home-grid > * { --u: calc(var(--u0) * var(--hw)); }
+        #home-remaining   { grid-row: 1; --u: calc(var(--u0) * 1.45); }
+        .home-mid         { grid-row: 3; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px; }
+        .home-death-wrap  { grid-row: 5; display: flex; flex-direction: column; --u: calc(var(--u0) * 1.3); }
+        .home-bank        { grid-row: 7; --u: calc(var(--u0) * 1.35); }
+        .home-mid #tick-card { --u: var(--u0); }
+        .home-ctrls { display: flex; flex-direction: column; gap: 6px; --u: var(--u0); }
+        .home-ctrls .ctrl-btn { flex: 1 1 0; }
         .home-grid .osrs-card {
             /* an ellipse follows the card's shape, so wide cards keep the same shading as the small ones */
             background: radial-gradient(ellipse farthest-corner at 50% 45%, var(--card-a) 0%, var(--well) 100%);
@@ -494,18 +501,18 @@
             justify-content: space-between;
         }
         .home-grid .osrs-card.static { cursor: default; }
-        .home-ctrls { display: flex; flex-direction: row; gap: 6px; }
-        .home-ctrls .ctrl-btn { flex: 1 1 0; }
-        .home-death-wrap { display: flex; flex-direction: column; }
+        .home-death-wrap .death-card { flex: 1 1 auto; }
         @media (orientation: landscape), (min-width: 600px) {
-            .home-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; align-content: start; padding-bottom: 0; --hw: 1; }
-            .home-ctrls { display: contents; }
+            .home-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: none; gap: 6px; align-content: start; }
+            #home-remaining, .home-death-wrap, .home-bank, .home-mid #tick-card { --u: var(--u0); }
+            .home-mid, .home-ctrls { display: contents; }
             #home-remaining { grid-column: 1; grid-row: 1; }
             #tick-card { grid-column: 2; grid-row: 1; }
             .home-death-wrap { grid-column: 3 / 5; grid-row: 1; }
-            #home-reset-btn { grid-column: 1; grid-row: 2; }
-            #home-plant-btn { grid-column: 2; grid-row: 2; }
+            #home-plant-btn { grid-column: 1; grid-row: 2; }
+            #home-reset-btn { grid-column: 2; grid-row: 2; }
             .home-bank { grid-column: 3 / 5; grid-row: 2; }
+            .death-card .card-btn, .bank-btn { min-height: 0 !important; }
         }
 
         /* Deathpile card (now on the main page) */
@@ -513,8 +520,9 @@
         .death-card .farming-icon { width: calc(var(--u) * 19); height: calc(var(--u) * 14); image-rendering: auto; }
         .death-card.disabled { opacity: 0.4; filter: grayscale(1); pointer-events: none; cursor: not-allowed; }
 
-        .death-card .card-btn { padding: calc(var(--u) * 4) 0; }
+        .death-card .card-btn { padding: calc(var(--u) * 4) 0; min-height: calc(var(--u) * 26); display: flex; align-items: center; justify-content: center; }
         .btn-inner { display: inline-flex; align-items: center; justify-content: center; gap: calc(var(--u) * 3); }
+        .btn-icon.wide { width: calc(var(--u) * 17); height: auto; image-rendering: auto; }
         .btn-icon { width: calc(var(--u) * 13); height: calc(var(--u) * 13); object-fit: contain; image-rendering: pixelated; flex-shrink: 0; }
 
         /* Deathbank: a card with two buttons, the one that is currently selected is greyed out */
@@ -522,7 +530,7 @@
         .bank-title-row { display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 4); }
         .bank-icon { width: calc(var(--u) * 15); height: calc(var(--u) * 15); object-fit: contain; image-rendering: pixelated; flex-shrink: 0; }
         .bank-btns { display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--u) * 5); width: 100%; margin-top: auto; }
-        .bank-btn { transition: opacity 0.2s ease, filter 0.2s ease; }
+        .bank-btn { transition: opacity 0.2s ease, filter 0.2s ease; min-height: calc(var(--u) * 26); }
         .bank-btn.no  .ctrl-inner { color: var(--osrs-red-text); }
         .bank-btn.yes .ctrl-inner { color: var(--osrs-green-text); }
         .ctrl-btn .btn-icon { width: calc(var(--u) * 14); height: calc(var(--u) * 14); }
@@ -957,34 +965,36 @@
                     <button class="osrs-btn card-btn" id="home-remaining-time">--:--</button>
                 </div>
 
-                <!-- Next Tick: tap = skip to next tick, hold 5s = set all active timers to 10s -->
-                <div class="osrs-card tick-card" id="tick-card">
-                    <div class="patch-name-text">Next Tick</div>
-                    <div class="timer-row">
-                        <img class="farming-icon" src="img/wiki/Watering_can_8_.png" alt="">
-                        <div class="timer" id="global-tick-timer">--:--</div>
-                        <img class="farming-icon" src="img/wiki/Watering_can_8_.png" alt="">
+                <div class="home-mid">
+                    <!-- Next Tick: tap = skip to next tick, hold 5s = set all active timers to 10s -->
+                    <div class="osrs-card tick-card" id="tick-card">
+                        <div class="patch-name-text">Next Tick</div>
+                        <div class="timer-row">
+                            <img class="farming-icon" src="img/wiki/Watering_can_8_.png" alt="">
+                            <div class="timer" id="global-tick-timer">--:--</div>
+                            <img class="farming-icon" src="img/wiki/Watering_can_8_.png" alt="">
+                        </div>
+                        <div class="cycle-text">Tap to skip</div>
+                        <button class="osrs-btn card-btn" id="global-tick-time">--:--</button>
+                        <div class="hold-bar"></div>
                     </div>
-                    <div class="cycle-text">Tap to skip</div>
-                    <button class="osrs-btn card-btn" id="global-tick-time">--:--</button>
-                    <div class="hold-bar"></div>
-                </div>
 
-                <div class="home-ctrls">
-                    <button class="osrs-btn ctrl-btn ctrl-reset" id="home-reset-btn" onclick="confirmReset()">
-                        <div class="ctrl-inner">
-                            <img class="uim-icon" src="img/spade.png" alt="Spade">
-                            <span class="reset-label">RESET</span>
-                            <img class="uim-icon" src="img/spade.png" alt="Spade">
-                        </div>
-                    </button>
-                    <button class="osrs-btn ctrl-btn ctrl-plant plant-all" id="home-plant-btn" onclick="plantAllPatches()">
-                        <div class="ctrl-inner">
-                            <img class="uim-icon" src="img/seed_dibber.png" alt="Seed dibber">
-                            <span class="plant-label">PLANT ALL</span>
-                            <img class="uim-icon" src="img/seed_dibber.png" alt="Seed dibber">
-                        </div>
-                    </button>
+                    <div class="home-ctrls">
+                        <button class="osrs-btn ctrl-btn ctrl-plant plant-all" id="home-plant-btn" onclick="plantAllPatches()">
+                            <div class="ctrl-inner">
+                                <img class="uim-icon" src="img/seed_dibber.png" alt="Seed dibber">
+                                <span class="plant-label">PLANT ALL</span>
+                                <img class="uim-icon" src="img/seed_dibber.png" alt="Seed dibber">
+                            </div>
+                        </button>
+                        <button class="osrs-btn ctrl-btn ctrl-reset" id="home-reset-btn" onclick="confirmReset()">
+                            <div class="ctrl-inner">
+                                <img class="uim-icon" src="img/spade.png" alt="Spade">
+                                <span class="reset-label">RESET</span>
+                                <img class="uim-icon" src="img/spade.png" alt="Spade">
+                            </div>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Deathpile -->
@@ -996,7 +1006,7 @@
                             <div class="timer" id="death-timer">Nothing</div>
                             <img class="farming-icon" id="death-icon-r" src="img/death_idle.png" alt="">
                         </div>
-                        <button class="osrs-btn card-btn" id="death-btn"><span class="btn-inner"><img class="btn-icon" src="img/death_start.webp" alt=""><span id="death-btn-text">Start</span><img class="btn-icon" src="img/death_start.webp" alt=""></span></button>
+                        <button class="osrs-btn card-btn" id="death-btn"><span class="btn-inner"><img class="btn-icon wide" src="img/death_bones.png" alt=""><span id="death-btn-text">Start</span><img class="btn-icon wide" src="img/death_bones.png" alt=""></span></button>
                     </div>
                 </div>
 
@@ -1009,7 +1019,7 @@
                     </div>
                     <div class="bank-btns">
                         <button class="osrs-btn ctrl-btn bank-btn no" id="bank-no" onclick="setBanked(false)">
-                            <div class="ctrl-inner"><img class="btn-icon" src="img/bank_no.webp" alt=""><span>No</span><img class="btn-icon" src="img/bank_no.webp" alt=""></div>
+                            <div class="ctrl-inner"><img class="btn-icon" src="img/bank_yes.webp" alt=""><span>No</span><img class="btn-icon" src="img/bank_yes.webp" alt=""></div>
                         </button>
                         <button class="osrs-btn ctrl-btn bank-btn yes" id="bank-yes" onclick="setBanked(true)">
                             <div class="ctrl-inner"><img class="btn-icon" src="img/bank_yes.webp" alt=""><span>Yes</span><img class="btn-icon" src="img/bank_yes.webp" alt=""></div>
@@ -1936,7 +1946,7 @@
         function closeMore() { document.getElementById('more-modal').hidden = true; }
 
         // Shown in the info box. Change this (and package.json) for each new build.
-        const APP_VERSION = '1.19';
+        const APP_VERSION = '1.20';
 
         // ---------- Themes: Old School (default), the four Ironman modes, plus Dark Mode (AMOLED) ----------
         const THEMES = [
