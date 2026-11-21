@@ -487,10 +487,10 @@
             grid-template-columns: minmax(0, 1fr);
             grid-template-rows: minmax(0, 24fr) minmax(0, 2.1fr) minmax(0, 18.8fr) minmax(0, 7fr) minmax(0, 23.4fr) minmax(0, 1.5fr) minmax(0, 19.8fr) minmax(0, 3.3fr);
         }
-        #home-remaining   { grid-row: 1; --u: calc(var(--u0) * 1.45); }
-        .home-mid         { grid-row: 3; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px; }
-        .home-death-wrap  { grid-row: 5; display: flex; flex-direction: column; --u: calc(var(--u0) * 1.3); }
-        .home-bank        { grid-row: 7; --u: calc(var(--u0) * 1.35); }
+        .home-bank        { grid-row: 1; --u: calc(var(--u0) * 1.45); }
+        .home-death-wrap  { grid-row: 3; display: flex; flex-direction: column; --u: calc(var(--u0) * 1.35); }
+        #home-remaining   { grid-row: 5; --u: calc(var(--u0) * 1.3); }
+        .home-mid         { grid-row: 7; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px; }
         .home-mid #tick-card { --u: var(--u0); }
         .home-ctrls { display: flex; flex-direction: column; gap: 6px; --u: var(--u0); }
         .home-ctrls .ctrl-btn { flex: 1 1 0; }
@@ -522,12 +522,12 @@
             #home-remaining, .home-death-wrap, .home-bank, .home-mid #tick-card { --u: var(--u0); }
             .home-mid, .home-ctrls { display: contents; }
             .split-band { display: none; }
+            .home-bank { grid-column: 3 / 5; grid-row: 1; }
+            .home-death-wrap { grid-column: 3 / 5; grid-row: 2; }
             #home-remaining { grid-column: 1; grid-row: 1; }
             #tick-card { grid-column: 2; grid-row: 1; }
-            .home-death-wrap { grid-column: 3 / 5; grid-row: 1; }
             #home-plant-btn { grid-column: 1; grid-row: 2; }
             #home-reset-btn { grid-column: 2; grid-row: 2; }
-            .home-bank { grid-column: 3 / 5; grid-row: 2; }
             .death-card .card-btn, .bank-btn { min-height: 0 !important; }
         }
 
@@ -963,6 +963,44 @@
         <div class="view" id="view-home">
             <div class="home-grid">
 
+                <!-- Deathbank -->
+                <div class="osrs-card bank-card home-bank">
+                    <div class="bank-title-row">
+                        <img class="bank-icon" src="img/death_bank.png" alt="">
+                        <div class="patch-name-text">Deathbank</div>
+                        <img class="bank-icon" src="img/death_bank.png" alt="">
+                    </div>
+                    <div class="bank-btns">
+                        <button class="osrs-btn ctrl-btn bank-btn no" id="bank-no" onclick="setBanked(false)">
+                            <div class="ctrl-inner"><img class="btn-icon" src="img/bank_yes.webp" alt=""><span>No</span><img class="btn-icon" src="img/bank_yes.webp" alt=""></div>
+                        </button>
+                        <button class="osrs-btn ctrl-btn bank-btn yes" id="bank-yes" onclick="setBanked(true)">
+                            <div class="ctrl-inner"><img class="btn-icon" src="img/bank_yes.webp" alt=""><span>Yes</span><img class="btn-icon" src="img/bank_yes.webp" alt=""></div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Deathpile -->
+                <div class="home-death-wrap">
+                    <div class="osrs-card death-card" id="death-card" onclick="toggleDeath()">
+                        <div class="patch-name-text">Deathpile</div>
+                        <div class="timer-row">
+                            <img class="farming-icon" id="death-icon-l" src="img/death_idle.png" alt="">
+                            <div class="timer" id="death-timer">Nothing</div>
+                            <img class="farming-icon" id="death-icon-r" src="img/death_idle.png" alt="">
+                        </div>
+                        <button class="osrs-btn card-btn" id="death-btn"><span class="btn-inner"><img class="btn-icon wide" src="img/death_bones.png" alt=""><span id="death-btn-text">Start</span><img class="btn-icon wide" src="img/death_bones.png" alt=""></span></button>
+                    </div>
+                </div>
+
+                <!-- Splits the home page into two framed panels, each with its own gold corners -->
+                <div class="split-band" aria-hidden="true">
+                    <svg class="corner-flourish corner-bl" viewBox="0 0 50 50"><path d="M2,2 L2,20 C2,12 12,2 20,2 Z" fill="#b38626" stroke="#3d290a" stroke-width="2"/><circle cx="8" cy="8" r="3" fill="#cca34d"/><path d="M2,2 L48,2 L48,6 L6,6 L6,48 L2,48 Z" fill="#a6771c"/></svg>
+                    <svg class="corner-flourish corner-br" viewBox="0 0 50 50"><path d="M2,2 L2,20 C2,12 12,2 20,2 Z" fill="#b38626" stroke="#3d290a" stroke-width="2"/><circle cx="8" cy="8" r="3" fill="#cca34d"/><path d="M2,2 L48,2 L48,6 L6,6 L6,48 L2,48 Z" fill="#a6771c"/></svg>
+                    <svg class="corner-flourish corner-tl" viewBox="0 0 50 50"><path d="M2,2 L2,20 C2,12 12,2 20,2 Z" fill="#b38626" stroke="#3d290a" stroke-width="2"/><circle cx="8" cy="8" r="3" fill="#cca34d"/><path d="M2,2 L48,2 L48,6 L6,6 L6,48 L2,48 Z" fill="#a6771c"/></svg>
+                    <svg class="corner-flourish corner-tr" viewBox="0 0 50 50"><path d="M2,2 L2,20 C2,12 12,2 20,2 Z" fill="#b38626" stroke="#3d290a" stroke-width="2"/><circle cx="8" cy="8" r="3" fill="#cca34d"/><path d="M2,2 L48,2 L48,6 L6,6 L6,48 L2,48 Z" fill="#a6771c"/></svg>
+                </div>
+
                 <!-- Time until every planted patch is ready -->
                 <div class="osrs-card static" id="home-remaining">
                     <div class="patch-name-text">Time Left</div>
@@ -1003,44 +1041,6 @@
                                 <span class="reset-label">RESET</span>
                                 <img class="uim-icon" src="img/spade.png" alt="Spade">
                             </div>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Splits the home page into two framed panels, each with its own gold corners -->
-                <div class="split-band" aria-hidden="true">
-                    <svg class="corner-flourish corner-bl" viewBox="0 0 50 50"><path d="M2,2 L2,20 C2,12 12,2 20,2 Z" fill="#b38626" stroke="#3d290a" stroke-width="2"/><circle cx="8" cy="8" r="3" fill="#cca34d"/><path d="M2,2 L48,2 L48,6 L6,6 L6,48 L2,48 Z" fill="#a6771c"/></svg>
-                    <svg class="corner-flourish corner-br" viewBox="0 0 50 50"><path d="M2,2 L2,20 C2,12 12,2 20,2 Z" fill="#b38626" stroke="#3d290a" stroke-width="2"/><circle cx="8" cy="8" r="3" fill="#cca34d"/><path d="M2,2 L48,2 L48,6 L6,6 L6,48 L2,48 Z" fill="#a6771c"/></svg>
-                    <svg class="corner-flourish corner-tl" viewBox="0 0 50 50"><path d="M2,2 L2,20 C2,12 12,2 20,2 Z" fill="#b38626" stroke="#3d290a" stroke-width="2"/><circle cx="8" cy="8" r="3" fill="#cca34d"/><path d="M2,2 L48,2 L48,6 L6,6 L6,48 L2,48 Z" fill="#a6771c"/></svg>
-                    <svg class="corner-flourish corner-tr" viewBox="0 0 50 50"><path d="M2,2 L2,20 C2,12 12,2 20,2 Z" fill="#b38626" stroke="#3d290a" stroke-width="2"/><circle cx="8" cy="8" r="3" fill="#cca34d"/><path d="M2,2 L48,2 L48,6 L6,6 L6,48 L2,48 Z" fill="#a6771c"/></svg>
-                </div>
-
-                <!-- Deathpile -->
-                <div class="home-death-wrap">
-                    <div class="osrs-card death-card" id="death-card" onclick="toggleDeath()">
-                        <div class="patch-name-text">Deathpile</div>
-                        <div class="timer-row">
-                            <img class="farming-icon" id="death-icon-l" src="img/death_idle.png" alt="">
-                            <div class="timer" id="death-timer">Nothing</div>
-                            <img class="farming-icon" id="death-icon-r" src="img/death_idle.png" alt="">
-                        </div>
-                        <button class="osrs-btn card-btn" id="death-btn"><span class="btn-inner"><img class="btn-icon wide" src="img/death_bones.png" alt=""><span id="death-btn-text">Start</span><img class="btn-icon wide" src="img/death_bones.png" alt=""></span></button>
-                    </div>
-                </div>
-
-                <!-- Deathbank -->
-                <div class="osrs-card bank-card home-bank">
-                    <div class="bank-title-row">
-                        <img class="bank-icon" src="img/death_bank.png" alt="">
-                        <div class="patch-name-text">Deathbank</div>
-                        <img class="bank-icon" src="img/death_bank.png" alt="">
-                    </div>
-                    <div class="bank-btns">
-                        <button class="osrs-btn ctrl-btn bank-btn no" id="bank-no" onclick="setBanked(false)">
-                            <div class="ctrl-inner"><img class="btn-icon" src="img/bank_yes.webp" alt=""><span>No</span><img class="btn-icon" src="img/bank_yes.webp" alt=""></div>
-                        </button>
-                        <button class="osrs-btn ctrl-btn bank-btn yes" id="bank-yes" onclick="setBanked(true)">
-                            <div class="ctrl-inner"><img class="btn-icon" src="img/bank_yes.webp" alt=""><span>Yes</span><img class="btn-icon" src="img/bank_yes.webp" alt=""></div>
                         </button>
                     </div>
                 </div>
