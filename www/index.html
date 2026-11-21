@@ -490,16 +490,16 @@
         #tick-card { grid-column: 1; grid-row: 2 / span 2; justify-content: center; }
         #home-plant-btn { grid-column: 2; grid-row: 2; }
         #home-reset-btn { grid-column: 2; grid-row: 3; }
-        .home-death-wrap { grid-column: 1 / -1; display: flex; flex-direction: column; }
-        .home-bank { grid-column: 1 / -1; }
+        .home-death-wrap { grid-column: 1 / -1; display: flex; flex-direction: column; margin-top: calc(var(--u) * 13); }
+        .home-bank { grid-column: 1 / -1; margin-top: calc(var(--u) * 16); }
         @media (orientation: landscape), (min-width: 600px) {
             .home-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); --tu: var(--u); --du: var(--u); }
             #home-remaining { grid-column: 1; grid-row: 1; }
             #tick-card { grid-column: 2; grid-row: 1; }
-            .home-death-wrap { grid-column: 3 / 5; grid-row: 1; }
+            .home-death-wrap { grid-column: 3 / 5; grid-row: 1; margin-top: 0; }
             #home-plant-btn { grid-column: 1; grid-row: 2; }
             #home-reset-btn { grid-column: 2; grid-row: 2; }
-            .home-bank { grid-column: 3 / 5; grid-row: 2; }
+            .home-bank { grid-column: 3 / 5; grid-row: 2; margin-top: 0; }
         }
 
         /* Deathpile card (now on the main page) */
@@ -507,30 +507,17 @@
         .death-card .farming-icon { width: calc(var(--u) * 19); height: calc(var(--u) * 14); image-rendering: auto; }
         .death-card.disabled { opacity: 0.4; filter: grayscale(1); pointer-events: none; cursor: not-allowed; }
 
-        /* "Death banked?" row */
-        .bank-row {
-            display: flex; flex-direction: row; align-items: center; gap: calc(var(--u) * 4);
-            padding: calc(var(--u) * 3) calc(var(--u) * 5);
-            cursor: default;
-        }
-        .bank-icon { width: calc(var(--u) * 17); height: calc(var(--u) * 17); object-fit: contain; image-rendering: pixelated; flex-shrink: 0; }
-        .bank-title { flex: 1; text-align: left; font-family: 'Cinzel', serif; font-weight: 700; font-size: calc(var(--u) * 10); color: var(--osrs-gold-text); text-shadow: 1px 1px #000; white-space: nowrap; }
-        .bank-choice { display: flex; align-items: center; gap: calc(var(--u) * 3); flex-shrink: 0; }
-        .bank-opt { font-family: 'Cinzel', serif; font-weight: 700; font-size: calc(var(--u) * 8.5); color: var(--dim2); }
-        .bank-opt.on { color: var(--osrs-gold-text); }
-        .bank-switch {
-            position: relative; flex-shrink: 0; padding: 0; cursor: pointer;
-            width: calc(var(--u) * 28); height: calc(var(--u) * 15);
-            border: 2px solid var(--btn-border); border-radius: calc(var(--u) * 8); background: var(--well);
-        }
-        .bank-switch::after {
-            content: ''; position: absolute; top: 50%; left: calc(var(--u) * 1.5);
-            width: calc(var(--u) * 9); height: calc(var(--u) * 9); margin-top: calc(var(--u) * -4.5);
-            border-radius: 50%; background: var(--dim2);
-            transition: transform 0.15s ease, background 0.15s ease;
-        }
-        .bank-switch[aria-checked="true"] { border-color: var(--osrs-gold-text); }
-        .bank-switch[aria-checked="true"]::after { transform: translateX(calc(var(--u) * 13)); background: var(--osrs-gold-text); }
+        .death-card .card-btn { padding: calc(var(--u) * 7) 0; }
+
+        /* Deathbank: a card with two buttons, the one that is currently selected is greyed out */
+        .bank-card { --u: var(--du); cursor: default; }
+        .bank-title-row { display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 4); }
+        .bank-icon { width: calc(var(--u) * 15); height: calc(var(--u) * 15); object-fit: contain; image-rendering: pixelated; flex-shrink: 0; }
+        .bank-btns { display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--u) * 5); width: 100%; margin-top: auto; }
+        .bank-btn { padding: calc(var(--u) * 8) 0; font-size: calc(var(--u) * 13); font-weight: 700; line-height: 1.1; transition: opacity 0.2s ease, filter 0.2s ease; }
+        .bank-btn.no  { color: var(--osrs-red-text); }
+        .bank-btn.yes { color: var(--osrs-green-text); }
+        .bank-btn:disabled { opacity: 0.4; filter: grayscale(1); pointer-events: none; cursor: not-allowed; }
 
         /* ---------- Corner flourishes ---------- */
         .corner-flourish {
@@ -1005,14 +992,16 @@
                     </div>
                 </div>
 
-                <!-- Death banked? -->
-                <div class="osrs-card bank-row home-bank">
-                    <img class="bank-icon" src="img/death_bank.png" alt="">
-                    <div class="bank-title">Death banked?</div>
-                    <div class="bank-choice">
-                        <span class="bank-opt" id="bank-no">No</span>
-                        <button class="bank-switch" id="bank-switch" role="switch" aria-checked="false" aria-label="Death banked?" onclick="toggleBanked()"></button>
-                        <span class="bank-opt" id="bank-yes">Yes</span>
+                <!-- Deathbank -->
+                <div class="osrs-card bank-card home-bank">
+                    <div class="bank-title-row">
+                        <img class="bank-icon" src="img/death_bank.png" alt="">
+                        <div class="patch-name-text">Deathbank</div>
+                        <img class="bank-icon" src="img/death_bank.png" alt="">
+                    </div>
+                    <div class="bank-btns">
+                        <button class="osrs-btn bank-btn no" id="bank-no" onclick="setBanked(false)">No</button>
+                        <button class="osrs-btn bank-btn yes" id="bank-yes" onclick="setBanked(true)">Yes</button>
                     </div>
                 </div>
             </div>
@@ -1833,21 +1822,20 @@
             updateDeathCard(Date.now());
         }
 
-        // ---------- "Death banked?" ----------
-        // Yes = your items are safe in the bank, so the Deathpile card is greyed out and can't be tapped.
+        // ---------- Deathbank ----------
+        // Yes = your items are safe in the bank: the Deathpile card and the Yes button are greyed out and can't be tapped.
+        // No  = the No button is greyed out instead (it is the current choice).
         function isBanked() { return localStorage.getItem('death_banked') === '1'; }
         function syncBanked() {
             const on = isBanked();
-            document.getElementById('bank-switch').setAttribute('aria-checked', on ? 'true' : 'false');
-            document.getElementById('bank-yes').classList.toggle('on', on);
-            document.getElementById('bank-no').classList.toggle('on', !on);
+            document.getElementById('bank-yes').disabled = on;
+            document.getElementById('bank-no').disabled = !on;
             const card = document.getElementById('death-card');
             card.classList.toggle('disabled', on);
             card.setAttribute('aria-disabled', on ? 'true' : 'false');
             updateDeathCard(Date.now());
         }
-        function toggleBanked() {
-            const on = !isBanked();
+        function setBanked(on) {
             try { localStorage.setItem('death_banked', on ? '1' : '0'); } catch (e) {}
             // a deathpile that is still counting down no longer matters once the death is banked
             if (on && loadQuick('death').finish) clearQuick('death');
@@ -1936,11 +1924,11 @@
         function closeMore() { document.getElementById('more-modal').hidden = true; }
 
         // Shown in the info box. Change this (and package.json) for each new build.
-        const APP_VERSION = '1.15';
+        const APP_VERSION = '1.17';
 
         // ---------- Themes: Old School (default), the four Ironman modes, plus Dark Mode (AMOLED) ----------
         const THEMES = [
-            { id: 'oldschool', name: 'Main',       swatch: '#c29a1c', icon: 'img/settings.png' },
+            { id: 'oldschool', name: 'Main',       swatch: '#c29a1c', icon: 'img/clan_bob.webp' },
             { id: 'iron',      name: 'Ironman',    swatch: '#aab1ba', icon: 'img/ironman.png' },
             { id: 'uim',       name: 'Ultimate',   swatch: '#f4f3ee', icon: 'img/uim.png' },
             { id: 'hcim',      name: 'Hardcore',   swatch: '#d9443a', icon: 'img/hcim.png' },
