@@ -41,7 +41,7 @@ final class WidgetTheme {
                         0xFF6AA0F2, 0xFFD0E0F8, 0xFF8FADDC, 0xFFE3DE4C, 0xFFE0675F);
             case "hcworld":
                 return new WidgetTheme(dark ? R.drawable.widget_bg_hcworld_amoled : R.drawable.widget_bg_hcworld,
-                        0xFFD6CBA8, 0xFFECE4CC, 0xFF9A9482, 0xFFE6D84A, 0xFFD95A4E);
+                        0xFFC6A8FF, 0xFFE6DCFF, 0xFF9C8CC0, 0xFFE6D84A, 0xFFD95A4E);
             default:   // Old School
                 return new WidgetTheme(dark ? R.drawable.widget_bg_oldschool_amoled : R.drawable.herb_widget_bg,
                         0xFFC9A227, 0xFFE8D9A8, 0xFFB8AB8C, 0xFFE8D83A, 0xFFC25A5A);

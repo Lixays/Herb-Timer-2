@@ -479,19 +479,18 @@
         .view[hidden] { display: none !important; }
 
         /* Home fills the space between the header and the footer. The four sections and the gaps between them
-           keep the proportions of the reference screenshot (card heights 24 : 18.8 : 23.4 : 19.8). */
+           keep the proportions of the reference screenshot. Top panel: Deathpile + Deathbank, bottom panel: farming. */
         #view-home:not([hidden]) { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
         .home-grid {
             flex: 1 1 auto; min-height: 0;
             display: grid;
             grid-template-columns: minmax(0, 1fr);
-            /* Change this line inside .home-grid */
-grid-template-rows: auto minmax(0, 2.1fr) minmax(0, 18.8fr) minmax(0, 7fr) minmax(0, 23.4fr) minmax(0, 1.5fr) minmax(0, 19.8fr) minmax(0, 3.3fr);
+            grid-template-rows: minmax(0, 19.8fr) minmax(0, 2.1fr) minmax(0, 23.4fr) minmax(0, 7fr) minmax(0, 24fr) minmax(0, 1.5fr) minmax(0, 18.8fr) minmax(0, 3.3fr);
         }
-        .home-bank        { grid-row: 1; --u: calc(var(--u0) * 1.45); }
-        .home-death-wrap  { grid-row: 3; display: flex; flex-direction: column; --u: calc(var(--u0) * 1.35); }
-        #home-remaining   { grid-row: 5; --u: calc(var(--u0) * 1.3); }
+        #home-remaining   { grid-row: 5; --u: calc(var(--u0) * 1.45); }
         .home-mid         { grid-row: 7; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px; }
+        .home-death-wrap  { grid-row: 3; display: flex; flex-direction: column; --u: calc(var(--u0) * 1.3); }
+        .home-bank        { grid-row: 1; --u: calc(var(--u0) * 1.35); }
         .home-mid #tick-card { --u: var(--u0); }
         .home-ctrls { display: flex; flex-direction: column; gap: 6px; --u: var(--u0); }
         .home-ctrls .ctrl-btn { flex: 1 1 0; }
@@ -523,12 +522,12 @@ grid-template-rows: auto minmax(0, 2.1fr) minmax(0, 18.8fr) minmax(0, 7fr) minma
             #home-remaining, .home-death-wrap, .home-bank, .home-mid #tick-card { --u: var(--u0); }
             .home-mid, .home-ctrls { display: contents; }
             .split-band { display: none; }
-            .home-bank { grid-column: 3 / 5; grid-row: 1; }
-            .home-death-wrap { grid-column: 3 / 5; grid-row: 2; }
             #home-remaining { grid-column: 1; grid-row: 1; }
             #tick-card { grid-column: 2; grid-row: 1; }
+            .home-death-wrap { grid-column: 3 / 5; grid-row: 1; }
             #home-plant-btn { grid-column: 1; grid-row: 2; }
             #home-reset-btn { grid-column: 2; grid-row: 2; }
+            .home-bank { grid-column: 3 / 5; grid-row: 2; }
             .death-card .card-btn, .bank-btn { min-height: 0 !important; }
         }
 
@@ -546,7 +545,7 @@ grid-template-rows: auto minmax(0, 2.1fr) minmax(0, 18.8fr) minmax(0, 7fr) minma
         .bank-card { cursor: default; }
         .bank-title-row { display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 4); }
         .bank-icon { width: calc(var(--u) * 15); height: calc(var(--u) * 15); object-fit: contain; image-rendering: pixelated; flex-shrink: 0; }
-        .bank-btns { display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--u) * 1); width: 100%; margin-top: auto; }
+        .bank-btns { display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--u) * 5); width: 100%; margin-top: auto; }
         .bank-btn { transition: opacity 0.2s ease, filter 0.2s ease; min-height: calc(var(--u) * 26); }
         .bank-btn.no  .ctrl-inner { color: var(--osrs-red-text); }
         .bank-btn.yes .ctrl-inner { color: var(--osrs-green-text); }
@@ -882,14 +881,15 @@ grid-template-rows: auto minmax(0, 2.1fr) minmax(0, 18.8fr) minmax(0, 7fr) minma
         }
         /* HC World: charcoal and bone, from the helm icon */
         html[data-theme="hcworld"] {
-            --osrs-bg-dark: #0a0908; --dots: #141210; --frame: #6b6a66;
-            --panel-a: #272523; --panel-b: #121110; --card-a: #171513; --well: #0b0a09;
-            --card-border: #3d3a36; --badge-border: #7a7872; --line: #2e2c29;
-            --btn-a: #34322f; --btn-b: #1c1b19; --btn-border: #5a5853; --btn-dark: #0d0c0b;
-            --btn-ha: #433f3b; --btn-hb: #272523; --btn-text: #c9bfa4; --btn-htext: #ece4cc;
-            --text: #a79f8b; --dim: #73705f; --dim2: #7a7664;
-            --osrs-gold-text: #d6cba8; --osrs-green-text: #3fa64f; --osrs-red-text: #d95a4e; --osrs-yellow-text: #dcd24a;
-            --reset: #d04444; --plant: #38a85a; --flash-a: #272523; --flash-b: #4e1414;
+            /* HC World: deep violet, so it can't be mistaken for the grey / bone themes */
+            --osrs-bg-dark: #0b0810; --dots: #15101c; --frame: #7c5fb0;
+            --panel-a: #2a2038; --panel-b: #130e1b; --card-a: #18121f; --well: #0c0910;
+            --card-border: #443659; --badge-border: #8c6fc4; --line: #2e2440;
+            --btn-a: #38294f; --btn-b: #1d1428; --btn-border: #5e4a85; --btn-dark: #0d0914;
+            --btn-ha: #47346a; --btn-hb: #281c3a; --btn-text: #c7b6ea; --btn-htext: #eadfff;
+            --text: #a798c4; --dim: #74688c; --dim2: #7a6e92;
+            --osrs-gold-text: #c6a8ff; --osrs-green-text: #3fa64f; --osrs-red-text: #d95a4e; --osrs-yellow-text: #dcd24a;
+            --reset: #d04444; --plant: #38a85a; --flash-a: #2a2038; --flash-b: #4e1414;
         }
         /* Ultimate Ironman: white / silver with black trim (a light theme) */
         html[data-theme="uim"] {
@@ -907,7 +907,7 @@ grid-template-rows: auto minmax(0, 2.1fr) minmax(0, 18.8fr) minmax(0, 7fr) minma
         html[data-theme="hcim"] .corner-flourish { filter: hue-rotate(-42deg) saturate(1.5); }
         html[data-theme="gim"] .corner-flourish { filter: hue-rotate(172deg) saturate(1.3); }
         html[data-theme="uim"] .corner-flourish { filter: grayscale(1) sepia(0.12) brightness(1.05); }
-        html[data-theme="hcworld"] .corner-flourish { filter: grayscale(1) sepia(0.35) brightness(1.1); }
+        html[data-theme="hcworld"] .corner-flourish { filter: hue-rotate(228deg) saturate(1.15) brightness(1.05); }
 
         /* ---------- Dark Mode (AMOLED): pure black behind whichever theme is chosen ---------- */
         html.amoled {
@@ -964,44 +964,6 @@ grid-template-rows: auto minmax(0, 2.1fr) minmax(0, 18.8fr) minmax(0, 7fr) minma
         <div class="view" id="view-home">
             <div class="home-grid">
 
-                <!-- Deathbank -->
-                <div class="osrs-card bank-card home-bank">
-                    <div class="bank-title-row">
-                        <img class="bank-icon" src="img/death_bank.png" alt="">
-                        <div class="patch-name-text">Deathbank</div>
-                        <img class="bank-icon" src="img/death_bank.png" alt="">
-                    </div>
-                    <div class="bank-btns">
-                        <button class="osrs-btn ctrl-btn bank-btn no" id="bank-no" onclick="setBanked(false)">
-                            <div class="ctrl-inner"><img class="btn-icon" src="img/bank_yes.webp" alt=""><span>No</span><img class="btn-icon" src="img/bank_yes.webp" alt=""></div>
-                        </button>
-                        <button class="osrs-btn ctrl-btn bank-btn yes" id="bank-yes" onclick="setBanked(true)">
-                            <div class="ctrl-inner"><img class="btn-icon" src="img/bank_yes.webp" alt=""><span>Yes</span><img class="btn-icon" src="img/bank_yes.webp" alt=""></div>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Deathpile -->
-                <div class="home-death-wrap">
-                    <div class="osrs-card death-card" id="death-card" onclick="toggleDeath()">
-                        <div class="patch-name-text">Deathpile</div>
-                        <div class="timer-row">
-                            <img class="farming-icon" id="death-icon-l" src="img/death_idle.png" alt="">
-                            <div class="timer" id="death-timer">Nothing</div>
-                            <img class="farming-icon" id="death-icon-r" src="img/death_idle.png" alt="">
-                        </div>
-                        <button class="osrs-btn card-btn" id="death-btn"><span class="btn-inner"><img class="btn-icon wide" src="img/death_bones.png" alt=""><span id="death-btn-text">Start</span><img class="btn-icon wide" src="img/death_bones.png" alt=""></span></button>
-                    </div>
-                </div>
-
-                <!-- Splits the home page into two framed panels, each with its own gold corners -->
-                <div class="split-band" aria-hidden="true">
-                    <svg class="corner-flourish corner-bl" viewBox="0 0 50 50"><path d="M2,2 L2,20 C2,12 12,2 20,2 Z" fill="#b38626" stroke="#3d290a" stroke-width="2"/><circle cx="8" cy="8" r="3" fill="#cca34d"/><path d="M2,2 L48,2 L48,6 L6,6 L6,48 L2,48 Z" fill="#a6771c"/></svg>
-                    <svg class="corner-flourish corner-br" viewBox="0 0 50 50"><path d="M2,2 L2,20 C2,12 12,2 20,2 Z" fill="#b38626" stroke="#3d290a" stroke-width="2"/><circle cx="8" cy="8" r="3" fill="#cca34d"/><path d="M2,2 L48,2 L48,6 L6,6 L6,48 L2,48 Z" fill="#a6771c"/></svg>
-                    <svg class="corner-flourish corner-tl" viewBox="0 0 50 50"><path d="M2,2 L2,20 C2,12 12,2 20,2 Z" fill="#b38626" stroke="#3d290a" stroke-width="2"/><circle cx="8" cy="8" r="3" fill="#cca34d"/><path d="M2,2 L48,2 L48,6 L6,6 L6,48 L2,48 Z" fill="#a6771c"/></svg>
-                    <svg class="corner-flourish corner-tr" viewBox="0 0 50 50"><path d="M2,2 L2,20 C2,12 12,2 20,2 Z" fill="#b38626" stroke="#3d290a" stroke-width="2"/><circle cx="8" cy="8" r="3" fill="#cca34d"/><path d="M2,2 L48,2 L48,6 L6,6 L6,48 L2,48 Z" fill="#a6771c"/></svg>
-                </div>
-
                 <!-- Time until every planted patch is ready -->
                 <div class="osrs-card static" id="home-remaining">
                     <div class="patch-name-text">Time Left</div>
@@ -1042,6 +1004,44 @@ grid-template-rows: auto minmax(0, 2.1fr) minmax(0, 18.8fr) minmax(0, 7fr) minma
                                 <span class="reset-label">RESET</span>
                                 <img class="uim-icon" src="img/spade.png" alt="Spade">
                             </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Splits the home page into two framed panels, each with its own gold corners -->
+                <div class="split-band" aria-hidden="true">
+                    <svg class="corner-flourish corner-bl" viewBox="0 0 50 50"><path d="M2,2 L2,20 C2,12 12,2 20,2 Z" fill="#b38626" stroke="#3d290a" stroke-width="2"/><circle cx="8" cy="8" r="3" fill="#cca34d"/><path d="M2,2 L48,2 L48,6 L6,6 L6,48 L2,48 Z" fill="#a6771c"/></svg>
+                    <svg class="corner-flourish corner-br" viewBox="0 0 50 50"><path d="M2,2 L2,20 C2,12 12,2 20,2 Z" fill="#b38626" stroke="#3d290a" stroke-width="2"/><circle cx="8" cy="8" r="3" fill="#cca34d"/><path d="M2,2 L48,2 L48,6 L6,6 L6,48 L2,48 Z" fill="#a6771c"/></svg>
+                    <svg class="corner-flourish corner-tl" viewBox="0 0 50 50"><path d="M2,2 L2,20 C2,12 12,2 20,2 Z" fill="#b38626" stroke="#3d290a" stroke-width="2"/><circle cx="8" cy="8" r="3" fill="#cca34d"/><path d="M2,2 L48,2 L48,6 L6,6 L6,48 L2,48 Z" fill="#a6771c"/></svg>
+                    <svg class="corner-flourish corner-tr" viewBox="0 0 50 50"><path d="M2,2 L2,20 C2,12 12,2 20,2 Z" fill="#b38626" stroke="#3d290a" stroke-width="2"/><circle cx="8" cy="8" r="3" fill="#cca34d"/><path d="M2,2 L48,2 L48,6 L6,6 L6,48 L2,48 Z" fill="#a6771c"/></svg>
+                </div>
+
+                <!-- Deathpile -->
+                <div class="home-death-wrap">
+                    <div class="osrs-card death-card" id="death-card" onclick="toggleDeath()">
+                        <div class="patch-name-text">Deathpile</div>
+                        <div class="timer-row">
+                            <img class="farming-icon" id="death-icon-l" src="img/death_idle.png" alt="">
+                            <div class="timer" id="death-timer">Nothing</div>
+                            <img class="farming-icon" id="death-icon-r" src="img/death_idle.png" alt="">
+                        </div>
+                        <button class="osrs-btn card-btn" id="death-btn"><span class="btn-inner"><img class="btn-icon wide" src="img/death_bones.png" alt=""><span id="death-btn-text">Start</span><img class="btn-icon wide" src="img/death_bones.png" alt=""></span></button>
+                    </div>
+                </div>
+
+                <!-- Deathbank -->
+                <div class="osrs-card bank-card home-bank">
+                    <div class="bank-title-row">
+                        <img class="bank-icon" src="img/death_bank.png" alt="">
+                        <div class="patch-name-text">Deathbank</div>
+                        <img class="bank-icon" src="img/death_bank.png" alt="">
+                    </div>
+                    <div class="bank-btns">
+                        <button class="osrs-btn ctrl-btn bank-btn no" id="bank-no" onclick="setBanked(false)">
+                            <div class="ctrl-inner"><img class="btn-icon" src="img/bank_yes.webp" alt=""><span>No</span><img class="btn-icon" src="img/bank_yes.webp" alt=""></div>
+                        </button>
+                        <button class="osrs-btn ctrl-btn bank-btn yes" id="bank-yes" onclick="setBanked(true)">
+                            <div class="ctrl-inner"><img class="btn-icon" src="img/bank_yes.webp" alt=""><span>Yes</span><img class="btn-icon" src="img/bank_yes.webp" alt=""></div>
                         </button>
                     </div>
                 </div>
@@ -1974,7 +1974,7 @@ grid-template-rows: auto minmax(0, 2.1fr) minmax(0, 18.8fr) minmax(0, 7fr) minma
             { id: 'uim',       name: 'Ultimate',   swatch: '#cfcdc2', icon: 'img/uim.png' },
             { id: 'hcim',      name: 'Hardcore',   swatch: '#d9443a', icon: 'img/hcim.png' },
             { id: 'gim',       name: 'Group',      swatch: '#3f78d8', icon: 'img/gim.png' },
-            { id: 'hcworld',   name: 'HC World',   swatch: '#d6cba8', icon: 'img/hcworld.png' }
+            { id: 'hcworld',   name: 'HC World',   swatch: '#9b72e0', icon: 'img/hcworld.png' }
         ];
         function currentTheme() {
             const id = localStorage.getItem('theme');
