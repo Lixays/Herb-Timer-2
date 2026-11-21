@@ -1,8 +1,8 @@
 {
   "name": "herb-timer",
-  "version": "1.11.0",
+  "version": "1.15.0",
   "private": true,
-  "description": "Herb Timer",
+  "description": "Rune Timer",
   "dependencies": {
     "@capacitor/android": "^7.0.0",
     "@capacitor/cli": "^7.0.0",

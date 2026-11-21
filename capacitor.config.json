@@ -1,6 +1,6 @@
 {
   "appId": "com.example.herbtimer",
-  "appName": "Herb Timer",
+  "appName": "Rune Timer",
   "webDir": "www",
   "plugins": {
     "LocalNotifications": {

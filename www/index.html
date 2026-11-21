@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-    <title>Herb Timer</title>
+    <title>Rune Timer</title>
     <!-- Google Fonts -->
     <style>
 /* latin-ext */
@@ -238,7 +238,7 @@
             --cols: 2;
             --panel-u: 214;   /* panel width in units */
             --h-u: 450;       /* panel height in units */
-            --h-px: 104px;     /* fixed pixel parts of the height (borders, gaps, footer) */
+            --h-px: 128px;     /* fixed pixel parts of the height (borders, gaps, footer) */
             --u: min(
                 calc((100vw - var(--sal) - var(--sar) - 28px) / var(--panel-u)),
                 calc((var(--vh) - var(--sat) - var(--sab) - var(--h-px)) / var(--h-u))
@@ -346,7 +346,6 @@
         /* Order of the last three cells (Patches page).
            Portrait:  ... Guild | Pirates  then  Reset | Plant All
            Landscape / tablet: patches fill 3 columns, controls + Pirates sit in a 4th column (see the media query below) */
-        .pirates-card { order: 10; }
         #reset-btn { order: 11; }
         #plant-all-btn { order: 12; }
 
@@ -397,7 +396,8 @@
         .uim-icon {
             width: calc(var(--u) * 12);
             height: calc(var(--u) * 12);
-            image-rendering: pixelated;
+            image-rendering: auto;
+            object-fit: contain;
             flex-shrink: 0;
         }
         .timer {
@@ -482,20 +482,23 @@
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 6px;
             align-content: start;
-            --du: calc(var(--u) * 1.4);          /* the Deathpile card is drawn bigger */
+            --tu: calc(var(--u) * 1.3);          /* the big Time Left card */
+            --du: calc(var(--u) * 1.4);          /* the Deathpile card */
         }
         .home-grid .osrs-card.static { cursor: default; }
-        #home-reset-btn { grid-column: 1; }
-        #home-plant-btn { grid-column: 2; }
+        #home-remaining { --u: var(--tu); grid-column: 1 / -1; }
+        #tick-card { grid-column: 1; grid-row: 2 / span 2; justify-content: center; }
+        #home-plant-btn { grid-column: 2; grid-row: 2; }
+        #home-reset-btn { grid-column: 2; grid-row: 3; }
         .home-death-wrap { grid-column: 1 / -1; display: flex; flex-direction: column; }
         .home-bank { grid-column: 1 / -1; }
         @media (orientation: landscape), (min-width: 600px) {
-            .home-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); --du: var(--u); }
+            .home-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); --tu: var(--u); --du: var(--u); }
             #home-remaining { grid-column: 1; grid-row: 1; }
             #tick-card { grid-column: 2; grid-row: 1; }
             .home-death-wrap { grid-column: 3 / 5; grid-row: 1; }
-            #home-reset-btn { grid-column: 1; grid-row: 2; }
-            #home-plant-btn { grid-column: 2; grid-row: 2; }
+            #home-plant-btn { grid-column: 1; grid-row: 2; }
+            #home-reset-btn { grid-column: 2; grid-row: 2; }
             .home-bank { grid-column: 3 / 5; grid-row: 2; }
         }
 
@@ -684,17 +687,24 @@
             margin-top: auto;
             flex-shrink: 0;
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
             gap: 8px;
             padding: 6px 14px 4px;
         }
-        .foot-btn { flex: 0 0 auto; min-width: 74px; padding: 8px 10px; font-size: 12px; letter-spacing: 0; }
-        .app-footer .app-credit { flex: 0 1 auto; margin: 0 auto; padding: 0; line-height: 1.1; font-size: 13px; cursor: pointer; }
-        .app-footer .app-credit { white-space: nowrap; min-width: 0; }
+        /* Portrait: Extras | Themes | Patches on one row, the credit centred underneath */
+        .foot-btn { flex: 1 1 0; min-width: 0; padding: 8px 6px; font-size: 12px; letter-spacing: 0; }
+        .app-footer .app-credit { order: 9; flex: 0 0 100%; margin: 0; padding: 0; line-height: 1.1; font-size: 13px; cursor: pointer; white-space: nowrap; }
         @media (max-width: 400px) {
-            .app-footer { padding: 6px 4px 4px; gap: 4px; }
-            .foot-btn { min-width: 58px; padding: 8px 6px; font-size: 10px; }
-            .app-footer .app-credit { font-size: 10px; letter-spacing: 0; }
+            .app-footer { padding: 6px 4px 4px; gap: 6px; }
+            .foot-btn { font-size: 11px; }
+        }
+        /* Landscape / tablet: everything on one row (Extras, Themes, credit, Patches) */
+        @media (orientation: landscape), (min-width: 600px) {
+            .app-footer { flex-wrap: nowrap; }
+            .foot-btn { flex: 0 0 auto; min-width: 90px; }
+            .f-extras { order: 1; } .f-themes { order: 2; } .f-view { order: 4; }
+            .app-footer .app-credit { order: 3; flex: 1 1 auto; }
         }
 
         .section-title {
@@ -792,7 +802,7 @@
         @media (orientation: landscape), (min-width: 600px) {
             .app-viewport-container { max-width: none; }
             #reset-btn { grid-column: 4; grid-row: 1; }
-            .pirates-card { grid-column: 4; grid-row: 2; }
+            .patch-card.slot-card { grid-column: 4; grid-row: 2; }   /* the 10th card fills the gap beside Reset / Plant All */
             #plant-all-btn { grid-column: 4; grid-row: 3; }
             .ctrl-btn { font-size: calc(var(--u) * 10); }
             .ctrl-btn .uim-icon { width: calc(var(--u) * 14); height: calc(var(--u) * 14); }
@@ -810,6 +820,10 @@
             border-radius: 4px;
             cursor: pointer;
         }
+        .theme-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 4px 0 6px; }
+        .theme-pick { flex-direction: column; justify-content: center; gap: 6px; padding: 10px 6px; }
+        .theme-icon { height: 34px; width: auto; max-width: 100%; object-fit: contain; image-rendering: pixelated; }
+        .theme-label { display: flex; align-items: center; gap: 6px; }
         .theme-pick .swatch { width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.35); }
         .theme-pick[aria-pressed="true"] { color: var(--osrs-gold-text); border-color: var(--osrs-gold-text); }
 
@@ -920,7 +934,7 @@
             <button class="header-badge stats-btn" onclick="openStats()" aria-label="Run stats">
                 <img src="img/stats.png" alt="">
             </button>
-            <h1 class="osrs-font-title">Herb Patch Timers</h1>
+            <h1 class="osrs-font-title">Rune Timer</h1>
             <button class="settings-btn header-badge gear-btn" onclick="openTickSettings(false)" aria-label="Settings">
                 <img class="mode-icon m-iron" src="img/ironman.png" alt="">
                 <img class="mode-icon m-uim" src="img/uim.png" alt="">
@@ -960,21 +974,21 @@
                     <div class="hold-bar"></div>
                 </div>
 
-                <!-- Reset all -->
-                <button class="osrs-btn ctrl-btn ctrl-reset" id="home-reset-btn" onclick="confirmReset()">
-                    <div class="ctrl-inner">
-                        <img class="uim-icon" src="img/wiki/Watch.webp" alt="Watch">
-                        <span class="reset-label">RESET</span>
-                        <img class="uim-icon" src="img/wiki/Watch.webp" alt="Watch">
-                    </div>
-                </button>
-
                 <!-- Plant all -->
                 <button class="osrs-btn ctrl-btn ctrl-plant plant-all" id="home-plant-btn" onclick="plantAllPatches()">
                     <div class="ctrl-inner">
-                        <img class="uim-icon" src="img/wiki/Spade.webp" alt="Spade">
+                        <img class="uim-icon" src="img/seed_dibber.png" alt="Seed dibber">
                         <span class="plant-label">PLANT ALL</span>
-                        <img class="uim-icon" src="img/wiki/Spade.webp" alt="Spade">
+                        <img class="uim-icon" src="img/seed_dibber.png" alt="Seed dibber">
+                    </div>
+                </button>
+
+                <!-- Reset all -->
+                <button class="osrs-btn ctrl-btn ctrl-reset" id="home-reset-btn" onclick="confirmReset()">
+                    <div class="ctrl-inner">
+                        <img class="uim-icon" src="img/spade.png" alt="Spade">
+                        <span class="reset-label">RESET</span>
+                        <img class="uim-icon" src="img/spade.png" alt="Spade">
                     </div>
                 </button>
 
@@ -1011,27 +1025,28 @@
                 <!-- Reset Button -->
                 <button class="osrs-btn ctrl-btn ctrl-reset" id="reset-btn" onclick="confirmReset()">
                     <div class="ctrl-inner">
-                        <img class="uim-icon" src="img/wiki/Watch.webp" alt="Watch">
+                        <img class="uim-icon" src="img/spade.png" alt="Spade">
                         <span class="reset-label">RESET</span>
-                        <img class="uim-icon" src="img/wiki/Watch.webp" alt="Watch">
+                        <img class="uim-icon" src="img/spade.png" alt="Spade">
                     </div>
                 </button>
 
                 <!-- Plant All Button -->
                 <button class="osrs-btn ctrl-btn ctrl-plant plant-all" id="plant-all-btn" onclick="plantAllPatches()">
                     <div class="ctrl-inner" id="plant-btn-inner">
-                        <img class="uim-icon" src="img/wiki/Spade.webp" alt="Spade">
+                        <img class="uim-icon" src="img/seed_dibber.png" alt="Seed dibber">
                         <span class="plant-label">PLANT ALL</span>
-                        <img class="uim-icon" src="img/wiki/Spade.webp" alt="Spade">
+                        <img class="uim-icon" src="img/seed_dibber.png" alt="Seed dibber">
                     </div>
                 </button>
             </div>
         </div>
 
         <div class="app-footer">
-            <button class="osrs-btn foot-btn" onclick="openMore()">Extras</button>
+            <button class="osrs-btn foot-btn f-extras" onclick="openMore()">Extras</button>
+            <button class="osrs-btn foot-btn f-themes" onclick="openThemes()">Themes</button>
+            <button class="osrs-btn foot-btn f-view" id="view-btn" onclick="toggleView()">Patches</button>
             <div class="app-credit" onclick="openAbout()" role="button" tabindex="0">Created by: Rikku</div>
-            <button class="osrs-btn foot-btn" id="view-btn" onclick="toggleView()">Patches</button>
         </div>
 
     </div>
@@ -1049,10 +1064,28 @@
             </div>
             <div class="modal-error" id="tick-error"></div>
             <div class="section-title">My Patches</div>
-            <p class="modal-text">Tap to hide the patches you don't use. The patches appear in the order you turn them on (the numbers show the order). Hidden patches are left out of the timers, notifications and widgets.</p>
+            <p class="modal-text">Tap to hide the patches you don't use. The patches appear in the app in the order you turn them on (the numbers show the order); turn one off and on again to move it to the end. Hidden patches are left out of the timers, notifications and widgets.</p>
             <div class="patch-picks" id="patch-picks"></div>
-            <div class="section-title">Theme</div>
-            <div class="theme-picks" id="theme-picks"></div>
+            <div class="section-title">Battery</div>
+            <div class="theme-row">
+                <div class="theme-text">
+                    <span class="theme-title">Battery saver</span>
+                    <span class="theme-note">Widgets update every 5 min, not every minute</span>
+                </div>
+                <button class="switch" id="saver-switch" role="switch" aria-checked="false" aria-label="Battery saver" onclick="toggleBatterySaver()"></button>
+            </div>
+            <div class="modal-actions">
+                <button class="osrs-btn modal-btn" id="tick-cancel" onclick="closeTickSettings()">Cancel</button>
+                <button class="osrs-btn modal-btn modal-save" onclick="saveTickSettings()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- THEMES -->
+    <div class="modal-overlay" id="theme-modal" hidden onclick="if (event.target === this) closeThemes()">
+        <div class="modal-card osrs-panel">
+            <h2 class="modal-title">Themes</h2>
+            <div class="theme-picks theme-grid" id="theme-picks"></div>
             <div class="theme-row">
                 <div class="theme-text">
                     <span class="theme-title">Dark Mode</span>
@@ -1067,16 +1100,8 @@
                 </div>
                 <button class="switch" id="icon-switch" role="switch" aria-checked="true" aria-label="App icon matches the theme" onclick="toggleIconFollow()"></button>
             </div>
-            <div class="theme-row">
-                <div class="theme-text">
-                    <span class="theme-title">Battery saver</span>
-                    <span class="theme-note">Widgets update every 5 min, not every minute</span>
-                </div>
-                <button class="switch" id="saver-switch" role="switch" aria-checked="false" aria-label="Battery saver" onclick="toggleBatterySaver()"></button>
-            </div>
             <div class="modal-actions">
-                <button class="osrs-btn modal-btn" id="tick-cancel" onclick="closeTickSettings()">Cancel</button>
-                <button class="osrs-btn modal-btn modal-save" onclick="saveTickSettings()">Save</button>
+                <button class="osrs-btn modal-btn" onclick="closeThemes()">Close</button>
             </div>
         </div>
     </div>
@@ -1789,7 +1814,7 @@
             });
             const btn = document.getElementById('death-btn');
             if (isBanked()) {
-                timer.innerText = 'Banked'; timer.style.color = 'var(--dim2)'; btn.innerText = 'Banked';
+                timer.innerText = 'DEATH BANKED'; timer.style.color = 'var(--dim2)'; btn.innerText = 'DEATH BANKED';
             } else if (st === 'idle') {
                 timer.innerText = 'Nothing'; timer.style.color = 'var(--osrs-red-text)'; btn.innerText = 'Start';
             } else if (st === 'wiped') {
@@ -1911,16 +1936,16 @@
         function closeMore() { document.getElementById('more-modal').hidden = true; }
 
         // Shown in the info box. Change this (and package.json) for each new build.
-        const APP_VERSION = '1.11';
+        const APP_VERSION = '1.15';
 
         // ---------- Themes: Old School (default), the four Ironman modes, plus Dark Mode (AMOLED) ----------
         const THEMES = [
-            { id: 'oldschool', name: 'Main', swatch: '#c29a1c' },
-            { id: 'iron',      name: 'Ironman',    swatch: '#aab1ba' },
-            { id: 'uim',       name: 'Ultimate',   swatch: '#f4f3ee' },
-            { id: 'hcim',      name: 'Hardcore',   swatch: '#d9443a' },
-            { id: 'gim',       name: 'Group',      swatch: '#3f78d8' },
-            { id: 'hcworld',   name: 'HC World',   swatch: '#d6cba8' }
+            { id: 'oldschool', name: 'Main',       swatch: '#c29a1c', icon: 'img/settings.png' },
+            { id: 'iron',      name: 'Ironman',    swatch: '#aab1ba', icon: 'img/ironman.png' },
+            { id: 'uim',       name: 'Ultimate',   swatch: '#f4f3ee', icon: 'img/uim.png' },
+            { id: 'hcim',      name: 'Hardcore',   swatch: '#d9443a', icon: 'img/hcim.png' },
+            { id: 'gim',       name: 'Group',      swatch: '#3f78d8', icon: 'img/gim.png' },
+            { id: 'hcworld',   name: 'HC World',   swatch: '#d6cba8', icon: 'img/hcworld.png' }
         ];
         function currentTheme() {
             const id = localStorage.getItem('theme');
@@ -1958,7 +1983,8 @@
                 b.type = 'button';
                 b.className = 'theme-pick';
                 b.setAttribute('aria-pressed', th.id === cur ? 'true' : 'false');
-                b.innerHTML = '<span class="swatch"></span><span class="swatch-name"></span>';
+                b.innerHTML = '<img class="theme-icon" alt=""><span class="theme-label"><span class="swatch"></span><span class="swatch-name"></span></span>';
+                b.querySelector('.theme-icon').src = th.icon;
                 b.querySelector('.swatch').style.background = th.swatch;
                 b.querySelector('.swatch-name').textContent = th.name;
                 b.onclick = () => setTheme(th.id);
@@ -1999,10 +2025,16 @@
             renderPatchPicks();
             document.getElementById('tick-error').innerText = '';
             document.getElementById('tick-cancel').style.display = firstRun ? 'none' : '';
-            renderThemePicks();
             syncThemeSwitch();
             document.getElementById('tick-modal').hidden = false;
         }
+
+        function openThemes() {
+            renderThemePicks();
+            syncThemeSwitch();
+            document.getElementById('theme-modal').hidden = false;
+        }
+        function closeThemes() { document.getElementById('theme-modal').hidden = true; }
 
         function openAbout() {
             document.getElementById('app-version').textContent = 'Version ' + APP_VERSION;
@@ -2055,9 +2087,9 @@
             const resetBtn = document.getElementById('reset-btn');
             grid.querySelectorAll('.patch-card').forEach(c => c.remove());
 
-            patches.forEach((patch) => {
+            patches.forEach((patch, idx) => {
                 const card = document.createElement('div');
-                card.className = 'osrs-card patch-card' + (patch.id === 'pirates' ? ' pirates-card' : '');
+                card.className = 'osrs-card patch-card' + (patches.length >= 10 && idx === 9 ? ' slot-card' : '');
                 card.onclick = () => togglePatch(patch.id);
                 card.innerHTML = `
                     <div class="patch-name-text">${patch.name}</div>
