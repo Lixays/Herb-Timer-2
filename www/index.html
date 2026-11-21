@@ -501,11 +501,27 @@
             justify-content: space-between;
         }
         .home-grid .osrs-card.static { cursor: default; }
+        /* Two framed panels on the home page: the band is the dark gap between them, with its own gold corners */
+        .split-band {
+            grid-row: 4; align-self: center; position: relative; box-sizing: border-box;
+            height: 22px; margin: 0 -14px;               /* reaches over the outer frame (10px padding + 4px border) */
+            border-top: 4px solid var(--frame); border-bottom: 4px solid var(--frame);
+            background-color: var(--osrs-bg-dark);
+            background-image: radial-gradient(var(--dots) 1px, transparent 1px);
+            background-size: 16px 16px; background-attachment: fixed;
+            z-index: 5;
+        }
+        .split-band .corner-flourish { z-index: 11; }
+        .split-band .corner-bl { left: 2px;  right: auto; top: auto; bottom: calc(100% + 2px); }
+        .split-band .corner-br { right: 2px; left: auto;  top: auto; bottom: calc(100% + 2px); }
+        .split-band .corner-tl { left: 2px;  right: auto; bottom: auto; top: calc(100% + 2px); }
+        .split-band .corner-tr { right: 2px; left: auto;  bottom: auto; top: calc(100% + 2px); }
         .home-death-wrap .death-card { flex: 1 1 auto; }
         @media (orientation: landscape), (min-width: 600px) {
             .home-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: none; gap: 6px; align-content: start; }
             #home-remaining, .home-death-wrap, .home-bank, .home-mid #tick-card { --u: var(--u0); }
             .home-mid, .home-ctrls { display: contents; }
+            .split-band { display: none; }
             #home-remaining { grid-column: 1; grid-row: 1; }
             #tick-card { grid-column: 2; grid-row: 1; }
             .home-death-wrap { grid-column: 3 / 5; grid-row: 1; }
@@ -995,6 +1011,14 @@
                             </div>
                         </button>
                     </div>
+                </div>
+
+                <!-- Splits the home page into two framed panels, each with its own gold corners -->
+                <div class="split-band" aria-hidden="true">
+                    <svg class="corner-flourish corner-bl" viewBox="0 0 50 50"><path d="M2,2 L2,20 C2,12 12,2 20,2 Z" fill="#b38626" stroke="#3d290a" stroke-width="2"/><circle cx="8" cy="8" r="3" fill="#cca34d"/><path d="M2,2 L48,2 L48,6 L6,6 L6,48 L2,48 Z" fill="#a6771c"/></svg>
+                    <svg class="corner-flourish corner-br" viewBox="0 0 50 50"><path d="M2,2 L2,20 C2,12 12,2 20,2 Z" fill="#b38626" stroke="#3d290a" stroke-width="2"/><circle cx="8" cy="8" r="3" fill="#cca34d"/><path d="M2,2 L48,2 L48,6 L6,6 L6,48 L2,48 Z" fill="#a6771c"/></svg>
+                    <svg class="corner-flourish corner-tl" viewBox="0 0 50 50"><path d="M2,2 L2,20 C2,12 12,2 20,2 Z" fill="#b38626" stroke="#3d290a" stroke-width="2"/><circle cx="8" cy="8" r="3" fill="#cca34d"/><path d="M2,2 L48,2 L48,6 L6,6 L6,48 L2,48 Z" fill="#a6771c"/></svg>
+                    <svg class="corner-flourish corner-tr" viewBox="0 0 50 50"><path d="M2,2 L2,20 C2,12 12,2 20,2 Z" fill="#b38626" stroke="#3d290a" stroke-width="2"/><circle cx="8" cy="8" r="3" fill="#cca34d"/><path d="M2,2 L48,2 L48,6 L6,6 L6,48 L2,48 Z" fill="#a6771c"/></svg>
                 </div>
 
                 <!-- Deathpile -->
@@ -1946,7 +1970,7 @@
         function closeMore() { document.getElementById('more-modal').hidden = true; }
 
         // Shown in the info box. Change this (and package.json) for each new build.
-        const APP_VERSION = '1.20';
+        const APP_VERSION = '1.21';
 
         // ---------- Themes: Old School (default), the four Ironman modes, plus Dark Mode (AMOLED) ----------
         const THEMES = [
