@@ -485,7 +485,8 @@
             flex: 1 1 auto; min-height: 0;
             display: grid;
             grid-template-columns: minmax(0, 1fr);
-            grid-template-rows: minmax(0, 24fr) minmax(0, 2.1fr) minmax(0, 18.8fr) minmax(0, 7fr) minmax(0, 23.4fr) minmax(0, 1.5fr) minmax(0, 19.8fr) minmax(0, 3.3fr);
+            /* Change this line inside .home-grid */
+grid-template-rows: auto minmax(0, 2.1fr) minmax(0, 18.8fr) minmax(0, 7fr) minmax(0, 23.4fr) minmax(0, 1.5fr) minmax(0, 19.8fr) minmax(0, 3.3fr);
         }
         .home-bank        { grid-row: 1; --u: calc(var(--u0) * 1.45); }
         .home-death-wrap  { grid-row: 3; display: flex; flex-direction: column; --u: calc(var(--u0) * 1.35); }
@@ -545,7 +546,7 @@
         .bank-card { cursor: default; }
         .bank-title-row { display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 4); }
         .bank-icon { width: calc(var(--u) * 15); height: calc(var(--u) * 15); object-fit: contain; image-rendering: pixelated; flex-shrink: 0; }
-        .bank-btns { display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--u) * 5); width: 100%; margin-top: auto; }
+        .bank-btns { display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--u) * 1); width: 100%; margin-top: auto; }
         .bank-btn { transition: opacity 0.2s ease, filter 0.2s ease; min-height: calc(var(--u) * 26); }
         .bank-btn.no  .ctrl-inner { color: var(--osrs-red-text); }
         .bank-btn.yes .ctrl-inner { color: var(--osrs-green-text); }
